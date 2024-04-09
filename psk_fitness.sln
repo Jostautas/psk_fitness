@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34723.18
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "psk_fitness", "psk_fitness\psk_fitness\psk_fitness.csproj", "{ADE05858-BA32-4027-A04F-99EF05588B0F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "psk_fitness.Client", "psk_fitness\psk_fitness.Client\psk_fitness.Client.csproj", "{B12FD20F-E9F5-4FEE-ABA2-179ACD2E2CCB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ADE05858-BA32-4027-A04F-99EF05588B0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADE05858-BA32-4027-A04F-99EF05588B0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADE05858-BA32-4027-A04F-99EF05588B0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADE05858-BA32-4027-A04F-99EF05588B0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B12FD20F-E9F5-4FEE-ABA2-179ACD2E2CCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B12FD20F-E9F5-4FEE-ABA2-179ACD2E2CCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B12FD20F-E9F5-4FEE-ABA2-179ACD2E2CCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B12FD20F-E9F5-4FEE-ABA2-179ACD2E2CCB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BF339386-F215-4F48-84F9-0F655887C889}
+	EndGlobalSection
+EndGlobal
