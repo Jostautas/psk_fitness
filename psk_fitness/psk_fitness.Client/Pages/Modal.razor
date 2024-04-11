@@ -1,34 +1,44 @@
-﻿<div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+﻿@using psk_fitness.Client.Shared
+
+@{
+    var list = new List<string> { "Chest", "Back", "Calves" };
+}
+
+
+<div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Modal title</h5>
-                <button type="button" @onclick="DeleteWorkout" class="btn btn-primary">Delete workout</button>
-
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" @onclick="OnDeleteWorkout" class="btn btn-primary">
                     <span aria-hidden="true">&times;</span>
+                    Delete workout
                 </button>
+
+
             </div>
             <div class="modal-body">
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Dropdown button
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
-                    </div>
-                </div>
-                <p>Modal body text goes here.</p>
+                
+                <label for="workoutTypeDropdown" class="form-label">Workout type:</label>
+                <Dropdown id="workoutTypeDropdown" TItem="string" OnSelected="@OnSelected">
+                    <InitialTip>This is a dropdown list</InitialTip>
+                    <ChildContent>
+                        <DropdownListItem Item="list[0]">Chest</DropdownListItem>
+                        <DropdownListItem Item="list[1]">Back</DropdownListItem>
+                        <div class="dropdown-divider"></div>
+                        <DropdownListItem Item="list[2]">Calves</DropdownListItem>
+                    </ChildContent>
+                </Dropdown>
+
             </div>
             <div class="modal-footer">
-                <button type="button" @onclick="SaveWorkout" class="btn btn-primary">Save changes</button>
+                <button type="button" @onclick="OnSaveWorkout" class="btn btn-primary">Save changes</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => Close()">Close</button>
             </div>
         </div>
     </div>
 </div>
+
 
 
 @if (ShowBackdrop)
@@ -44,12 +54,17 @@
     public string ModalClass = "";
     public bool ShowBackdrop = false;
 
-    public void DeleteWorkout()
+    private void OnSelected(string selection)
+    {
+        Console.WriteLine(selection);
+    }
+
+    public void OnDeleteWorkout()
     {
         Console.WriteLine("Delete");
     }
 
-    public void SaveWorkout()
+    public void OnSaveWorkout()
     {
         Console.WriteLine("Save");
     }
