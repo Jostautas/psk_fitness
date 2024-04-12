@@ -20,51 +20,79 @@
                         <form>
 
                             <label for="workout-type-div" class="form-label">Workout type:</label>
-                            <div id="wokout-type-div" class="dropdown me-2">
-                                
-                                <button id="workout-type" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    @_singleDayWorkout.WorkoutType
-                                </button>
-                                <ul class="dropdown-menu">
-                                    @foreach (var workoutType in workoutTypes)
-                                    {
-                                        <li><button class="dropdown-item" type="button" @onclick="() => SelectWorkoutType(workoutType)">@workoutType</button></li>
-                                    }
-                                </ul>
-                            </div>
+                            @if (_singleDayWorkout.WorkoutType != "Workout type") 
+                            {
+                                <p>@_singleDayWorkout.WorkoutType</p>
+                            }
+                            else
+                            {
+                                <div id="workout-type-div" class="dropdown me-2">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Select Type
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        @foreach (var workoutType in workoutTypes)
+                                        {
+                                            <li><button class="dropdown-item" type="button" @onclick="() => SelectWorkoutType(workoutType)">@workoutType</button></li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
 
                             <div class="time-picker">
                                 <label for="startingTimeHours" class="form-label">Starting time:</label>
                                 <div class="d-flex align-items-center">
-                                    <input type="number" id="startingTimeHours" class="form-control" 
-                                           style="width: auto;" placeholder="HH" min="0" max="23"
-                                           @bind="_singleDayWorkout.WorkoutStartHour" @bind:event="oninput">
+                                    @if (!string.IsNullOrEmpty(_singleDayWorkout.WorkoutNotes))
+                                    {
+                                        <span>@_singleDayWorkout.WorkoutStartHour</span>
+                                        <span class="mx-2">:</span>
+                                        <span>@_singleDayWorkout.WorkoutStartMinute</span>
+                                    }
+                                    else{
+                                        <input type="number" id="startingTimeHours" class="form-control" 
+                                               style="width: auto;" placeholder="HH" min="0" max="23"
+                                               @bind="_singleDayWorkout.WorkoutStartHour" @bind:event="oninput">
 
-                                    <span class="mx-2">:</span>
-                                    <input type="number" id="startingTimeMinutes" class="form-control" 
-                                           style="width: auto;" placeholder="MM" min="0" max="59"
-                                           @bind="_singleDayWorkout.WorkoutStartMinute" @bind:event="oninput">
+                                        <span class="mx-2">:</span>
+                                        <input type="number" id="startingTimeMinutes" class="form-control" 
+                                               style="width: auto;" placeholder="MM" min="0" max="59"
+                                               @bind="_singleDayWorkout.WorkoutStartMinute" @bind:event="oninput">
+                                     }
                                 </div>
                             </div>
 
                             <div class="time-picker">
                                 <label for="endTimeHours" class="form-label">Starting time:</label>
                                 <div class="d-flex align-items-center">
-                                    <input type="number" id="endTimeHours" class="form-control" 
-                                           style="width: auto;" placeholder="HH" min="0" max="23"
-                                           @bind="_singleDayWorkout.WorkoutEndHour" @bind:event="oninput">
+                                    @if (!string.IsNullOrEmpty(_singleDayWorkout.WorkoutNotes))
+                                    {
+                                        <span>@_singleDayWorkout.WorkoutEndHour</span>
+                                        <span class="mx-2">:</span>
+                                        <span>@_singleDayWorkout.WorkoutEndMinute</span>
+                                    }
+                                    else{
+                                        <input type="number" id="endTimeHours" class="form-control" 
+                                               style="width: auto;" placeholder="HH" min="0" max="23"
+                                               @bind="_singleDayWorkout.WorkoutEndHour" @bind:event="oninput">
                                     
-                                    <span class="mx-2">:</span>
-                                    <input type="number" id="endTimeMinutes" class="form-control"
-                                           style="width: auto;" placeholder="MM" min="0" max="59"
-                                           @bind="_singleDayWorkout.WorkoutEndMinute" @bind:event="oninput">
+                                        <span class="mx-2">:</span>
+                                        <input type="number" id="endTimeMinutes" class="form-control"
+                                               style="width: auto;" placeholder="MM" min="0" max="59"
+                                               @bind="_singleDayWorkout.WorkoutEndMinute" @bind:event="oninput">
+                                    }
                                 </div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="dayWorkoutNotes" class="form-label">Notes</label>
-                                <textarea class="form-control" id="dayWorkoutNotes" rows="3" 
-                                          placeholder="Enter notes" @bind="_singleDayWorkout.WorkoutNotes"></textarea>
+                                @if (!string.IsNullOrEmpty(_singleDayWorkout.WorkoutNotes))
+                                {
+                                    <p>@_singleDayWorkout.WorkoutNotes</p>
+                                }
+                                else
+                                {
+                                    <textarea class="form-control" id="dayWorkoutNotes" rows="3" placeholder="Enter notes" @bind="_singleDayWorkout.WorkoutNotes"></textarea>
+                                }
                             </div>
                         </form>
                     </div>
