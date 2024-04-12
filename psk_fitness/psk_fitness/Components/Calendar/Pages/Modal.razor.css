@@ -1,0 +1,17 @@
+﻿label {
+    margin-top: 10px; /* Adjust the top margin as needed */
+    margin-bottom: 10px; /* Adjust the bottom margin as needed */
+    font-weight: bold; /* Makes the text bold */
+}
+
+.delete-button {
+    color: #FFFFFF;
+    background-color: #FF0000;
+    border-color: #FF0000;
+}
+
+.cancel-button {
+    background-color: #FFFFFF;
+    border: 1px solid #222222;
+    color: #222222;
+}

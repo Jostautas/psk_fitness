@@ -1,0 +1,20 @@
+﻿@page "/calendar"
+@rendermode InteractiveServer
+
+
+
+<h3>Calendar</h3>
+
+
+<Modal @ref="modalRef" />
+<button @onclick="OpenModal">Open Modal</button>
+
+@code {
+    private Modal modalRef;
+
+    private async Task OpenModal()
+    {
+        await modalRef.OpenAsync();
+    }
+}
+

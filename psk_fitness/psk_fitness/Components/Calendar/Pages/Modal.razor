@@ -1,0 +1,108 @@
+﻿@page "/modal"
+
+@{
+    var workoutTypes = new List<string> { "Chest", "Back", "Calves" };
+}
+
+
+<div class="d-flex flex-column">
+    <div class="d-flex align-items-center">
+
+        <div class="modal fade" id="calendarModal" tabindex="-1" aria-labelledby="calendarModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="newTopicModalLabel">Your workput</h5>
+                        <button type="button" class="btn delete-button">Delete</button>
+                    </div>
+
+                    <div class="modal-body">
+                        <form>
+
+                            <label for="workout-type-div" class="form-label">Workout type:</label>
+                            <div id="wokout-type-div" class="dropdown me-2">
+                                
+                                <button id="workout-type" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @selectedWorkoutType
+                                </button>
+                                <ul class="dropdown-menu">
+                                    @foreach (var workoutType in workoutTypes)
+                                    {
+                                        <li><button class="dropdown-item" type="button" @onclick="() => SelectWorkoutType(workoutType)">@workoutType</button></li>
+                                    }
+                                </ul>
+                            </div>
+
+                            <div class="time-picker">
+                                <label for="startingTimeHours" class="form-label">Starting time:</label>
+                                <div class="d-flex align-items-center">
+                                    <input type="number" id="startingTimeHours" class="form-control" style="width: auto;" placeholder="HH" min="0" max="23">
+                                    <span class="mx-2">:</span>
+                                    <input type="number" id="startingTimeMinutes" class="form-control" style="width: auto;" placeholder="MM" min="0" max="59">
+                                </div>
+                            </div>
+
+                            <div class="time-picker">
+                                <label for="endTimeHours" class="form-label">Starting time:</label>
+                                <div class="d-flex align-items-center">
+                                    <input type="number" id="endTimeHours" class="form-control" style="width: auto;" placeholder="HH" min="0" max="23">
+                                    <span class="mx-2">:</span>
+                                    <input type="number" id="endTimeMinutes" class="form-control" style="width: auto;" placeholder="MM" min="0" max="59">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="topicDescription" class="form-label">Description</label>
+                                <textarea class="form-control" id="topicDescription" rows="3" placeholder="Enter topic description"></textarea>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button type="button" class="btn btn-primary">Create</button>
+                        <button type="button" class="btn cancel-button">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+@code {
+
+    private string selectedWorkoutType = "Woekout";
+
+
+    private void SelectWorkoutType(string workoutType)
+    {
+        Console.WriteLine(workoutType);
+        selectedWorkoutType = workoutType;
+    }
+
+    @inject IJSRuntime JSRuntime;
+
+    public async Task OpenAsync()
+    {
+        await JSRuntime.InvokeVoidAsync("openModal", "calendarModal");
+    }
+
+    public void OnDeleteWorkout()
+    {
+        Console.WriteLine("Delete");
+    }
+
+    public void OnSaveWorkout()
+    {
+        Console.WriteLine("Save");
+    }
+
+
+
+    public void Close()
+    {
+
+    }
+}
