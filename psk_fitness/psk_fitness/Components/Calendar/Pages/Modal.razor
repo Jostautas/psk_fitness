@@ -23,7 +23,7 @@
                             <div id="wokout-type-div" class="dropdown me-2">
                                 
                                 <button id="workout-type" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    @selectedWorkoutType
+                                    @_singleDayWorkout.WorkoutType
                                 </button>
                                 <ul class="dropdown-menu">
                                     @foreach (var workoutType in workoutTypes)
@@ -38,12 +38,12 @@
                                 <div class="d-flex align-items-center">
                                     <input type="number" id="startingTimeHours" class="form-control" 
                                            style="width: auto;" placeholder="HH" min="0" max="23"
-                                           @bind="workoutStartHour" @bind:event="oninput">
+                                           @bind="_singleDayWorkout.WorkoutStartHour" @bind:event="oninput">
 
                                     <span class="mx-2">:</span>
                                     <input type="number" id="startingTimeMinutes" class="form-control" 
                                            style="width: auto;" placeholder="MM" min="0" max="59"
-                                           @bind="workoutStartMinute" @bind:event="oninput">
+                                           @bind="_singleDayWorkout.WorkoutStartMinute" @bind:event="oninput">
                                 </div>
                             </div>
 
@@ -52,19 +52,19 @@
                                 <div class="d-flex align-items-center">
                                     <input type="number" id="endTimeHours" class="form-control" 
                                            style="width: auto;" placeholder="HH" min="0" max="23"
-                                           @bind="workoutEndHour" @bind:event="oninput">
+                                           @bind="_singleDayWorkout.WorkoutEndHour" @bind:event="oninput">
                                     
                                     <span class="mx-2">:</span>
                                     <input type="number" id="endTimeMinutes" class="form-control"
                                            style="width: auto;" placeholder="MM" min="0" max="59"
-                                           @bind="workoutEndMinute" @bind:event="oninput">
+                                           @bind="_singleDayWorkout.WorkoutEndMinute" @bind:event="oninput">
                                 </div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="dayWorkoutNotes" class="form-label">Notes</label>
                                 <textarea class="form-control" id="dayWorkoutNotes" rows="3" 
-                                          placeholder="Enter notes" @bind="workoutNotes"></textarea>
+                                          placeholder="Enter notes" @bind="_singleDayWorkout.WorkoutNotes"></textarea>
                             </div>
                         </form>
                     </div>
@@ -84,22 +84,20 @@
 
 @code {
 
-    private string selectedWorkoutType = "Woekout";
-    private int workoutStartHour, workoutEndHour, workoutStartMinute, workoutEndMinute;
-    private string workoutNotes = "";
-
+    private SingleDayWorkout _singleDayWorkout = new SingleDayWorkout();
 
     private void SelectWorkoutType(string workoutType)
     {
-        Console.WriteLine(workoutType);
-        selectedWorkoutType = workoutType;
+        _singleDayWorkout.WorkoutType = workoutType;
     }
 
     @inject IJSRuntime JSRuntime;
 
-    public async Task OpenAsync()
+    public async Task OpenAsync(SingleDayWorkout singleDayWorkout)
     {
+        _singleDayWorkout = singleDayWorkout;
         await JSRuntime.InvokeVoidAsync("openModal", "calendarModal");
+        StateHasChanged();
     }
 
     public void OnDeleteWorkout()
@@ -109,10 +107,10 @@
 
     public void OnSaveWorkout()
     {
-        Console.WriteLine(selectedWorkoutType);
-        Console.WriteLine(workoutStartHour + ":" + workoutEndHour);
-        Console.WriteLine(workoutEndHour + ":" + workoutEndMinute);
-        Console.WriteLine(workoutNotes);
+        Console.WriteLine(_singleDayWorkout.WorkoutType);
+        Console.WriteLine(_singleDayWorkout.WorkoutStartHour + ":" + _singleDayWorkout.WorkoutStartMinute);
+        Console.WriteLine(_singleDayWorkout.WorkoutEndHour + ":" + _singleDayWorkout.WorkoutEndMinute);
+        Console.WriteLine(_singleDayWorkout.WorkoutNotes);
     }
 
 

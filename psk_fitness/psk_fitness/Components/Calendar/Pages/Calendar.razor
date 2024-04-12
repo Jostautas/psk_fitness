@@ -14,7 +14,17 @@
 
     private async Task OpenModal()
     {
-        await modalRef.OpenAsync();
+        SingleDayWorkout singleDayWorkout = new SingleDayWorkout()
+            {
+                WorkoutType = "Chest",
+                WorkoutStartHour = 1,
+                WorkoutEndHour = 2,
+                WorkoutStartMinute = 30,
+                WorkoutEndMinute = 30,
+                WorkoutNotes = "Notes"
+            };
+
+        await modalRef.OpenAsync(singleDayWorkout);
     }
 }
 
