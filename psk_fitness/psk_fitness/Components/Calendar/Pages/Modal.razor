@@ -13,7 +13,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="newTopicModalLabel">Your workput</h5>
-                        <button type="button" class="btn delete-button">Delete</button>
+                        <button type="button" @onclick="() => OnDeleteWorkout()"  class="btn delete-button">Delete</button>
                     </div>
 
                     <div class="modal-body">
@@ -36,30 +36,41 @@
                             <div class="time-picker">
                                 <label for="startingTimeHours" class="form-label">Starting time:</label>
                                 <div class="d-flex align-items-center">
-                                    <input type="number" id="startingTimeHours" class="form-control" style="width: auto;" placeholder="HH" min="0" max="23">
+                                    <input type="number" id="startingTimeHours" class="form-control" 
+                                           style="width: auto;" placeholder="HH" min="0" max="23"
+                                           @bind="workoutStartHour" @bind:event="oninput">
+
                                     <span class="mx-2">:</span>
-                                    <input type="number" id="startingTimeMinutes" class="form-control" style="width: auto;" placeholder="MM" min="0" max="59">
+                                    <input type="number" id="startingTimeMinutes" class="form-control" 
+                                           style="width: auto;" placeholder="MM" min="0" max="59"
+                                           @bind="workoutStartMinute" @bind:event="oninput">
                                 </div>
                             </div>
 
                             <div class="time-picker">
                                 <label for="endTimeHours" class="form-label">Starting time:</label>
                                 <div class="d-flex align-items-center">
-                                    <input type="number" id="endTimeHours" class="form-control" style="width: auto;" placeholder="HH" min="0" max="23">
+                                    <input type="number" id="endTimeHours" class="form-control" 
+                                           style="width: auto;" placeholder="HH" min="0" max="23"
+                                           @bind="workoutEndHour" @bind:event="oninput">
+                                    
                                     <span class="mx-2">:</span>
-                                    <input type="number" id="endTimeMinutes" class="form-control" style="width: auto;" placeholder="MM" min="0" max="59">
+                                    <input type="number" id="endTimeMinutes" class="form-control"
+                                           style="width: auto;" placeholder="MM" min="0" max="59"
+                                           @bind="workoutEndMinute" @bind:event="oninput">
                                 </div>
                             </div>
 
                             <div class="mb-3">
-                                <label for="topicDescription" class="form-label">Description</label>
-                                <textarea class="form-control" id="topicDescription" rows="3" placeholder="Enter topic description"></textarea>
+                                <label for="dayWorkoutNotes" class="form-label">Notes</label>
+                                <textarea class="form-control" id="dayWorkoutNotes" rows="3" 
+                                          placeholder="Enter notes" @bind="workoutNotes"></textarea>
                             </div>
                         </form>
                     </div>
 
                     <div class="modal-footer d-flex justify-content-center">
-                        <button type="button" class="btn btn-primary">Create</button>
+                        <button type="button" @onclick="() => OnSaveWorkout()" class="btn btn-primary">Create</button>
                         <button type="button" class="btn cancel-button">Cancel</button>
                     </div>
                 </div>
@@ -74,6 +85,8 @@
 @code {
 
     private string selectedWorkoutType = "Woekout";
+    private int workoutStartHour, workoutEndHour, workoutStartMinute, workoutEndMinute;
+    private string workoutNotes = "";
 
 
     private void SelectWorkoutType(string workoutType)
@@ -96,7 +109,10 @@
 
     public void OnSaveWorkout()
     {
-        Console.WriteLine("Save");
+        Console.WriteLine(selectedWorkoutType);
+        Console.WriteLine(workoutStartHour + ":" + workoutEndHour);
+        Console.WriteLine(workoutEndHour + ":" + workoutEndMinute);
+        Console.WriteLine(workoutNotes);
     }
 
 
