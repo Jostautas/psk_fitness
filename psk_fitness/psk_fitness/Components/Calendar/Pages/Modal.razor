@@ -20,7 +20,7 @@
                         <form>
 
                             <label for="workout-type-div" class="form-label">Workout type:</label>
-                            @if (_singleDayWorkout.WorkoutType != "Workout type") 
+                            @if (_doNotShowInputBoxes)
                             {
                                 <p>@_singleDayWorkout.WorkoutType</p>
                             }
@@ -42,7 +42,7 @@
                             <div class="time-picker">
                                 <label for="startingTimeHours" class="form-label">Starting time:</label>
                                 <div class="d-flex align-items-center">
-                                    @if (!string.IsNullOrEmpty(_singleDayWorkout.WorkoutNotes))
+                                    @if (_doNotShowInputBoxes)
                                     {
                                         <span>@_singleDayWorkout.WorkoutStartHour</span>
                                         <span class="mx-2">:</span>
@@ -64,7 +64,7 @@
                             <div class="time-picker">
                                 <label for="endTimeHours" class="form-label">Starting time:</label>
                                 <div class="d-flex align-items-center">
-                                    @if (!string.IsNullOrEmpty(_singleDayWorkout.WorkoutNotes))
+                                    @if (_doNotShowInputBoxes)
                                     {
                                         <span>@_singleDayWorkout.WorkoutEndHour</span>
                                         <span class="mx-2">:</span>
@@ -85,7 +85,7 @@
 
                             <div class="mb-3">
                                 <label for="dayWorkoutNotes" class="form-label">Notes</label>
-                                @if (!string.IsNullOrEmpty(_singleDayWorkout.WorkoutNotes))
+                                @if(_doNotShowInputBoxes)
                                 {
                                     <p>@_singleDayWorkout.WorkoutNotes</p>
                                 }
@@ -99,6 +99,10 @@
 
                     <div class="modal-footer d-flex justify-content-center">
                         <button type="button" @onclick="() => OnSaveWorkout()" class="btn btn-primary">Create</button>
+                        @if (_doNotShowInputBoxes)
+                        {
+                            <button type="button" @onclick="() => ChangeModalState()" class="btn edit-button">Edit</button>
+                        }
                         <button type="button" class="btn cancel-button">Cancel</button>
                     </div>
                 </div>
@@ -113,6 +117,7 @@
 @code {
 
     private SingleDayWorkout _singleDayWorkout = new SingleDayWorkout();
+    private bool _doNotShowInputBoxes = true;
 
     private void SelectWorkoutType(string workoutType)
     {
@@ -125,6 +130,16 @@
     {
         _singleDayWorkout = singleDayWorkout;
         await JSRuntime.InvokeVoidAsync("openModal", "calendarModal");
+        if (_singleDayWorkout.WorkoutType == "Workout type")
+        {
+            Console.WriteLine("nOOOO");
+            _doNotShowInputBoxes = false;
+        }
+        else
+        {
+            Console.WriteLine("yes");
+
+        }
         StateHasChanged();
     }
 
@@ -141,6 +156,10 @@
         Console.WriteLine(_singleDayWorkout.WorkoutNotes);
     }
 
+    public void ChangeModalState()
+    {
+        _doNotShowInputBoxes = false;
+    }
 
 
     public void Close()

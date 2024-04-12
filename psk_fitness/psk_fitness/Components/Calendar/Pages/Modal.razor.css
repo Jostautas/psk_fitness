@@ -15,3 +15,9 @@
     border: 1px solid #222222;
     color: #222222;
 }
+
+.edit-button {
+    background-color: #FFA500;
+    border-color: #FFA500;
+    color: #222222;
+}
