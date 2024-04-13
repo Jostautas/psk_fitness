@@ -10,7 +10,7 @@
     border-color: #FF0000;
 }
 
-.cancel-button {
+.close-button {
     background-color: #FFFFFF;
     border: 1px solid #222222;
     color: #222222;
@@ -20,4 +20,13 @@
     background-color: #FFA500;
     border-color: #FFA500;
     color: #222222;
+}
+
+#workout-type-div {
+    width: 200px; /* Fixed width */
+}
+
+#workout-type-div .dropdown-toggle,
+#workout-type-div .dropdown-menu {
+    width: 200px; /* Fixed width for both the button and the menu */
 }

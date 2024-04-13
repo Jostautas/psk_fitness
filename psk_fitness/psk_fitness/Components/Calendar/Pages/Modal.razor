@@ -26,16 +26,19 @@
                             }
                             else
                             {
-                                <div id="workout-type-div" class="dropdown me-2">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Select Type
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        @foreach (var workoutType in workoutTypes)
-                                        {
-                                            <li><button class="dropdown-item" type="button" @onclick="() => SelectWorkoutType(workoutType)">@workoutType</button></li>
-                                        }
-                                    </ul>
+                                <div class="d-flex align-items-center">
+                                    <div id="workout-type-div" class="dropdown me-1">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            @_singleDayWorkout.WorkoutType
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            @foreach (var workoutType in workoutTypes)
+                                            {
+                                                <li><button class="dropdown-item" type="button" @onclick="() => SelectWorkoutType(workoutType)">@workoutType</button></li>
+                                            }
+                                        </ul>
+                                    </div>
+                                    <button type="button" @onclick="() => OnViewWorkoutPage()" class="btn btn-primary">Edit</button>
                                 </div>
                             }
 
@@ -98,12 +101,12 @@
                     </div>
 
                     <div class="modal-footer d-flex justify-content-center">
-                        <button type="button" @onclick="() => OnSaveWorkout()" class="btn btn-primary">Create</button>
+                        <button type="button" @onclick="() => OnSaveWorkout()" class="btn btn-primary">Save</button>
                         @if (_doNotShowInputBoxes)
                         {
                             <button type="button" @onclick="() => ChangeModalState()" class="btn edit-button">Edit</button>
                         }
-                        <button type="button" class="btn cancel-button">Cancel</button>
+                        <button type="button" class="btn close-button" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -132,16 +135,11 @@
         await JSRuntime.InvokeVoidAsync("openModal", "calendarModal");
         if (_singleDayWorkout.WorkoutType == "Workout type")
         {
-            Console.WriteLine("nOOOO");
             _doNotShowInputBoxes = false;
-        }
-        else
-        {
-            Console.WriteLine("yes");
-
         }
         StateHasChanged();
     }
+
 
     public void OnDeleteWorkout()
     {
@@ -154,6 +152,12 @@
         Console.WriteLine(_singleDayWorkout.WorkoutStartHour + ":" + _singleDayWorkout.WorkoutStartMinute);
         Console.WriteLine(_singleDayWorkout.WorkoutEndHour + ":" + _singleDayWorkout.WorkoutEndMinute);
         Console.WriteLine(_singleDayWorkout.WorkoutNotes);
+        _doNotShowInputBoxes = true;
+    }
+
+    public void OnViewWorkoutPage()
+    {
+        
     }
 
     public void ChangeModalState()
@@ -162,8 +166,9 @@
     }
 
 
-    public void Close()
+    public async Task CloseModal()
     {
+        await JSRuntime.InvokeVoidAsync("closeModal", "calendarModal");
 
     }
 }
