@@ -1,0 +1,174 @@
+﻿@page "/modal"
+
+@{
+    var workoutTypes = new List<string> { "Chest", "Back", "Calves" };
+}
+
+
+<div class="d-flex flex-column">
+    <div class="d-flex align-items-center">
+
+        <div class="modal fade" id="calendarModal" tabindex="-1" aria-labelledby="calendarModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="newTopicModalLabel">Your workput</h5>
+                        <button type="button" @onclick="() => OnDeleteWorkout()"  class="btn delete-button">Delete</button>
+                    </div>
+
+                    <div class="modal-body">
+                        <form>
+
+                            <label for="workout-type-div" class="form-label">Workout type:</label>
+                            @if (_doNotShowInputBoxes)
+                            {
+                                <p>@_singleDayWorkout.WorkoutType</p>
+                            }
+                            else
+                            {
+                                <div class="d-flex align-items-center">
+                                    <div id="workout-type-div" class="dropdown me-1">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            @_singleDayWorkout.WorkoutType
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            @foreach (var workoutType in workoutTypes)
+                                            {
+                                                <li><button class="dropdown-item" type="button" @onclick="() => SelectWorkoutType(workoutType)">@workoutType</button></li>
+                                            }
+                                        </ul>
+                                    </div>
+                                    <button type="button" @onclick="() => OnViewWorkoutPage()" class="btn btn-primary">Edit</button>
+                                </div>
+                            }
+
+                            <div class="time-picker">
+                                <label for="startingTimeHours" class="form-label">Starting time:</label>
+                                <div class="d-flex align-items-center">
+                                    @if (_doNotShowInputBoxes)
+                                    {
+                                        <span>@_singleDayWorkout.WorkoutStartHour</span>
+                                        <span class="mx-2">:</span>
+                                        <span>@_singleDayWorkout.WorkoutStartMinute</span>
+                                    }
+                                    else{
+                                        <input type="number" id="startingTimeHours" class="form-control" 
+                                               style="width: auto;" placeholder="HH" min="0" max="23"
+                                               @bind="_singleDayWorkout.WorkoutStartHour" @bind:event="oninput">
+
+                                        <span class="mx-2">:</span>
+                                        <input type="number" id="startingTimeMinutes" class="form-control" 
+                                               style="width: auto;" placeholder="MM" min="0" max="59"
+                                               @bind="_singleDayWorkout.WorkoutStartMinute" @bind:event="oninput">
+                                     }
+                                </div>
+                            </div>
+
+                            <div class="time-picker">
+                                <label for="endTimeHours" class="form-label">Starting time:</label>
+                                <div class="d-flex align-items-center">
+                                    @if (_doNotShowInputBoxes)
+                                    {
+                                        <span>@_singleDayWorkout.WorkoutEndHour</span>
+                                        <span class="mx-2">:</span>
+                                        <span>@_singleDayWorkout.WorkoutEndMinute</span>
+                                    }
+                                    else{
+                                        <input type="number" id="endTimeHours" class="form-control" 
+                                               style="width: auto;" placeholder="HH" min="0" max="23"
+                                               @bind="_singleDayWorkout.WorkoutEndHour" @bind:event="oninput">
+                                    
+                                        <span class="mx-2">:</span>
+                                        <input type="number" id="endTimeMinutes" class="form-control"
+                                               style="width: auto;" placeholder="MM" min="0" max="59"
+                                               @bind="_singleDayWorkout.WorkoutEndMinute" @bind:event="oninput">
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="dayWorkoutNotes" class="form-label">Notes</label>
+                                @if(_doNotShowInputBoxes)
+                                {
+                                    <p>@_singleDayWorkout.WorkoutNotes</p>
+                                }
+                                else
+                                {
+                                    <textarea class="form-control" id="dayWorkoutNotes" rows="3" placeholder="Enter notes" @bind="_singleDayWorkout.WorkoutNotes"></textarea>
+                                }
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button type="button" @onclick="() => OnSaveWorkout()" class="btn btn-primary">Save</button>
+                        @if (_doNotShowInputBoxes)
+                        {
+                            <button type="button" @onclick="() => ChangeModalState()" class="btn edit-button">Edit</button>
+                        }
+                        <button type="button" class="btn close-button" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+@code {
+
+    private SingleDayWorkout _singleDayWorkout = new SingleDayWorkout();
+    private bool _doNotShowInputBoxes = true;
+
+    private void SelectWorkoutType(string workoutType)
+    {
+        _singleDayWorkout.WorkoutType = workoutType;
+    }
+
+    @inject IJSRuntime JSRuntime;
+
+    public async Task OpenAsync(SingleDayWorkout singleDayWorkout)
+    {
+        _singleDayWorkout = singleDayWorkout;
+        await JSRuntime.InvokeVoidAsync("openModal", "calendarModal");
+        if (_singleDayWorkout.WorkoutType == "Workout type")
+        {
+            _doNotShowInputBoxes = false;
+        }
+        StateHasChanged();
+    }
+
+
+    public void OnDeleteWorkout()
+    {
+        Console.WriteLine("Delete");
+    }
+
+    public void OnSaveWorkout()
+    {
+        Console.WriteLine(_singleDayWorkout.WorkoutType);
+        Console.WriteLine(_singleDayWorkout.WorkoutStartHour + ":" + _singleDayWorkout.WorkoutStartMinute);
+        Console.WriteLine(_singleDayWorkout.WorkoutEndHour + ":" + _singleDayWorkout.WorkoutEndMinute);
+        Console.WriteLine(_singleDayWorkout.WorkoutNotes);
+        _doNotShowInputBoxes = true;
+    }
+
+    public void OnViewWorkoutPage()
+    {
+        
+    }
+
+    public void ChangeModalState()
+    {
+        _doNotShowInputBoxes = false;
+    }
+
+
+    public async Task CloseModal()
+    {
+        await JSRuntime.InvokeVoidAsync("closeModal", "calendarModal");
+
+    }
+}

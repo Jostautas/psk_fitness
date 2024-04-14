@@ -1,0 +1,30 @@
+﻿@page "/calendar"
+@rendermode InteractiveServer
+
+
+
+<h3>Calendar</h3>
+
+
+<Modal @ref="modalRef" />
+<button @onclick="OpenModal">Open Modal</button>
+
+@code {
+    private Modal modalRef;
+
+    private async Task OpenModal()
+    {
+        SingleDayWorkout singleDayWorkout = new SingleDayWorkout()
+            {
+                WorkoutType = "Chest",
+                WorkoutStartHour = 1,
+                WorkoutEndHour = 2,
+                WorkoutStartMinute = 30,
+                WorkoutEndMinute = 30,
+                WorkoutNotes = "Notes"
+            };
+
+        await modalRef.OpenAsync(singleDayWorkout);
+    }
+}
+
