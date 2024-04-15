@@ -1,0 +1,87 @@
+﻿<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTopicModal">
+    New topic
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="newTopicModal" tabindex="-1" aria-labelledby="newTopicModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style=@($"background-color: {_createTopicModel.Color}")>
+        <div class="modal-content" style=@($"background-color: {_createTopicModel.Color}")>
+            <div class="modal-header" style=@($"background-color: {_createTopicModel.Color}")>
+                <h5 class="modal-title" id="newTopicModalLabel">New topic</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <EditForm Model="_createTopicModel" OnSubmit="OnSubmit">
+                    <div class="mb-3">
+                        <label for="topicTitle" class="form-label">Title</label>
+                        <InputText @bind-Value=_createTopicModel.Title class="form-control" id="topicTitle" placeholder="Enter topic title" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="topicDescription" class="form-label">Description</label>
+                        <InputTextArea @bind-Value=_createTopicModel.Description class="form-control" id="topicDescription" rows="3"
+                            placeholder="Enter topic description"></InputTextArea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="topicColor" class="form-label">Color</label>
+                        <InputRadioGroup @bind-Value=_createTopicModel!.Color class="d-flex flex-wrap gap-2">
+                            @foreach (string color in _availableTopicColors)
+                            {
+                                <InputRadio Value=color @onchange=HandleColorSelection class="color-circle"
+                                    style=@($"background-color: {color}")>
+                                </InputRadio>
+                            }
+                        </InputRadioGroup>
+                    </div>
+                </EditForm>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="submit" value="Submit" class="btn btn-primary">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .color-circle {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 1px solid black;
+        cursor: pointer;
+    }
+
+    input[type="radio"] {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+}
+
+    input[type="radio"]:checked {
+        border: 5px solid black;
+    }
+</style>
+
+@code {
+
+    private class CreateTopicData {
+        public string? Title {get; set;}
+        public string? Description {get; set;}
+        public string? Color {get; set;}
+    }
+
+    private CreateTopicData _createTopicModel = new();
+
+    private List<string> _availableTopicColors { get; set; }
+    = new() {"red", "green", "blue"};
+
+    private void OnSubmit() {
+        _availableTopicColors.Add("pink");
+        return;
+    }
+
+    private void HandleColorSelection(ChangeEventArgs e) {
+        string color = e.Value.ToString();
+        Console.WriteLine($"color: {color}");
+    }
+}
