@@ -1,7 +1,39 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
+@using psk_fitness.Data
+@using Microsoft.AspNetCore.Components.Authorization
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Hello, @user?.UserName</h1>
+@if (user != null)
+{
+    <p>Height: @user.Height cm</p>
+    <p>Weight: @user.Weight kg</p>
+    <p>Age: @user.Age years</p>
+}
+else
+{
+    <p>>Please log in to see the details</P>
+}
 
-Welcome to your new app.
+@code {
+    private ApplicationUser? user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userClaimsPrincipal = authState.User;
+
+        if (userClaimsPrincipal.Identity.IsAuthenticated)
+        {
+            var userId = userClaimsPrincipal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            user = await UserManager.FindByIdAsync(userId);
+        }
+    }
+}
