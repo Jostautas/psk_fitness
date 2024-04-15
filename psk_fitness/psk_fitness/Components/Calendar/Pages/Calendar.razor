@@ -1,53 +1,87 @@
 ﻿@page "/calendar"
+@using System.Globalization
 @rendermode InteractiveServer
+<Modal @ref="modalRef" />
+@{
+    CultureInfo culture = new CultureInfo("en-US"); //Default to en-US calendar
+}
+
 
 <PageTitle>Calendar</PageTitle>
 
 
 <h3>Calendar</h3>
 
-<h4>@(char.ToUpper(DateTime.Now.ToString("MMMM")[0]) + DateTime.Now.ToString("MMMM").Substring(1))</h4>
 
+<h4>@(char.ToUpper(DateTime.Now.ToString("MMMM", culture)[0]) + DateTime.Now.ToString("MMMM", culture).Substring(1))</h4>
+
+<div>
+    <select @bind="selectedWorkoutType">
+        <option value="">All</option>
+        @foreach (var type in workoutTypes)
+        {
+            <option value="@type">@type</option>
+        }
+    </select>
+</div>
 
 <div class="calendar">
     @for (var day = 1; day <= DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month); day++)
     {
-        var workout = GetWorkoutForDay(day);
-        <div class="calendar-day" @onmouseover="() => SetHoveredWorkout(workout.Workout)" @onmouseleave="() => SetHoveredWorkout(null)">
-            <span class="day">@day</span>
-            @if (workout.Workout != null)
-            {
-                <div class="workout-box">
-                    <span>@workout.Workout.WorkoutType</span>
-                    <button class="edit-button" @onclick="() => OpenModal(workout.Workout)">Edit</button>
-                </div>
-                @if (!workout.Workout.Finished)
-                    {
-                        <div class="circle red"></div>
-                    }
-                    else
-                    {
-                        <div class="circle green"></div>
-                    }
-            }
-            else
-            {
-                <div class="workout-box">
-					<span>Rest</span>
-                    <button class="edit-button" @onclick="() => OpenModal()">Create</button>
-				</div>
-            }
-        </div>
+        Workout? workout = GetWorkoutByDay(day);
+        @if (selectedWorkoutType == "" || (workout != null && workout.WorkoutType == selectedWorkoutType))
+        {
+            <div class="calendar-day" @onmouseover="() => SetHoveredWorkout(workout)" @onmouseleave="() => SetHoveredWorkout(null)">
+                <span class="day">@day</span>
+                @if (workout != null)
+                {
+                    <div class="workout-box">
+                        <span>@workout.WorkoutType</span>
+                        <button class="edit-button" @onclick="() => OpenModal(workout)">Edit</button>
+                    </div>
+                    @if (!workout.Finished)
+                        {
+                            <div class="circle red"></div>
+                        }
+                        else
+                        {
+                            <div class="circle green"></div>
+                        }
+                }
+                else
+                {
+                    <div class="workout-box">
+					    <span>Rest</span>
+                        <button class="edit-button" @onclick="() => OpenModal()">Create</button>
+				    </div>
+                }
+            </div>
+        }
     }
 </div>
 
 
 @code {
     private Modal modalRef;
+    private List<Workout> workouts = new List<Workout>(); //TODO: Get from DB
+    private Workout? hoveredWorkout;
 
+    private string selectedWorkoutType = "";
+    private List<string> workoutTypes;  //TODO: Get from DB, probably id to readable words enum
+
+
+    protected override void OnInitialized()
+    {
+        GenerateRandomWorkouts(3); //Remove after connecting to DB
+        workoutTypes = workouts.Select(w => w.WorkoutType).Distinct().ToList();
+
+    }
+
+
+    //TODO: Make Default values, or change to use create method
     private async Task OpenModal()
     {
-        SingleDayWorkout singleDayWorkout = new SingleDayWorkout()
+        Workout singleDayWorkout = new Workout()
             {
                 WorkoutType = "Chest",
                 WorkoutStartHour = 1,
@@ -60,51 +94,42 @@
         await modalRef.OpenAsync(singleDayWorkout);
     }
 
-    private async Task OpenModal(SingleDayWorkout workout)
+    private async Task OpenModal(Workout workout)
     {
         await modalRef.OpenAsync(workout);
     }
 
 
-    private List<(SingleDayWorkout Workout, DateTime Date)> workoutsWithDates = new List<(SingleDayWorkout, DateTime)>();
-
-    private SingleDayWorkout? hoveredWorkout;
-
-    protected override void OnInitialized()
-    {
-        GenerateRandomWorkouts(3);
-    }
-
+    //Remove after connecting to DB
     private void GenerateRandomWorkouts(int count)
     {
         Random random = new Random();
         for (int i = 0; i < count; i++)
         {
-            SingleDayWorkout singleDayWorkout = new SingleDayWorkout()
+            int randomDay = random.Next(1, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month) + 1);
+            DateTime date = new DateTime(DateTime.Now.Year, DateTime.Now.Month, randomDay);
+            Workout singleDayWorkout = new Workout()
                 {
-                    WorkoutType =  "Chest",
+                    WorkoutType = "Chest",
                     WorkoutStartHour = random.Next(24),
                     WorkoutEndHour = random.Next(24),
                     WorkoutStartMinute = random.Next(60),
                     WorkoutEndMinute = random.Next(60),
                     WorkoutNotes = "Notes",
-                    Finished = random.Next(2) == 1
+                    Finished = random.Next(2) == 1,
+                    Date = date
                 };
-            int randomDay = random.Next(1, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month) + 1);
-            DateTime date = new DateTime(DateTime.Now.Year, DateTime.Now.Month, randomDay);
-            if (!workoutsWithDates.Any(w => w.Date.Day == randomDay))
-            {
-                workoutsWithDates.Add((singleDayWorkout, date));
-            }
-        }
+            workouts.Add(singleDayWorkout);
+        }   
     }
 
-    private (SingleDayWorkout Workout, DateTime Date) GetWorkoutForDay(int day)
+    //TODO: Probably will have to check if not null
+    private Workout? GetWorkoutByDay(int day)
     {
-        return workoutsWithDates.FirstOrDefault(w => w.Date.Day == day);
+        return workouts.FirstOrDefault(workout => workout.Date.Day == day);
     }
 
-    private void SetHoveredWorkout(SingleDayWorkout? workout)
+    private void SetHoveredWorkout(Workout? workout)
     {
         hoveredWorkout = workout;
     }

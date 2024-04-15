@@ -1,6 +1,6 @@
 ﻿namespace psk_fitness.Entities
 {
-    public class SingleDayWorkout
+    public class Workout
     {
         public Guid Id { get; set; }
         public string WorkoutType { get; set; } = "Workout type";
@@ -10,6 +10,7 @@
         public int WorkoutEndMinute { get;set; }
         public string WorkoutNotes { get; set; } = string.Empty;
         public bool Finished { get; set; } = false;
+        public DateTime Date { get; set; }
 
     }
 }
