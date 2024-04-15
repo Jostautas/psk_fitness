@@ -9,6 +9,7 @@
         public int WorkoutStartMinute { get; set; }
         public int WorkoutEndMinute { get;set; }
         public string WorkoutNotes { get; set; } = string.Empty;
+        public bool Finished { get; set; } = false;
 
     }
 }

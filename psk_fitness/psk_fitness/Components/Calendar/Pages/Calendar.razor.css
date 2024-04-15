@@ -7,24 +7,59 @@
 .calendar-day {
     border: 1px solid #ccc;
     padding: 10px;
+    text-align: center;
+    background-color: #f7f7f7;
+    position: relative;
+    min-width: 100px;
+    min-height: 10px;
+    padding-bottom: 50px;
 }
 
 .workout-box {
     border: 1px solid #ccc;
-    padding: 10px;
     margin-top: 5px;
     position: relative;
-    min-width: 100px;
-    min-height: 50px;
+    min-width: 90%;
+    min-height: 10px;
+    background-color: #FFFFFF;
 }
 
-    .workout-box:hover button {
-        display: block;
-    }
+.workout-box:hover button {
+    display: block;
+}
 
-    .workout-box button {
-        display: none;
-        position: absolute;
-        top: 5px;
-        right: 5px;
-    }
+.workout-box button {
+    display: none;
+    position: absolute;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, 50%);
+}
+
+.day {
+    font-weight: bold;
+    font-size: 2rem;
+}
+
+.calendar-day:hover .edit-button {
+    display: inline-block;
+}
+
+.circle {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    border-radius: 50%;
+    top: 10%;
+    right: 10%;
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.red {
+    background-color: red;
+}
+
+.green {
+    background-color: green;
+}

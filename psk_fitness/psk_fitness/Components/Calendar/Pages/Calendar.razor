@@ -6,10 +6,6 @@
 
 <h3>Calendar</h3>
 
-
-<Modal @ref="modalRef" />
-<button @onclick="OpenModal">Open Modal</button>
-
 <h4>@(char.ToUpper(DateTime.Now.ToString("MMMM")[0]) + DateTime.Now.ToString("MMMM").Substring(1))</h4>
 
 
@@ -17,19 +13,28 @@
     @for (var day = 1; day <= DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month); day++)
     {
         var workout = GetWorkoutForDay(day);
-        <div class="calendar-day">
-            <span>@day</span>
+        <div class="calendar-day" @onmouseover="() => SetHoveredWorkout(workout.Workout)" @onmouseleave="() => SetHoveredWorkout(null)">
+            <span class="day">@day</span>
             @if (workout.Workout != null)
             {
-                <div class="workout-box" @onmouseover="() => SetHoveredWorkout(workout.Workout)" @onmouseleave="() => SetHoveredWorkout(null)">
+                <div class="workout-box">
                     <span>@workout.Workout.WorkoutType</span>
-                    <button @onclick="() => OpenModal(workout.Workout)">Edit</button>
+                    <button class="edit-button" @onclick="() => OpenModal(workout.Workout)">Edit</button>
                 </div>
+                @if (!workout.Workout.Finished)
+                    {
+                        <div class="circle red"></div>
+                    }
+                    else
+                    {
+                        <div class="circle green"></div>
+                    }
             }
             else
             {
                 <div class="workout-box">
 					<span>Rest</span>
+                    <button class="edit-button" @onclick="() => OpenModal()">Create</button>
 				</div>
             }
         </div>
@@ -82,7 +87,8 @@
                     WorkoutEndHour = random.Next(24),
                     WorkoutStartMinute = random.Next(60),
                     WorkoutEndMinute = random.Next(60),
-                    WorkoutNotes = "Notes"
+                    WorkoutNotes = "Notes",
+                    Finished = random.Next(2) == 1
                 };
             int randomDay = random.Next(1, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month) + 1);
             DateTime date = new DateTime(DateTime.Now.Year, DateTime.Now.Month, randomDay);
