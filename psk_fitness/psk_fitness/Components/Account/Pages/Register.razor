@@ -33,6 +33,21 @@
                 <ValidationMessage For="() => Input.Email" class="text-danger" />
             </div>
             <div class="form-floating mb-3">
+                <InputNumber @bind-Value="Input.Height" class="form-control" aria-required="true" placeholder="180" />
+                <label for="height">Height</label>
+                <ValidationMessage For="() => Input.Height" class="text-danger" />
+            </div>
+            <div class="form-floating mb-3">
+                <InputNumber @bind-Value="Input.Weight" class="form-control" aria-required="true" placeholder="80" />
+                <label for="weight">Weight</label>
+                <ValidationMessage For="() => Input.Weight" class="text-danger" />
+            </div>
+            <div class="form-floating mb-3">
+                <InputNumber @bind-Value="Input.Age" class="form-control" aria-required="true" placeholder="30" />
+                <label for="age">Age</label>
+                <ValidationMessage For="() => Input.Age" class="text-danger" />
+            </div>
+            <div class="form-floating mb-3">
                 <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
                 <label for="password">Password</label>
                 <ValidationMessage For="() => Input.Password" class="text-danger" />
@@ -72,6 +87,9 @@
         await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         var emailStore = GetEmailStore();
         await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+        user.Height = Input.Height;
+        user.Weight = Input.Weight;
+        user.Age = Input.Age;
         var result = await UserManager.CreateAsync(user, Input.Password);
 
         if (!result.Succeeded)
@@ -116,7 +134,7 @@
     }
 
     private IUserEmailStore<ApplicationUser> GetEmailStore()
-    {
+    {   
         if (!UserManager.SupportsUserEmail)
         {
             throw new NotSupportedException("The default UI requires a user store with email support.");
@@ -130,6 +148,18 @@
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; } = "";
+
+        [Required]
+        [Display(Name = "Height")]
+        public int Height { get; set; }
+
+        [Required]
+        [Display(Name = "Weight")]
+        public double Weight { get; set; }
+
+        [Required]
+        [Display(Name = "Age")]
+        public int Age { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
