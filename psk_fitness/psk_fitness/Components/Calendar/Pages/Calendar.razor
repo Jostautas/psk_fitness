@@ -1,6 +1,7 @@
 ﻿@page "/calendar"
 @rendermode InteractiveServer
 
+<PageTitle>Calendar</PageTitle>
 
 
 <h3>Calendar</h3>
@@ -8,6 +9,33 @@
 
 <Modal @ref="modalRef" />
 <button @onclick="OpenModal">Open Modal</button>
+
+<h4>@(char.ToUpper(DateTime.Now.ToString("MMMM")[0]) + DateTime.Now.ToString("MMMM").Substring(1))</h4>
+
+
+<div class="calendar">
+    @for (var day = 1; day <= DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month); day++)
+    {
+        var workout = GetWorkoutForDay(day);
+        <div class="calendar-day">
+            <span>@day</span>
+            @if (workout.Workout != null)
+            {
+                <div class="workout-box" @onmouseover="() => SetHoveredWorkout(workout.Workout)" @onmouseleave="() => SetHoveredWorkout(null)">
+                    <span>@workout.Workout.WorkoutType</span>
+                    <button @onclick="() => OpenModal(workout.Workout)">Edit</button>
+                </div>
+            }
+            else
+            {
+                <div class="workout-box">
+					<span>Rest</span>
+				</div>
+            }
+        </div>
+    }
+</div>
+
 
 @code {
     private Modal modalRef;
@@ -26,5 +54,54 @@
 
         await modalRef.OpenAsync(singleDayWorkout);
     }
+
+    private async Task OpenModal(SingleDayWorkout workout)
+    {
+        await modalRef.OpenAsync(workout);
+    }
+
+
+    private List<(SingleDayWorkout Workout, DateTime Date)> workoutsWithDates = new List<(SingleDayWorkout, DateTime)>();
+
+    private SingleDayWorkout? hoveredWorkout;
+
+    protected override void OnInitialized()
+    {
+        GenerateRandomWorkouts(3);
+    }
+
+    private void GenerateRandomWorkouts(int count)
+    {
+        Random random = new Random();
+        for (int i = 0; i < count; i++)
+        {
+            SingleDayWorkout singleDayWorkout = new SingleDayWorkout()
+                {
+                    WorkoutType =  "Chest",
+                    WorkoutStartHour = random.Next(24),
+                    WorkoutEndHour = random.Next(24),
+                    WorkoutStartMinute = random.Next(60),
+                    WorkoutEndMinute = random.Next(60),
+                    WorkoutNotes = "Notes"
+                };
+            int randomDay = random.Next(1, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month) + 1);
+            DateTime date = new DateTime(DateTime.Now.Year, DateTime.Now.Month, randomDay);
+            if (!workoutsWithDates.Any(w => w.Date.Day == randomDay))
+            {
+                workoutsWithDates.Add((singleDayWorkout, date));
+            }
+        }
+    }
+
+    private (SingleDayWorkout Workout, DateTime Date) GetWorkoutForDay(int day)
+    {
+        return workoutsWithDates.FirstOrDefault(w => w.Date.Day == day);
+    }
+
+    private void SetHoveredWorkout(SingleDayWorkout? workout)
+    {
+        hoveredWorkout = workout;
+    }
+
 }
 

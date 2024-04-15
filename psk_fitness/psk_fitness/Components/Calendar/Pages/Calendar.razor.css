@@ -1,0 +1,30 @@
+﻿.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-gap: 10px;
+}
+
+.calendar-day {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.workout-box {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 5px;
+    position: relative;
+    min-width: 100px;
+    min-height: 50px;
+}
+
+    .workout-box:hover button {
+        display: block;
+    }
+
+    .workout-box button {
+        display: none;
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
