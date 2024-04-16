@@ -10,13 +10,19 @@
         public TimeSpan Duration { get; set; } // Stores hours, minutes, and seconds
         public int Sets { get; set; }
         public int Reps { get; set; }
-        public string Steps { get; set; } 
+        private List<string> _steps = new List<string>();
+
+        public string Steps
+        {
+            get => string.Join(";", _steps);
+            set => _steps = value.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+        }
 
         public bool IsExpanded { get; set; } = false;
 
         public Exercise()
         {
-            
+
         }
     }
 }
