@@ -1,5 +1,7 @@
 ﻿@page "/weather"
 @attribute [StreamRendering]
+@using BlazorBootstrap;
+
 
 <PageTitle>Weather</PageTitle>
 
@@ -38,6 +40,7 @@ else
 
 @code {
     private WeatherForecast[]? forecasts;
+    private Modal modal = default!;
 
     protected override async Task OnInitializedAsync()
     {
