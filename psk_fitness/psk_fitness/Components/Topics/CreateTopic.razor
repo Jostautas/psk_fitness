@@ -11,7 +11,7 @@
                 <h5 class="modal-title" id="newTopicModalLabel">@GetCardTitle()</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <EditForm Model=@CreateTopicModel OnSubmit=@OnSubmit FormName="CreateTopicForm">
+            <EditForm Model=@CreateTopicModel OnSubmit=@HandleSubmit FormName="CreateTopicForm">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="topicTitle" class="form-label">Title</label>
@@ -21,6 +21,10 @@
                         <label for="topicDescription" class="form-label">Description</label>
                         <InputTextArea @bind-Value=CreateTopicModel.Description class="form-control" id="topicDescription" rows="3"
                             placeholder="Enter topic description"></InputTextArea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="imageUpload" class="form-label">Upload image</label>
+                        <InputFile id="imageUpload" OnChange="@HandleImageUpload" accept="image/*" />
                     </div>
                     <div class="mb-3">
                         <label for="topicColor" class="form-label">Color</label>
@@ -74,10 +78,6 @@
     [SupplyParameterFromForm]
     public CreateTopicData CreateTopicModel {get; set;}
 
-    protected override void OnInitialized(){
-        CreateTopicModel ??= new();
-    }
-
     private List<CssColor> _availableCssTopicColors { get; set; }
     = new() {
         new CssColor(CssColorMode.RGBA, (255, 150, 150).ToTuple()),
@@ -85,16 +85,36 @@
         new CssColor(CssColorMode.RGBA, (150, 150, 255).ToTuple()),    
     };
 
-    private async Task OnSubmit() {
+    private string _selectedImageBase64;
+
+    protected override void OnInitialized(){
+        CreateTopicModel ??= new();
+    }
+
+    private async Task HandleSubmit() {
         await OnTopicCreated.InvokeAsync(new TopicDisplayData {
             Title = CreateTopicModel.Title,
-            CssColor = CreateTopicModel.CssColor
+            CssColor = CreateTopicModel.CssColor,
+            ImageBase64 = _selectedImageBase64
         });
-        Console.WriteLine("WHATTTTTTTT");
-        return;
     }
 
     private string GetCardTitle() {
-        return String.IsNullOrEmpty(CreateTopicModel.Title) || String.IsNullOrWhiteSpace(CreateTopicModel.Title)? "New topic" : CreateTopicModel.Title;
+        return String.IsNullOrEmpty(CreateTopicModel.Title)
+            || String.IsNullOrWhiteSpace(CreateTopicModel.Title)?
+            "New topic" : CreateTopicModel.Title;
+    }
+
+    private async Task HandleImageUpload(InputFileChangeEventArgs e) {
+        var imageFile = e.File;
+        if (imageFile != null)
+        {
+             var buffer = new byte[imageFile.Size];
+            await imageFile.OpenReadStream().ReadAsync(buffer);
+            var base64String = Convert.ToBase64String(buffer);
+            // Remove padding characters '=' from the base64 string
+            var cleanedBase64String = base64String.TrimEnd('=').TrimEnd('A');
+            _selectedImageBase64 = $"data:{imageFile.ContentType};base64,{cleanedBase64String}";
+        }
     }
 }

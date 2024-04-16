@@ -16,7 +16,7 @@
                 <li><a class="dropdown-item" href="#">Invited</a></li>
             </ul>
         </div>
-        <CreateTopic @rendermode=InteractiveServer OnTopicCreated=@AddTopicToDisplay/>
+        <CreateTopic OnTopicCreated=@AddTopicToDisplay/>
     </div>
 </div>
 
@@ -27,7 +27,7 @@
             <div class="col-md-4">
                 <div class="card mb-4" style=@($"background-color: {topic.CssColor}; min-height: 10rem")>
                     <div class="card-body">
-                        <img src="https://picsum.photos/200/140" class="card-img-top" alt="...">
+                        <img src=@topic.ImageBase64 class="card-img-top" alt="Topic image">
                     </div>
                     <div class="card-footer">
                         <h5 class="card-title text-center">@topic.Title</h5>
@@ -48,6 +48,6 @@
 
     public void AddTopicToDisplay(TopicDisplayData topicToDisplay) {
         _topicsToDisplay.Add(topicToDisplay);
-        Console.WriteLine("WOAAHAHHAH");
+        Console.WriteLine(topicToDisplay.ImageBase64);
     }
 }
