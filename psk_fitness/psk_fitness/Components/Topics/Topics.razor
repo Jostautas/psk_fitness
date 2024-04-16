@@ -1,4 +1,5 @@
 ﻿@page "/topics"
+@rendermode InteractiveServer
 
 <PageTitle>Topics</PageTitle>
 
@@ -15,19 +16,21 @@
                 <li><a class="dropdown-item" href="#">Invited</a></li>
             </ul>
         </div>
-        <CreateTopic @rendermode=InteractiveServer/>
+        <CreateTopic @rendermode=InteractiveServer OnTopicCreated=@AddTopicToDisplay/>
     </div>
 </div>
 
-<div class="container">
+<div class="container mt-4">
     <div class="row">
-        @foreach (var item in Enumerable.Range(1, 12))
+        @foreach (TopicDisplayData topic in _topicsToDisplay)
         {
             <div class="col-md-4">
-                <div class="card mb-4">
-                    <img src="https://picsum.photos/200/140" class="card-img-top" alt="...">
+                <div class="card mb-4" style=@($"background-color: {topic.CssColor}; min-height: 10rem")>
                     <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
+                        <img src="https://picsum.photos/200/140" class="card-img-top" alt="...">
+                    </div>
+                    <div class="card-footer">
+                        <h5 class="card-title text-center">@topic.Title</h5>
                     </div>
                 </div>
             </div>
@@ -37,4 +40,14 @@
 
 
 @code {
+    List<TopicDisplayData> _topicsToDisplay;
+
+    protected override void OnInitialized(){
+        _topicsToDisplay ??= new();
+    }
+
+    public void AddTopicToDisplay(TopicDisplayData topicToDisplay) {
+        _topicsToDisplay.Add(topicToDisplay);
+        Console.WriteLine("WOAAHAHHAH");
+    }
 }

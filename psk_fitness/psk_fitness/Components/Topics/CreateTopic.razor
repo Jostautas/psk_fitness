@@ -6,12 +6,12 @@
 <!-- Modal -->
 <div class="modal fade" id="newTopicModal" tabindex="-1" aria-labelledby="newTopicModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content" style=@($"background-color: {CreateTopicModel.CssColor?.ToString()}")>
+        <div class="modal-content" style=@($"background-color: {CreateTopicModel.CssColor}")>
             <div class="modal-header">
-                <h5 class="modal-title" id="newTopicModalLabel">New topic</h5>
+                <h5 class="modal-title" id="newTopicModalLabel">@GetCardTitle()</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <EditForm Model="CreateTopicModel" OnSubmit="OnSubmit" FormName="CreateTopicForm">
+            <EditForm Model=@CreateTopicModel OnSubmit=@OnSubmit FormName="CreateTopicForm">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="topicTitle" class="form-label">Title</label>
@@ -28,14 +28,14 @@
                             @foreach (CssColor color in _availableCssTopicColors)
                             {
                                 <InputRadio Value=color class="color-circle"
-                                    style=@($"background-color: {color.ToString()}")>
+                                    style=@($"background-color: {color}")>
                                 </InputRadio>
                             }
                         </InputRadioGroup>
                     </div>
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
-                    <button type="submit" value="Submit" class="btn btn-primary">Create</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
                 </div>
             </EditForm>
         </div>
@@ -68,12 +68,8 @@
 
 
 @code {
-
-    public class CreateTopicData {
-        public string? Title {get; set;}
-        public string? Description {get; set;}
-        public CssColor? CssColor {get; set;}
-    }
+    [Parameter]
+    public EventCallback<TopicDisplayData> OnTopicCreated {get; set;}
 
     [SupplyParameterFromForm]
     public CreateTopicData CreateTopicModel {get; set;}
@@ -89,13 +85,16 @@
         new CssColor(CssColorMode.RGBA, (150, 150, 255).ToTuple()),    
     };
 
-    private void OnSubmit() {
-        _availableCssTopicColors.Add(new CssColor(CssColorMode.RGBA, (255, 0, 150).ToTuple()));
+    private async Task OnSubmit() {
+        await OnTopicCreated.InvokeAsync(new TopicDisplayData {
+            Title = CreateTopicModel.Title,
+            CssColor = CreateTopicModel.CssColor
+        });
+        Console.WriteLine("WHATTTTTTTT");
         return;
     }
 
-    private void HandleColorSelection(ChangeEventArgs e) {
-        string color = e.Value.ToString();
-        Console.WriteLine($"color: {color}");
+    private string GetCardTitle() {
+        return String.IsNullOrEmpty(CreateTopicModel.Title) || String.IsNullOrWhiteSpace(CreateTopicModel.Title)? "New topic" : CreateTopicModel.Title;
     }
 }
