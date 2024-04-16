@@ -119,7 +119,7 @@
 
 @code {
 
-    private SingleDayWorkout _singleDayWorkout = new SingleDayWorkout();
+    private Workout _singleDayWorkout = new Workout();
     private bool _doNotShowInputBoxes = true;
 
     private void SelectWorkoutType(string workoutType)
@@ -129,7 +129,7 @@
 
     @inject IJSRuntime JSRuntime;
 
-    public async Task OpenAsync(SingleDayWorkout singleDayWorkout)
+    public async Task OpenAsync(Workout singleDayWorkout)
     {
         _singleDayWorkout = singleDayWorkout;
         await JSRuntime.InvokeVoidAsync("openModal", "calendarModal");
