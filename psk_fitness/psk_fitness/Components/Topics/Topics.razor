@@ -1,0 +1,64 @@
+﻿@page "/topics"
+@rendermode InteractiveServer
+
+<PageTitle>Topics</PageTitle>
+
+<h3>Topics</h3>
+
+<div class="d-flex flex-column">
+    <div class="d-flex align-items-center">
+        <div class="dropdown me-2">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Personal
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Personal</a></li>
+                <li><a class="dropdown-item" href="#">Invited</a></li>
+            </ul>
+        </div>
+        <CreateTopic OnTopicCreated=@AddTopicToDisplay/>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <div class="row">
+        @foreach (TopicDisplayData topic in _topicsToDisplay)
+        {
+            <div class="col-md-4">
+                <div class="card mb-4 topic-card-size" style=@($"background-color: {topic.CssColor}")>
+                    <div class="card-body">
+                        <img src=@topic.ImageBase64 class="topic-img mx-auto d-block" alt="Topic image">
+                    </div>
+                    <div class="card-footer">
+                        <h5 class="card-title text-center">@topic.Title</h5>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .topic-card-size {
+        min-height: 10rem;
+    }
+
+    .topic-img {
+        width: 200px;
+        height: 150px;
+        object-fit: fill;
+    }
+</style>
+
+
+@code {
+    List<TopicDisplayData> _topicsToDisplay;
+
+    protected override void OnInitialized(){
+        _topicsToDisplay ??= new();
+    }
+
+    public void AddTopicToDisplay(TopicDisplayData topicToDisplay) {
+        _topicsToDisplay.Add(topicToDisplay);
+    }
+}
