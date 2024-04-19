@@ -3,22 +3,21 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace psk_fitness.Data
 {
-    public class Workout
+    public class Exercise
     {
         [Key] public int Id { get; set; }
-        [ForeignKey("Topic")]
-        public required int TopicId { get; set; }
+        [ForeignKey("Workout")]
+        public required int WorkoutId { get; set; }
         public required string Title { get; set; }
-        public required DateOnly Date {  get; set; }
-        public TimeSpan? Duration { get; set; }
+        public DateOnly? Duration { get; set; }
+        public int? Sets { get; set; }
+        public int? Reps { get; set; }
         public string Description { get; set; } = "";
         public string Notes { get; set; } = "";
         public string FriendsNotes { get; set; } = "";
-        public bool Finished { get; set; } = false;
+        public string Steps { get; set; } = "";
 
-        public required virtual Topic Topic { get; set; }
-        public virtual ICollection<Exercise>? Exercises { get; set; }
-
+        public virtual Workout? Workout { get; set; }
 
     }
 }

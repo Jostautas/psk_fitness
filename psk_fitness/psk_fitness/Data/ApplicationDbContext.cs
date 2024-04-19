@@ -7,6 +7,8 @@ namespace psk_fitness.Data
     {
         public DbSet<Topic> Topics { get; set; }
         public DbSet<TopicFriend> TopicFriends { get; set; }
+        public DbSet<Workout> Workouts { get; set; }
+        public DbSet<Exercise> Exercise { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -19,14 +21,26 @@ namespace psk_fitness.Data
             modelBuilder.Entity<Topic>()
                 .HasOne(t => t.ApplicationUser)
                 .WithMany(au => au.Topics) // Assuming ApplicationUser has a Topics collection
-                .HasForeignKey(t => t.ApplicationUserId);
+                .HasForeignKey(t => t.ApplicationUserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            // Configuring the many-to-one relationship between TopicFriends and Topics
             modelBuilder.Entity<TopicFriend>()
                 .HasOne(tf => tf.Topic)
                 .WithMany(t => t.TopicFriends)
                 .HasForeignKey(tf => tf.TopicId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Workout>()
+                .HasOne(w => w.Topic)
+                .WithMany(t => t.Workouts)
+                .HasForeignKey(w => w.TopicId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Workout>()
+                .HasMany(w => w.Exercises)
+                .WithOne(e => e.Workout)
+                .HasForeignKey(e => e.WorkoutId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
     }

@@ -12,11 +12,12 @@ namespace psk_fitness.Data
         public required string ApplicationUserId { get; set; }
         public required string Title { get; set; }
         public string? Color { get; set; }
-        public string? Description { get; set; }
-        public string? FriendsNotes { get; set; }
+        public string Description { get; set; } = "";
+        public string FriendsNotes { get; set; } = "";
 
         public virtual required ApplicationUser ApplicationUser { get; set; }
         public virtual ICollection<TopicFriend>? TopicFriends { get; set; }
+        public virtual ICollection<Workout>? Workouts { get; set; }
 
 
     }
