@@ -8,6 +8,7 @@ namespace psk_fitness.Data
         public int? Height { get; set; }
         public double? Weight { get; set; }
         public int? Age { get; set; }
+        public virtual ICollection<Topic>? Topics { get; set; }
     }
 
 }
