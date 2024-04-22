@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using psk_fitness.Data;
 
@@ -11,13 +12,15 @@ using psk_fitness.Data;
 namespace psk_fitness.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240419080229_addTopicsAndTopicFriendsTables")]
+    partial class addTopicsAndTopicFriendsTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.4")
+                .HasAnnotation("ProductVersion", "8.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -229,53 +232,6 @@ namespace psk_fitness.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("psk_fitness.Data.Exercise", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly?>("Duration")
-                        .HasColumnType("date");
-
-                    b.Property<string>("FriendsNotes")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Reps")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Sets")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Steps")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("WorkoutId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("WorkoutId");
-
-                    b.ToTable("Exercise");
-                });
-
             modelBuilder.Entity("psk_fitness.Data.Topic", b =>
                 {
                     b.Property<int>("Id")
@@ -292,11 +248,9 @@ namespace psk_fitness.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FriendsNotes")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
@@ -326,49 +280,6 @@ namespace psk_fitness.Migrations
                     b.HasIndex("ApplicationUserId");
 
                     b.ToTable("TopicFriends");
-                });
-
-            modelBuilder.Entity("psk_fitness.Data.Workout", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<TimeSpan?>("Duration")
-                        .HasColumnType("time");
-
-                    b.Property<bool>("Finished")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("FriendsNotes")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TopicId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TopicId");
-
-                    b.ToTable("Workouts");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -422,23 +333,12 @@ namespace psk_fitness.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("psk_fitness.Data.Exercise", b =>
-                {
-                    b.HasOne("psk_fitness.Data.Workout", "Workout")
-                        .WithMany("Exercises")
-                        .HasForeignKey("WorkoutId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Workout");
-                });
-
             modelBuilder.Entity("psk_fitness.Data.Topic", b =>
                 {
                     b.HasOne("psk_fitness.Data.ApplicationUser", "ApplicationUser")
                         .WithMany("Topics")
                         .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");
@@ -455,21 +355,10 @@ namespace psk_fitness.Migrations
                     b.HasOne("psk_fitness.Data.Topic", "Topic")
                         .WithMany("TopicFriends")
                         .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");
-
-                    b.Navigation("Topic");
-                });
-
-            modelBuilder.Entity("psk_fitness.Data.Workout", b =>
-                {
-                    b.HasOne("psk_fitness.Data.Topic", "Topic")
-                        .WithMany("Workouts")
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("Topic");
                 });
@@ -482,13 +371,6 @@ namespace psk_fitness.Migrations
             modelBuilder.Entity("psk_fitness.Data.Topic", b =>
                 {
                     b.Navigation("TopicFriends");
-
-                    b.Navigation("Workouts");
-                });
-
-            modelBuilder.Entity("psk_fitness.Data.Workout", b =>
-                {
-                    b.Navigation("Exercises");
                 });
 #pragma warning restore 612, 618
         }
