@@ -24,13 +24,9 @@
                         <InputTextArea @bind-Value=CreateTopicModel.Description class="form-control" id="topicDescription" rows="3"
                             placeholder="Enter topic description"></InputTextArea>
                     </div>
-                    <div class="mb-3">
-                        <label for="imageUpload" class="form-label">Upload image</label>
-                        <InputFile id="imageUpload" OnChange="@HandleImageUpload" accept="image/*" />
-                    </div>
-                    <div class="mb-3">
+                    <div class="mb-3 d-flex">
                         <label for="topicColor" class="form-label">Color</label>
-                        <InputRadioGroup @bind-Value=CreateTopicModel!.CssColor class="d-flex flex-wrap gap-2">
+                        <InputRadioGroup @bind-Value=CreateTopicModel!.CssColor>
                             @foreach (CssColor color in _availableCssTopicColors)
                             {
                                 <InputRadio Value=color class="color-circle"
@@ -61,6 +57,7 @@
         appearance: none;
         -webkit-appearance: none;
         -moz-appearance: none;
+        margin-left: 10px;
     }
 
     .valid.modified:not([type="checkbox"]) {
@@ -105,18 +102,5 @@
         return String.IsNullOrEmpty(CreateTopicModel.Title)
             || String.IsNullOrWhiteSpace(CreateTopicModel.Title)?
             "New topic" : CreateTopicModel.Title;
-    }
-
-    private async Task HandleImageUpload(InputFileChangeEventArgs e) {
-        var imageFile = e.File;
-        if (imageFile != null)
-        {
-             var buffer = new byte[imageFile.Size];
-            await imageFile.OpenReadStream().ReadAsync(buffer);
-            var base64String = Convert.ToBase64String(buffer);
-            // Remove padding characters '=' from the base64 string
-            var cleanedBase64String = base64String.TrimEnd('=').TrimEnd('A');
-            _selectedImageBase64 = $"data:{imageFile.ContentType};base64,{cleanedBase64String}";
-        }
     }
 }
