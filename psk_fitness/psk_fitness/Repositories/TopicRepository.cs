@@ -7,11 +7,8 @@ using psk_fitness.Interfaces;
 
 namespace psk_fitness.Repositories;
 
-public class TopicRepository(ApplicationDbContext applicationDbContext, IMapper mapper) : ITopicRepository
+public class TopicRepository(ApplicationDbContext _applicationDbContext, IMapper _mapper) : ITopicRepository
 {
-    private ApplicationDbContext _applicationDbContext = applicationDbContext;
-    private IMapper _mapper = mapper;
-
     public async Task<Topic> CreateTopicAsync(TopicCreateDTO topicCreateDTO, string userEmail)
     {
         var topic = _mapper.Map<Topic>(topicCreateDTO);

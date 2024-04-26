@@ -12,15 +12,8 @@ using psk_fitness.Repositories;
 
 namespace xUnitTests;
 
-public class TopicTest(ApplicationDbContextFixture fixture) : TestContext, IClassFixture<ApplicationDbContextFixture>
+public class TopicTest
 {
-    private readonly ApplicationDbContext _context = fixture.Context;
-
-    [Fact]
-    public void Test1()
-    {
-    }
-
     [Fact]
     public async Task CreatedTopicContainsUserId()
     {
