@@ -9,9 +9,5 @@ namespace psk_fitness.Data
         public double? Weight { get; set; }
         public int? Age { get; set; }
         public virtual ICollection<Topic>? Topics { get; set; }
-
-        [PersonalData]
-        public string ConcurrencyStamp { get; set; }
     }
-
 }

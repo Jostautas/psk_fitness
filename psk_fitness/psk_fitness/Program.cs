@@ -5,6 +5,9 @@ using psk_fitness.Client.Pages;
 using psk_fitness.Components;
 using psk_fitness.Components.Account;
 using psk_fitness.Data;
+using psk_fitness.Interfaces;
+using psk_fitness.Repositories;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +20,7 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
+builder.Services.AddScoped<ITopicRepository, TopicRepository>();
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>

@@ -72,10 +72,10 @@
 
 @code {
     [Parameter]
-    public EventCallback<TopicDisplayData> OnTopicCreated {get; set;}
+    public EventCallback<TopicDisplayDTO> OnTopicCreated {get; set;}
 
     [SupplyParameterFromForm]
-    public CreateTopicData CreateTopicModel {get; set;}
+    public TopicCreateDTO CreateTopicModel {get; set;}
 
     private List<CssColor> _availableCssTopicColors { get; set; }
     = new() {
@@ -84,17 +84,14 @@
         new CssColor(CssColorMode.RGBA, (150, 150, 255).ToTuple()),    
     };
 
-    private string _selectedImageBase64;
-
     protected override void OnInitialized(){
         CreateTopicModel ??= new();
     }
 
     private async Task HandleSubmit() {
-        await OnTopicCreated.InvokeAsync(new TopicDisplayData {
+        await OnTopicCreated.InvokeAsync(new TopicDisplayDTO {
             Title = CreateTopicModel.Title,
-            CssColor = CreateTopicModel.CssColor,
-            ImageBase64 = _selectedImageBase64
+            CssColor = CreateTopicModel.CssColor
         });
     }
 

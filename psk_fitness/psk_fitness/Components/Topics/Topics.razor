@@ -22,7 +22,7 @@
 
 <div class="container mt-4">
     <div class="row">
-        @foreach (TopicDisplayData topic in _topicsToDisplay)
+        @foreach (TopicDisplayDTO topic in _topicsToDisplay)
         {
             <div class="col-md-4">
                 <div class="card mb-4 text-center topic-card-size ratio ratio-1x1" style=@($"background-color: {topic.CssColor}")>
@@ -43,13 +43,13 @@
 </style>
 
 @code {
-    List<TopicDisplayData> _topicsToDisplay;
+    List<TopicDisplayDTO> _topicsToDisplay;
 
     protected override void OnInitialized(){
         _topicsToDisplay ??= new();
     }
 
-    public void AddTopicToDisplay(TopicDisplayData topicToDisplay) {
+    public void AddTopicToDisplay(TopicDisplayDTO topicToDisplay) {
         _topicsToDisplay.Add(topicToDisplay);
     }
 }
