@@ -1,6 +1,6 @@
-﻿namespace psk_fitness;
+namespace psk_fitness.DTOs;
 
-public class CreateTopicData
+public class TopicCreateDTO
 {
     public string? Title {get; set;}
     public string? Description {get; set;}

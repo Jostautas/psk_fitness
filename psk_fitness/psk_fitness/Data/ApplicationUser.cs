@@ -10,5 +10,4 @@ namespace psk_fitness.Data
         public int? Age { get; set; }
         public virtual ICollection<Topic>? Topics { get; set; }
     }
-
 }
