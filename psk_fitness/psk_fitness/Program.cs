@@ -26,10 +26,12 @@ builder.Services.AddScoped<ITopicRepository, TopicRepository>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
-var mapperConfig = new MapperConfiguration(mc =>
-{
-    mc.AddProfile(new MappingProfile());
-});
+// var mapperConfig = new MapperConfiguration(mc =>
+// {
+//     mc.AddProfile(new MappingProfile());
+// });
+
+builder.Services.AddHttpClient();
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>

@@ -2,32 +2,27 @@
 using Microsoft.AspNetCore.Mvc;
 using psk_fitness.Interfaces;
 using psk_fitness.Data;
+using psk_fitness.DTOs;
 
 namespace psk_fitness.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class WorkoutController : Controller
+public class TopicController(ITopicRepository topicRepository) : Controller
 {
-
-    ITopicRepository _topicRepository;
-
-    public WorkoutController(ITopicRepository topicRepository) 
-    {
-        _topicRepository = topicRepository;
-    }
+    ITopicRepository _topicRepository = topicRepository;
 
     [HttpPost]
-    public async Task<IActionResult> CreateTopic([FromBody] Topic topic) 
+    public async Task<IActionResult> CreateTopicAsync([FromBody] TopicCreateDTO topic, string userEmail) 
     {
-        await _topicRepository.CreateAsync(topic);
+        await _topicRepository.CreateTopicAsync(topic, userEmail);
         return Ok(topic);
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllTopics()
+    public async Task<IActionResult> GetAllTopicsAsync()
     {
-        var topics = await _topicRepository.GetAllTopicsAsync();
+        var topics = await _topicRepository.GetAllTopicsToDisplayAsync();
         return Ok(topics);
     }
 }
