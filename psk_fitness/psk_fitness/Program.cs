@@ -7,6 +7,8 @@ using psk_fitness.Components.Account;
 using psk_fitness.Data;
 using psk_fitness.Interfaces;
 using psk_fitness.Repositories;
+using psk_fitness;
+using AutoMapper;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +23,13 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
+
+builder.Services.AddAutoMapper(typeof(Program));
+
+var mapperConfig = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new MappingProfile());
+});
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>
