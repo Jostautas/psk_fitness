@@ -41,6 +41,11 @@ namespace psk_fitness.Data
                 .WithOne(e => e.Workout)
                 .HasForeignKey(e => e.WorkoutId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ApplicationUser>(entity =>
+            {
+                entity.Property(e => e.ConcurrencyStamp).HasColumnType("TEXT");
+            });
         }
 
     }
