@@ -6,4 +6,5 @@ public interface ITopicService
 {
 
     public Task<IEnumerable<TopicDisplayDTO>> GetTopicsToDisplay();
+    public Task<HttpResponseMessage> CreateTopicAsync(TopicCreateDTO topicCreateDTO, string userEmail);
 }

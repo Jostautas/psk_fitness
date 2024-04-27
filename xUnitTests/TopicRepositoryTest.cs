@@ -1,18 +1,13 @@
 using AutoMapper;
-using Bunit;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
-using psk_fitness;
-using psk_fitness.Controllers;
+using psk_fitness.Utilities;
 using psk_fitness.Data;
 using psk_fitness.DTOs;
-using psk_fitness.Interfaces;
 using psk_fitness.Repositories;
 
 namespace xUnitTests;
 
-public class TopicTest
+public class TopicRepositoryTest
 {
     [Fact]
     public async Task CreatedTopicContainsUserId()
@@ -22,8 +17,8 @@ public class TopicTest
             .UseInMemoryDatabase(databaseName: "TestDatabase")
             .Options;
         var dbContext = new ApplicationDbContext(options);
-        IMapper mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>()));
-        ITopicRepository repo = new TopicRepository(dbContext, mapper);
+        Mapper mapper = new (new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>()));
+        TopicRepository repo = new (dbContext, mapper);
         var userId = Guid.NewGuid().ToString();
         var userEmail = "a@b.com";
         var applicationUser = new ApplicationUser { Id = userId, Email = userEmail};

@@ -71,6 +71,9 @@
 
 
 @code {
+    [Inject]
+    public ITopicService TopicService {get; set;}
+
     [Parameter]
     public EventCallback<TopicDisplayDTO> OnTopicCreated {get; set;}
 
@@ -89,10 +92,13 @@
     }
 
     private async Task HandleSubmit() {
-        await OnTopicCreated.InvokeAsync(new TopicDisplayDTO {
+        HttpResponseMessage thing = await TopicService.CreateTopicAsync(CreateTopicModel, Constants.RegisteredUserTestEmail);
+        Console.WriteLine(thing.ToString());
+        
+        @* await OnTopicCreated.InvokeAsync(new TopicDisplayDTO {
             Title = CreateTopicModel.Title,
             CssColor = CreateTopicModel.CssColor
-        });
+        }); *@
     }
 
     private string GetCardTitle() {

@@ -9,6 +9,8 @@ using psk_fitness.Interfaces;
 using psk_fitness.Repositories;
 using psk_fitness;
 using AutoMapper;
+using psk_fitness.ClientServices;
+using psk_fitness.Properties;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,7 +32,13 @@ builder.Services.AddAutoMapper(typeof(Program));
 //     mc.AddProfile(new MappingProfile());
 // });
 
-builder.Services.AddHttpClient();
+// builder.Services.AddHttpClient();
+
+builder.Services.AddHttpClient<ITopicService, TopicService>(client =>
+{
+    // TODO: Make this dynamic according to launchSettings.json
+    client.BaseAddress = new Uri(Constants.BaseHttpUri);
+});
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>
