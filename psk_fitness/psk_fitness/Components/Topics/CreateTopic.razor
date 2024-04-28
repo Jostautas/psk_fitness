@@ -74,8 +74,8 @@
     [Inject]
     public ITopicService TopicService {get; set;}
 
-    [Parameter]
-    public EventCallback<TopicDisplayDTO> OnTopicCreated {get; set;}
+    [Inject]
+    AuthenticationStateProvider AuthenticationStateProvider {get; set;}
 
     [SupplyParameterFromForm]
     public TopicCreateDTO CreateTopicModel {get; set;}
@@ -92,13 +92,10 @@
     }
 
     private async Task HandleSubmit() {
-        HttpResponseMessage thing = await TopicService.CreateTopicAsync(CreateTopicModel, Constants.RegisteredUserTestEmail);
-        Console.WriteLine(thing.ToString());
-        
-        @* await OnTopicCreated.InvokeAsync(new TopicDisplayDTO {
-            Title = CreateTopicModel.Title,
-            CssColor = CreateTopicModel.CssColor
-        }); *@
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userEmail = authState.User.Identity.Name;
+        HttpResponseMessage response = await TopicService.CreateTopicAsync(CreateTopicModel, userEmail);
+        Console.WriteLine(response.ToString());
     }
 
     private string GetCardTitle() {

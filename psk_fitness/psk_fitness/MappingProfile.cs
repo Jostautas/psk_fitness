@@ -1,10 +1,12 @@
 using AutoMapper;
 using psk_fitness.Data;
 using psk_fitness.DTOs;
-namespace psk_fitness.Utilities;
+using psk_fitness.Utilities;
+namespace psk_fitness;
 
 public class MappingProfile : Profile
 {
+    // Notes: Don't define Collection mappings, they are automatic
     public MappingProfile()
     {
         // TODO: refactor mapping by - same types, different names or for same types

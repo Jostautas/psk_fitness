@@ -1,14 +1,12 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using psk_fitness.Client.Pages;
 using psk_fitness.Components;
 using psk_fitness.Components.Account;
 using psk_fitness.Data;
 using psk_fitness.Interfaces;
 using psk_fitness.Repositories;
 using psk_fitness;
-using AutoMapper;
 using psk_fitness.ClientServices;
 using psk_fitness.Properties;
 
@@ -25,14 +23,9 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
 
-builder.Services.AddAutoMapper(typeof(Program));
-
-// var mapperConfig = new MapperConfiguration(mc =>
-// {
-//     mc.AddProfile(new MappingProfile());
-// });
-
-// builder.Services.AddHttpClient();
+builder.Services.AddAutoMapper(options => {
+    options.AddProfile<MappingProfile>();
+});
 
 builder.Services.AddHttpClient<ITopicService, TopicService>(client =>
 {

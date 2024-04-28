@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using psk_fitness.Data;
 using psk_fitness.DTOs;
 using psk_fitness.Interfaces;
@@ -28,7 +29,16 @@ public class TopicRepository(ApplicationDbContext _applicationDbContext, IMapper
 
     public async Task<List<TopicDisplayDTO>> GetAllTopicsToDisplayAsync()
     {
-        var topics = await GetAllTopicsAsync();
-        return _mapper.Map<List<TopicDisplayDTO>>(topics);
+        var allTopics = await GetAllTopicsAsync();
+        return _mapper.Map<List<TopicDisplayDTO>>(allTopics);
+    }
+
+    public async Task<List<TopicDisplayDTO>> GetUserTopicsToDisplayAsync(string userEmail)
+    {
+        ApplicationUser? user = await _applicationDbContext.Users.FirstOrDefaultAsync(u => u.Email == userEmail)
+            ?? throw new Exception("User not found.");
+        var userTopics = await _applicationDbContext.Topics.Where(t => t.ApplicationUserId == user.Id).ToListAsync();
+        var userDisplayTopics = _mapper.Map<List<TopicDisplayDTO>>(userTopics);
+        return userDisplayTopics;
     }
 }

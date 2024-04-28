@@ -1,6 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using psk_fitness.Utilities;
+using psk_fitness;
 using psk_fitness.Data;
 using psk_fitness.DTOs;
 using psk_fitness.Repositories;

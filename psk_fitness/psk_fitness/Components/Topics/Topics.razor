@@ -16,10 +16,11 @@
                 <li><a class="dropdown-item" href="#">Invited</a></li>
             </ul>
         </div>
-        <CreateTopic OnTopicCreated=@AddTopicToDisplay/>
+        <CreateTopic/>
     </div>
 </div>
 
+@if (_topicsToDisplay != null) {
 <div class="container mt-4">
     <div class="row">
         @foreach (TopicDisplayDTO topic in _topicsToDisplay)
@@ -34,6 +35,10 @@
         }
     </div>
 </div>
+}
+else {
+    <h1>Loading in progress</h1>
+}
 
 <style>
     .card-title-adj {
@@ -43,13 +48,20 @@
 </style>
 
 @code {
-    List<TopicDisplayDTO> _topicsToDisplay;
+    [Inject]
+    public ITopicService TopicService {get; set;}
+    [Inject]
+    AuthenticationStateProvider AuthenticationStateProvider {get; set;}
+    private IEnumerable<TopicDisplayDTO> _topicsToDisplay;
 
-    protected override void OnInitialized(){
-        _topicsToDisplay ??= new();
+    protected override async Task OnInitializedAsync(){
+        await FetchUserTopicsAsync();
     }
 
-    public void AddTopicToDisplay(TopicDisplayDTO topicToDisplay) {
-        _topicsToDisplay.Add(topicToDisplay);
+    private async Task FetchUserTopicsAsync() {
+        @* TODO: refetch when modal is closed *@
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userEmail = authState.User.Identity.Name;
+        _topicsToDisplay = await TopicService.GetUserDisplayTopicsAsync(userEmail);
     }
 }

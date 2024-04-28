@@ -12,9 +12,12 @@ using psk_fitness.Properties;
 namespace psk_fitness.ClientServices;
 public class TopicService(HttpClient _httpClient) : ITopicService
 {
-    public async Task<IEnumerable<TopicDisplayDTO>> GetTopicsToDisplay()
+    public async Task<IEnumerable<TopicDisplayDTO>> GetUserDisplayTopicsAsync(string userEmail)
     {
-        return await _httpClient.GetFromJsonAsync<TopicDisplayDTO[]>($"{Constants.ApiEndpointPrefix}/topics");
+        var response = await _httpClient.GetAsync($"{Constants.ApiEndpointPrefix}/topics?userEmail={userEmail}");
+        var json = await response.Content.ReadAsStringAsync();
+        var topicsToDisplay = JsonSerializer.Deserialize<List<TopicDisplayDTO>>(json);
+        return topicsToDisplay;
     }
 
     public async Task<HttpResponseMessage> CreateTopicAsync(TopicCreateDTO topicCreateDTO, string userEmail)

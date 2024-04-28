@@ -4,6 +4,8 @@ using psk_fitness.Interfaces;
 using psk_fitness.DTOs;
 using System.ComponentModel.DataAnnotations;
 using psk_fitness.Properties;
+using System.Text.Json;
+using System.Text;
 
 namespace psk_fitness.Controllers;
 
@@ -21,9 +23,17 @@ public class TopicController(ITopicRepository _topicRepository) : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllTopicsAsync()
+    public async Task<IActionResult> GetDisplayTopicsAsync(string userEmail)
     {
-        var topics = await _topicRepository.GetAllTopicsToDisplayAsync();
-        return Ok(topics);
+        List<TopicDisplayDTO>? topics;
+        // branch out for different "filtering" params
+        if (userEmail == null) {
+            topics = await _topicRepository.GetAllTopicsToDisplayAsync();
+        }
+        else {
+            topics = await _topicRepository.GetUserTopicsToDisplayAsync(userEmail);
+        }
+        var json = JsonSerializer.Serialize(topics);
+        return Content(json, "application/json", Encoding.UTF8);
     }
 }
