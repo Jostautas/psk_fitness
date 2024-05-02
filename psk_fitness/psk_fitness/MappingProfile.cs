@@ -10,5 +10,6 @@ public class MappingProfile : Profile
     {
         CreateMap<Topic, TopicDisplayDTO>().ReverseMap();
         CreateMap<Topic, TopicCreateDTO>().ReverseMap();
+        CreateMap<TopicFriend, TopicFriendCreateDTO>().ReverseMap();
     }
 }
