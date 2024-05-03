@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using psk_fitness.Data;
+using psk_fitness.Interfaces;
 
 namespace psk_fitness.Controllers
 {
@@ -10,17 +11,17 @@ namespace psk_fitness.Controllers
     [ApiController]
     public class ExerciseController : ControllerBase
     {
-        private readonly ApplicationDbContext context;
-        public ExerciseController(ApplicationDbContext context)
+        private readonly IExerciseService exerciseService;
+        public ExerciseController(IExerciseService exerciseService)
         {
-            this.context = context;
+            this.exerciseService = exerciseService;
         }
 
 
         [HttpGet]
         public async Task<ActionResult<List<Exercise>>> GetAllExercises()
         {
-            var dbExercises = await context.Exercise.ToListAsync();
+            var dbExercises = await exerciseService.GetAllExercises();
 
             return Ok(dbExercises);
         }
@@ -28,7 +29,7 @@ namespace psk_fitness.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Exercise>> GetExercise(int id)
         {
-            var dbExercise = await context.Exercise.FindAsync(id);
+            var dbExercise = await exerciseService.GetExercise(id);
             if (dbExercise is null)
                 return NotFound("Exercise not found.");
 
@@ -38,37 +39,26 @@ namespace psk_fitness.Controllers
         [HttpPost]
         public async Task<ActionResult<Exercise>> AddExercise(Exercise newExercise)
         {
-            context.Exercise.Add(newExercise);
-
-            await context.SaveChangesAsync();
-
-            return Ok(newExercise);
+            var addedExercise = await exerciseService.AddExercise(newExercise);
+            return Ok(addedExercise);
         }
 
-        [HttpPut]
-        public async Task<ActionResult<Exercise>> UpdateExercise(Exercise updatedExercise)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Exercise>> UpdateExercise(int id, Exercise updatedExercise)
         {
-            var dbExercise = await context.Exercise.FindAsync(updatedExercise.Id);
-            if (dbExercise is null)
+            var exercise = await exerciseService.UpdateExercise(id, updatedExercise);
+            if (exercise == null)
                 return NotFound("Exercise not found.");
-
-            dbExercise = updatedExercise;
-
-            await context.SaveChangesAsync();
-
-            return Ok(dbExercise);
+            return Ok(exercise);
         }
+
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteExercise(int id)
         {
-            var dbHero = await context.Exercise.FindAsync(id);
-            if (dbHero is null)
+            var deletedExercise = await exerciseService.DeleteExercise(id);
+            if (deletedExercise == null)
                 return NotFound("Exercise not found.");
-
-            context.Exercise.Remove(dbHero);
-            await context.SaveChangesAsync();
-
             return Ok("Exercise was removed.");
         }
     }
