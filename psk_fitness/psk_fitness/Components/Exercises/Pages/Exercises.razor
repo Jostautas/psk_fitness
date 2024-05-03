@@ -1,25 +1,34 @@
 ﻿@page "/exercises"
+@using psk_fitness.Interfaces
+@inject IExerciseService ExerciseService
+
 
 <div class="d-flex align-items-center">
     <h3 class="me-3">Exercises:</h3> 
     <CreateExercise /> 
-   
 </div>
 
-@foreach (var exercise in GetExercises())
+@if (exercises == null)
 {
-
+    <span>Loading...</span>
+}
+else if (exercises.Count == 0)
+{
+    <span>No exercises found.</span>
+}
+else
+{
+    @foreach (var exercise in exercises)
+    {
+        <li>@exercise.Title</li>
+    }
 }
 
-
 @code {
-    public List<Exercise> GetExercises()
+    List<psk_fitness.Data.Exercise>? exercises = null;
+
+    protected override async Task OnInitializedAsync()
     {
-
-        List<Exercise> exercises = new List<Exercise>();
-
-
-
-        return exercises;
+        exercises = await ExerciseService.GetAllExercises();
     }
 }
