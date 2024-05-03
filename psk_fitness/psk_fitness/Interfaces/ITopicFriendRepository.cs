@@ -1,5 +1,4 @@
 ﻿using psk_fitness.Data;
-using psk_fitness.Migrations;
 
 namespace psk_fitness.Interfaces
 {

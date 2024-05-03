@@ -11,8 +11,8 @@ using psk_fitness.Data;
 namespace psk_fitness.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240426075008_InitialCreateSqlite")]
-    partial class InitialCreateSqlite
+    [Migration("20240503043823_SQL_exercise_initial")]
+    partial class SQL_exercise_initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -161,7 +161,6 @@ namespace psk_fitness.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")

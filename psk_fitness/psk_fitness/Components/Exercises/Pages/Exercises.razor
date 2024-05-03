@@ -1,6 +1,4 @@
-﻿@using psk_fitness.Data.Entities
-
-@page "/exercises"
+﻿@page "/exercises"
 
 <div class="d-flex align-items-center">
     <h3 class="me-3">Exercises:</h3> 
@@ -20,66 +18,7 @@
 
         List<Exercise> exercises = new List<Exercise>();
 
-        // First exercise with sets and reps but no time
-        Exercise exercise1 = new Exercise
-            {
-                Title = "Exercise 1",
-                Description = "Description for Exercise 1",
-                Notes = "Notes for Exercise 1",
-                Sets = 3,
-                Reps = 12,
-                Steps = "Step 1 for Exercise 1;Step 2 for Exercise 1"
-            };
-        exercises.Add(exercise1);
 
-        // Second exercise with time but no sets or reps
-        Exercise exercise2 = new Exercise
-            {
-                Title = "Exercise 2",
-                Description = "Description for Exercise 2",
-                Notes = "Notes for Exercise 2",
-                Duration = TimeSpan.FromMinutes(30),
-                Steps = "Step 1 for Exercise 2;Step 2 for Exercise 2" 
-            };
-        exercises.Add(exercise2);
-
-        // Third exercise with time and sets but no reps
-        Exercise exercise3 = new Exercise
-            {
-                Title = "Exercise 3",
-                Description = "Description for Exercise 3",
-                Notes = "Notes for Exercise 3",
-                Duration = TimeSpan.FromHours(1),
-                Sets = 4,
-                Steps =  "Step 1 for Exercise 3;Step 2 for Exercise 3"
-            };
-        exercises.Add(exercise3);
-
-        // Fourth exercise with all fields filled up
-        Exercise exercise4 = new Exercise
-            {
-                Title = "Exercise 4",
-                Description = "Description for Exercise 4",
-                Notes = "Notes for Exercise 4",
-                Duration = TimeSpan.FromMinutes(45),
-                Sets = 3,
-                Reps = 10,
-                Steps = "Step 1 for Exercise 4;Step 2 for Exercise 4" 
-            };
-        exercises.Add(exercise4);
-
-        // Fifth exercise with all fields filled up
-        Exercise exercise5 = new Exercise
-            {
-                Title = "Exercise 5",
-                Description = "Description for Exercise 5",
-                Notes = "Notes for Exercise 5",
-                Duration = TimeSpan.FromHours(1),
-                Sets = 5,
-                Reps = 8,
-                Steps = "Step 1 for Exercise 5;Step 2 for Exercise 5"
-            };
-        exercises.Add(exercise5);
 
         return exercises;
     }
