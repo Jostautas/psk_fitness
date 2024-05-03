@@ -1,4 +1,6 @@
-﻿<!-- Button trigger modal -->
+﻿@using psk_fitness.Data
+
+<!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newExerciseModal">
     New Exercise
 </button>
@@ -78,7 +80,7 @@
 </script>
 
 @code {
-    Exercise newExercise = new Exercise();
+    Exercise newExercise;
 
     // Properties to bind form inputs
     string exerciseTitle;
@@ -93,13 +95,5 @@
 
     public void SubmitExercise()
     {
-        // Set values to the new exercise instance
-        newExercise.Title = exerciseTitle;
-        newExercise.Description = exerciseDescription;
-        newExercise.Notes = exerciseNotes;
-        newExercise.Duration = new TimeSpan(exerciseTimeHours, exerciseTimeMinutes, exerciseTimeSeconds);
-        newExercise.Sets = exerciseSets;
-        newExercise.Reps = exerciseReps;
-        //newExercise.Steps = exerciseSteps;
     }
 }

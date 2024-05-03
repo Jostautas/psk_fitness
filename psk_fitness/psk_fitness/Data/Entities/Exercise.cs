@@ -18,6 +18,5 @@ namespace psk_fitness.Data
         public string Steps { get; set; } = "";
 
         public virtual Workout? Workout { get; set; }
-
     }
 }
