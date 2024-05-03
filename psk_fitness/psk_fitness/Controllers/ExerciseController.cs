@@ -34,5 +34,42 @@ namespace psk_fitness.Controllers
 
             return Ok(dbExercise);
         }
+
+        [HttpPost]
+        public async Task<ActionResult<Exercise>> AddExercise(Exercise newExercise)
+        {
+            context.Exercise.Add(newExercise);
+
+            await context.SaveChangesAsync();
+
+            return Ok(newExercise);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<Exercise>> UpdateExercise(Exercise updatedExercise)
+        {
+            var dbExercise = await context.Exercise.FindAsync(updatedExercise.Id);
+            if (dbExercise is null)
+                return NotFound("Exercise not found.");
+
+            dbExercise = updatedExercise;
+
+            await context.SaveChangesAsync();
+
+            return Ok(dbExercise);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteExercise(int id)
+        {
+            var dbHero = await context.Exercise.FindAsync(id);
+            if (dbHero is null)
+                return NotFound("Exercise not found.");
+
+            context.Exercise.Remove(dbHero);
+            await context.SaveChangesAsync();
+
+            return Ok("Exercise was removed.");
+        }
     }
 }
