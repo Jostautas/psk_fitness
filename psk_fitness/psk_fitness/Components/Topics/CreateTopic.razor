@@ -1,0 +1,103 @@
+﻿@rendermode InteractiveServer
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTopicModal">
+    New topic
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="newTopicModal" tabindex="-1" aria-labelledby="newTopicModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style=@($"background-color: {CreateTopicModel.CssColor}")>
+            <div class="modal-header">
+                <h5 class="modal-title" id="newTopicModalLabel">@GetCardTitle()</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <EditForm Model=@CreateTopicModel OnSubmit=@HandleSubmit FormName="CreateTopicForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="topicTitle" class="form-label">Title</label>
+                        <InputText @bind-Value=CreateTopicModel.Title class="form-control" id="topicTitle" placeholder="Enter topic title" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="topicDescription" class="form-label">Description</label>
+                        <InputTextArea @bind-Value=CreateTopicModel.Description class="form-control" id="topicDescription" rows="3"
+                            placeholder="Enter topic description"></InputTextArea>
+                    </div>
+                    <div class="mb-3 d-flex">
+                        <label for="topicColor" class="form-label">Color</label>
+                        <InputRadioGroup @bind-Value=CreateTopicModel!.CssColor>
+                            @foreach (CssColor color in _availableCssTopicColors)
+                            {
+                                <InputRadio Value=color class="color-circle"
+                                    style=@($"background-color: {color}")>
+                                </InputRadio>
+                            }
+                        </InputRadioGroup>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+<style>
+    .color-circle {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 1px solid black;
+        cursor: pointer;
+    }
+
+    input[type="radio"] {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        margin-left: 10px;
+    }
+
+    .valid.modified:not([type="checkbox"]) {
+        outline: none;
+    }
+
+    input[type="radio"]:checked {
+        border: 5px solid black;
+    }
+</style>
+
+
+@code {
+    [Parameter]
+    public EventCallback<TopicDisplayDTO> OnTopicCreated {get; set;}
+
+    [SupplyParameterFromForm]
+    public TopicCreateDTO CreateTopicModel {get; set;}
+
+    private List<CssColor> _availableCssTopicColors { get; set; }
+    = new() {
+        new CssColor(CssColorMode.RGBA, (255, 150, 150).ToTuple()),
+        new CssColor(CssColorMode.RGBA, (150, 255, 150).ToTuple()),
+        new CssColor(CssColorMode.RGBA, (150, 150, 255).ToTuple()),    
+    };
+
+    protected override void OnInitialized(){
+        CreateTopicModel ??= new();
+    }
+
+    private async Task HandleSubmit() {
+        await OnTopicCreated.InvokeAsync(new TopicDisplayDTO {
+            Title = CreateTopicModel.Title,
+            CssColor = CreateTopicModel.CssColor
+        });
+    }
+
+    private string GetCardTitle() {
+        return String.IsNullOrEmpty(CreateTopicModel.Title)
+            || String.IsNullOrWhiteSpace(CreateTopicModel.Title)?
+            "New topic" : CreateTopicModel.Title;
+    }
+}

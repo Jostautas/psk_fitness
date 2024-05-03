@@ -73,4 +73,8 @@ h1:focus {
     cursor: auto;
 }
 
+.form-label {
+    font-weight: 900;
+}
+
 

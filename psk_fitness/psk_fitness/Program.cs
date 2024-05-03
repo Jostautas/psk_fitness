@@ -5,17 +5,32 @@ using psk_fitness.Client.Pages;
 using psk_fitness.Components;
 using psk_fitness.Components.Account;
 using psk_fitness.Data;
+using psk_fitness.Interfaces;
+using psk_fitness.Repositories;
+using psk_fitness;
+using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveWebAssemblyComponents();
+    .AddInteractiveWebAssemblyComponents()
+    .AddInteractiveServerComponents();
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
+builder.Services.AddScoped<ITopicRepository, TopicRepository>();
+
+builder.Services.AddAutoMapper(typeof(Program));
+
+// var mapperConfig = new MapperConfiguration(mc =>
+// {
+//     mc.AddProfile(new MappingProfile());
+// });
+
+builder.Services.AddHttpClient();
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>
@@ -25,9 +40,16 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
+builder.Services.AddScoped<ITopicFriendRepository, TopicFriendRepository>();
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlite(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -47,6 +69,8 @@ if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
     app.UseMigrationsEndPoint();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 else
 {
@@ -68,5 +92,6 @@ app.MapRazorComponents<App>()
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
 
+app.MapControllers();
 
 app.Run(); 
