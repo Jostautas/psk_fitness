@@ -2,8 +2,8 @@
 {
     public class ExerciseCreateDTO
     {
-        public required int WorkoutId { get; set; }
-        public required string Title { get; set; }
+        public int WorkoutId { get; set; }
+        public string Title { get; set; }
         public int? DurationSeconds { get; set; }
         public int? DurationMinutes { get; set; }
         public int? DurationHours { get; set; }
@@ -12,5 +12,10 @@
         public string Description { get; set; } = string.Empty;
         public string Notes { get; set; } = string.Empty;
         public string Steps { get; set; } = string.Empty;
+
+        public ExerciseCreateDTO()
+        {
+                
+        }
     }
 }

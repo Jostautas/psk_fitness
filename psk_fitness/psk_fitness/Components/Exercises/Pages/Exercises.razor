@@ -1,6 +1,6 @@
 ﻿@page "/exercises"
 @using psk_fitness.Interfaces
-@inject IExerciseRepository ExerciseService
+@inject IExerciseRepository ExerciseRepository
 
 
 <div class="d-flex align-items-center">
@@ -29,6 +29,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        exercises = await ExerciseService.GetAllExercisesAsync();
+        exercises = await ExerciseRepository.GetAllExercisesAsync();
     }
 }

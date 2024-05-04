@@ -1,48 +1,56 @@
 ﻿@using psk_fitness.Data
-<!-- Button trigger modal -->
+@using psk_fitness.Interfaces
+@page "/edit-exercise"
+@page "/edit-exercise/{id:int}"
+
+@inject NavigationManager Navigation
+@inject IExerciseRepository ExerciseRepository
+
+
+﻿<!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newExerciseModal">
     New Exercise
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="newExerciseModal" tabindex="-1" aria-labelledby="newExerciseModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="newExerciseModalLabel">Create New Exercise</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form method="SubmitExercise">
+<EditForm Model="exerciseDTO" OnSubmit="HandleSubmit">
+    <div class="modal fade" id="newExerciseModal" tabindex="-1" aria-labelledby="newExerciseModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newExerciseModalLabel">Create New Exercise</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
                     <div class="mb-3 d-flex align-items-center">
                         <label for="exerciseName" class="form-label me-1" style="margin-bottom: 0;">Name:</label>
-                        <input type="text" class="form-control" id="exerciseName" name="Name" />
+                        <InputText @bind-Value="exerciseDTO.Title" class="form-control" style="width: 100%" />
                     </div>
                     <div class="mb-3">
                         <label for="exerciseDescription" class="form-label">Description:</label>
-                        <textarea class="form-control" id="exerciseDescription" name="Description"></textarea>
+                        <textarea @bind="exerciseDTO.Description" class="form-control" style="width: 100%"></textarea>
                     </div>
 
                     <div class="mb-3 d-flex align-items-center">
                         <label for="exerciseTimeHours" class="form-label">Time:</label>
-                        <input type="number" class="form-control mx-1" id="exerciseTimeHours" name="TimeHours" placeholder="hh" style="width: 67px;">
-                        <input type="number" class="form-control mx-1" id="exerciseTimeMinutes" name="TimeMinutes" placeholder="mm" style="width: 67px;">
-                        <input type="number" class="form-control mx-2" id="exerciseTimeSeconds" name="TimeSeconds" placeholder="ss" style="width: 67px;"> <!-- Increased margin from mx-1 to mx-2 -->
-
+                        <InputNumber @bind-Value="exerciseDTO.DurationHours" style="width: 67px;"> </InputNumber>
+                        <InputNumber @bind-Value="exerciseDTO.DurationMinutes" style="width: 67px;"> </InputNumber>
+                        <InputNumber @bind-Value="exerciseDTO.DurationSeconds" style="width: 67px;"> </InputNumber>
                         <div style="width:40px"></div>
 
+
                         <label for="exerciseSets" class="form-label mx-1">Sets:</label> <!-- Increased margin from mx-1 to mx-3 -->
-                        <input type="number" class="form-control mx-1" id="exerciseSets" name="Sets" style="width: 65px;" placeholder="0"> <!-- Placeholder set to "0" -->
+                        <InputNumber @bind-Value="exerciseDTO.Sets" style="width: 65px;"> </InputNumber>
 
                         <label for="exerciseReps" class="form-label mx-1">Reps:</label>
-                        <input type="number" class="form-control mx-1" id="exerciseReps" name="Reps" style="width: 65px;" placeholder="0"> <!-- Placeholder set to "0" -->
+                        <InputNumber @bind-Value="exerciseDTO.Reps" style="width: 65px;"> </InputNumber>
                     </div>
 
                     <div class="mb-3">
                         <label for="exerciseNotes" class="form-label">Notes:</label>
-                        <textarea class="form-control" id="exerciseNotes" name="Notes"></textarea>
+                        <textarea @bind="exerciseDTO.Notes" class="form-control" style="width: 100%"></textarea>
                     </div>
-
                     <div class="mb-3 d-flex align-items-center">
                         <label class="form-label me-2">Steps:</label>
                         <button type="button" class="btn btn-primary btn-sm me-2" onclick="addStep()" style="height: 30px; width: 30px;">+</button> <!-- Adjusted button size -->
@@ -52,11 +60,11 @@
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Create</button>
-                </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</EditForm>
 
 <script>
     function addStep() {
@@ -72,27 +80,20 @@
         stepContainer.parentNode.removeChild(stepContainer);
         // Update step numbers
         var stepContainers = document.querySelectorAll('#exerciseSteps .step-container');
-        stepContainers.forEach(function(stepContainer, index) {
+        stepContainers.forEach(function (stepContainer, index) {
             stepContainer.querySelector('.form-label').innerText = (index + 1) + '.';
         });
     }
 </script>
 
 @code {
-    Exercise newExercise;
+    ExerciseCreateDTO exerciseDTO = new ExerciseCreateDTO(); // Initialize a new Exercise object
 
-    // Properties to bind form inputs
-    string exerciseTitle;
-    string exerciseDescription;
-    string exerciseNotes;
-    int exerciseTimeHours;
-    int exerciseTimeMinutes;
-    int exerciseTimeSeconds;
-    int exerciseSets;
-    int exerciseReps;
     List<string> exerciseSteps = new List<string>();
 
-    public void SubmitExercise()
+    async Task HandleSubmit()
     {
+        await ExerciseRepository.AddExerciseAsync(exerciseDTO);
+        // Handle form submission logic here
     }
 }
