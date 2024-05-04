@@ -12,7 +12,7 @@ public class MappingProfile : Profile
         CreateMap<Topic, TopicCreateDTO>().ReverseMap();
 
         CreateMap<ExerciseCreateDTO, Exercise>()
-            .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => new DateTime(
+            .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => new TimeSpan(
                 src.DurationHours ?? 0,
                 src.DurationMinutes ?? 0,
                 src.DurationSeconds ?? 0

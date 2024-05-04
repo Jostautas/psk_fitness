@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace psk_fitness.Migrations
 {
     /// <inheritdoc />
-    public partial class SQL_exercise_initial : Migration
+    public partial class updated : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -240,7 +240,7 @@ namespace psk_fitness.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     WorkoutId = table.Column<int>(type: "INTEGER", nullable: false),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
-                    Duration = table.Column<DateOnly>(type: "TEXT", nullable: true),
+                    Duration = table.Column<TimeSpan>(type: "TEXT", nullable: true),
                     Sets = table.Column<int>(type: "INTEGER", nullable: true),
                     Reps = table.Column<int>(type: "INTEGER", nullable: true),
                     Description = table.Column<string>(type: "TEXT", nullable: false),

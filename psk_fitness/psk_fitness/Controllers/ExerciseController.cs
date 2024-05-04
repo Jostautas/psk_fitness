@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using psk_fitness.Data;
+using psk_fitness.DTOs;
 using psk_fitness.Interfaces;
 
 namespace psk_fitness.Controllers
@@ -11,42 +12,42 @@ namespace psk_fitness.Controllers
     [ApiController]
     public class ExerciseController : ControllerBase
     {
-        private readonly IExerciseService exerciseService;
-        public ExerciseController(IExerciseService exerciseService)
+        private readonly IExerciseRepository exerciseService;
+        public ExerciseController(IExerciseRepository exerciseService)
         {
             this.exerciseService = exerciseService;
         }
 
 
         [HttpGet]
-        public async Task<ActionResult<List<Exercise>>> GetAllExercises()
+        public async Task<ActionResult<List<ExerciseDisplayDTO>>> GetAllExercisesAsync()
         {
-            var dbExercises = await exerciseService.GetAllExercises();
+            var exercises = await exerciseService.GetAllExercisesAsync();
 
-            return Ok(dbExercises);
+            return Ok(exercises);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Exercise>> GetExercise(int id)
+        public async Task<ActionResult<ExerciseDisplayDTO>> GetExerciseAsync(int id)
         {
-            var dbExercise = await exerciseService.GetExercise(id);
-            if (dbExercise is null)
+            var exercise = await exerciseService.GetExerciseAsync(id);
+            if (exercise is null)
                 return NotFound("Exercise not found.");
 
-            return Ok(dbExercise);
+            return Ok(exercise);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Exercise>> AddExercise(Exercise newExercise)
+        public async Task<ActionResult<ExerciseDisplayDTO>> AddExerciseAsync(ExerciseCreateDTO newExercise)
         {
-            var addedExercise = await exerciseService.AddExercise(newExercise);
+            var addedExercise = await exerciseService.AddExerciseAsync(newExercise);
             return Ok(addedExercise);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Exercise>> UpdateExercise(int id, Exercise updatedExercise)
+        public async Task<ActionResult<ExerciseDisplayDTO>> UpdateExerciseAsync(int id, ExerciseCreateDTO updatedExercise)
         {
-            var exercise = await exerciseService.UpdateExercise(id, updatedExercise);
+            var exercise = await exerciseService.UpdateExerciseAsync(id, updatedExercise);
             if (exercise == null)
                 return NotFound("Exercise not found.");
             return Ok(exercise);
@@ -54,9 +55,9 @@ namespace psk_fitness.Controllers
 
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteExercise(int id)
+        public async Task<ActionResult> DeleteExerciseAsync(int id)
         {
-            var deletedExercise = await exerciseService.DeleteExercise(id);
+            var deletedExercise = await exerciseService.DeleteExerciseAsync(id);
             if (deletedExercise == null)
                 return NotFound("Exercise not found.");
             return Ok("Exercise was removed.");
