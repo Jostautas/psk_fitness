@@ -1,19 +1,23 @@
-﻿@using psk_fitness.Data
+﻿@using System.Text.Json
+@using psk_fitness.Data
 @using psk_fitness.Interfaces
 @page "/edit-exercise"
 @page "/edit-exercise/{id:int}"
+
+@rendermode InteractiveServer
+@inject IJSRuntime JsRuntime
 
 @inject NavigationManager Navigation
 @inject IExerciseRepository ExerciseRepository
 
 
-﻿<!-- Button trigger modal -->
+<!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newExerciseModal">
     New Exercise
 </button>
 
 <!-- Modal -->
-<EditForm Model="exerciseDTO" OnSubmit="HandleSubmit">
+<EditForm Model="exerciseDTO" OnSubmit="HandleSubmit" FormName="ExerciseForm">
     <div class="modal fade" id="newExerciseModal" tabindex="-1" aria-labelledby="newExerciseModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -59,6 +63,8 @@
                         <div id="exerciseSteps">
                         </div>
                     </div>
+                </div>
+                <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Create</button>
                 </div>
             </div>
@@ -84,16 +90,57 @@
             stepContainer.querySelector('.form-label').innerText = (index + 1) + '.';
         });
     }
+
+    window.getHtmlContent = function () {
+        return document.documentElement.outerHTML;
+    }
 </script>
 
 @code {
-    ExerciseCreateDTO exerciseDTO = new ExerciseCreateDTO(); // Initialize a new Exercise object
+    [Parameter]
+    public int? Id { get; set; }
+
+    [Parameter]
+    public EventCallback OnExerciseCreated { get; set; }
+
+    [SupplyParameterFromForm]
+    ExerciseCreateDTO exerciseDTO { get; set; } = new ExerciseCreateDTO(); // Initialize a new Exercise object
 
     List<string> exerciseSteps = new List<string>();
 
+
+
+    string htmlContent = ""; // Receive HTML content containing the steps
+
+    public CreateExercise()
+    {
+    }
+
     async Task HandleSubmit()
     {
+        // Parse HTML content with HTML Agility Pack
+
+        htmlContent = await JsRuntime.InvokeAsync<string>("getHtmlContent");
+
+        var htmlDocument = new HtmlAgilityPack.HtmlDocument();
+        htmlDocument.LoadHtml(htmlContent);
+
+        // Extract steps from the HTML document
+        var stepNodes = htmlDocument.DocumentNode.SelectNodes("//div[@id='exerciseSteps']//input[@type='text']");
+        if (stepNodes != null)
+        {
+            foreach (var stepNode in stepNodes)
+            {
+                string stepValue = stepNode.InnerText.Trim();
+                //System.Diagnostics.Debug.WriteLine("Step Value: " + stepValue);
+                exerciseSteps.Add(stepValue);
+            }
+
+            exerciseDTO.WorkoutId = 1;
+            exerciseDTO.Steps = string.Join(";", exerciseSteps); ; //here excract all the steps into list of strings and make it into one string using delimiter ";"
+            
+        }
+        exerciseDTO.WorkoutId = 1;
         await ExerciseRepository.AddExerciseAsync(exerciseDTO);
-        // Handle form submission logic here
     }
 }
