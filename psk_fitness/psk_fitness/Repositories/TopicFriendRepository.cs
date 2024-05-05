@@ -6,26 +6,27 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using AutoMapper;
+using psk_fitness.Components.Topics;
 
 namespace psk_fitness.Repositories
 {
     public class TopicFriendRepository : ITopicFriendRepository
     {
         private readonly ApplicationDbContext _applicationDbContext;
-        //private readonly AuthenticationStateProvider? _authenticationStateProvider;
+        private readonly AuthenticationStateProvider? _authenticationStateProvider;
         private readonly IMapper _mapper;
-        public TopicFriendRepository(ApplicationDbContext applicationDbContext, IMapper mapper/*, AuthenticationStateProvider authenticationStateProvider*/) {
+        public TopicFriendRepository(ApplicationDbContext applicationDbContext, IMapper mapper, AuthenticationStateProvider authenticationStateProvider) {
             _applicationDbContext = applicationDbContext;
-            //_authenticationStateProvider = authenticationStateProvider;
+            _authenticationStateProvider = authenticationStateProvider;
             _mapper = mapper;
         }
 
         public async Task<TopicFriendCreateDTO?> AddTopicFriend(string email, int topicId)
         {
-            if (/*_authenticationStateProvider is null ||*/ _applicationDbContext is null)
-            {
-                return null;
-            }
+            //if (_authenticationstateprovider is null || _applicationDbContext is null)
+            //{
+            //    return null;
+            //}
 
             //var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
             //var userClaimsPrincipal = authState.User;
@@ -68,5 +69,31 @@ namespace psk_fitness.Repositories
             return topicFriendDTO;
         }
 
+        public async Task<List<int>?> GetAllAccessibleTopics()
+        {
+            //if (_authenticationStateProvider is null || _applicationDbContext is null)
+            //{
+            //    return null;
+            //}
+
+            //var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+            //var userClaimsPrincipal = authState.User;
+
+            //if (userClaimsPrincipal.Identity is null || userClaimsPrincipal.Identity.IsAuthenticated!)
+            //{
+            //    return null;
+            //}
+            //var currentUserId = userClaimsPrincipal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            string currentUserId = "f50090cd-92b9-4887-94ed-9574f687f4f2";
+
+            var topicFriends = await _applicationDbContext.TopicFriends
+                .Where(tf => tf.ApplicationUserId == currentUserId)
+                .ToListAsync();
+
+            List<int> topicIds = topicFriends.Select(tf => tf.TopicId).ToList();
+
+            return topicIds;
+        }
     }
 }
