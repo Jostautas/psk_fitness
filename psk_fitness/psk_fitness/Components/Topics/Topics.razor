@@ -16,7 +16,7 @@
                 <li><a class="dropdown-item" href="#">Invited</a></li>
             </ul>
         </div>
-        <CreateTopic/>
+        <CreateTopic OnUserCreated=@FetchUserTopicsAsync/>
     </div>
 </div>
 
@@ -25,8 +25,8 @@
     <div class="row">
         @foreach (TopicDisplayDTO topic in _topicsToDisplay)
         {
-            <div class="col-md-4">
-                <div class="card mb-4 text-center topic-card-size ratio ratio-1x1" style=@($"background-color: {topic.CssColor}")>
+            <div class="col-md-2">
+                <div class="card mb-3 text-center topic-card-size ratio ratio-1x1 max-card-width" style=@($"background-color: {topic.CssColor}")>
                     <div class="card-body d-flex justify-content-center align-items-center">
                         <h1 class="card-title text-wrap card-title-adj">@topic.Title</h1>
                     </div>
@@ -42,8 +42,12 @@ else {
 
 <style>
     .card-title-adj {
+        font-size: 90%;
         max-width: 100%;
         word-wrap: break-word;
+    }
+    .max-card-width {
+        max-width: 200px;
     }
 </style>
 

@@ -71,6 +71,8 @@
 
 
 @code {
+    [Parameter]
+    public EventCallback<Task> OnUserCreated {get; set;}
     [Inject]
     public ITopicService TopicService {get; set;}
 
@@ -94,8 +96,8 @@
     private async Task HandleSubmit() {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userEmail = authState.User.Identity.Name;
-        HttpResponseMessage response = await TopicService.CreateTopicAsync(CreateTopicModel, userEmail);
-        Console.WriteLine(response.ToString());
+        await TopicService.CreateTopicAsync(CreateTopicModel, userEmail);
+        await OnUserCreated.InvokeAsync();
     }
 
     private string GetCardTitle() {
