@@ -22,6 +22,7 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
+builder.Services.AddScoped<IWorkoutRepository, WorkoutRepository>();
 
 builder.Services.AddAutoMapper(options => {
     options.AddProfile<MappingProfile>();
@@ -35,10 +36,10 @@ builder.Services.AddHttpClient<ITopicService, TopicService>(client =>
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-    })
+{
+    options.DefaultScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+})
     .AddIdentityCookies();
 
 builder.Services.AddScoped<ITopicFriendRepository, TopicFriendRepository>();
@@ -95,4 +96,4 @@ app.MapAdditionalIdentityEndpoints();
 
 app.MapControllers();
 
-app.Run(); 
+app.Run();

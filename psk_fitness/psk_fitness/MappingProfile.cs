@@ -2,6 +2,8 @@ using AutoMapper;
 using psk_fitness.Data;
 using psk_fitness.DTOs;
 using psk_fitness.Utilities;
+using psk_fitness.DTOs.WorkoutDTOs;
+
 namespace psk_fitness;
 
 public class MappingProfile : Profile
@@ -26,5 +28,7 @@ public class MappingProfile : Profile
             .ForMember(
                 dest => dest.Color,
                 opt => opt.MapFrom(src => src.CssColor.ToString()));
+        CreateMap<TopicFriend, TopicFriendCreateDTO>().ReverseMap();
+        CreateMap<Workout, WorkoutCreateDTO>().ReverseMap();
     }
 }
