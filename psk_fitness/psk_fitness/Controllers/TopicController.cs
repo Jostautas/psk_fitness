@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using psk_fitness.Properties;
 using System.Text.Json;
 using System.Text;
+using Microsoft.IdentityModel.Tokens;
 
 namespace psk_fitness.Controllers;
 
@@ -23,11 +24,11 @@ public class TopicController(ITopicRepository _topicRepository) : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetDisplayTopicsAsync(string userEmail)
+    public async Task<IActionResult> GetDisplayTopicsAsync(string userEmail="")
     {
         List<TopicDisplayDTO>? topics;
         // branch out for different "filtering" params
-        if (userEmail == null) {
+        if (userEmail.IsNullOrEmpty()) {
             topics = await _topicRepository.GetAllTopicsToDisplayAsync();
         }
         else {
