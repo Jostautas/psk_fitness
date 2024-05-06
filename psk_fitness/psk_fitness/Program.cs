@@ -9,6 +9,9 @@ using psk_fitness.Interfaces;
 using psk_fitness.Repositories;
 using psk_fitness;
 using AutoMapper;
+using psk_fitness.ClientServices;
+using psk_fitness.Properties;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +24,11 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
+
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
+builder.Services.AddScoped<ITopicFriendRepository, TopicFriendRepository>();
+
+builder.Services.AddScoped<TopicFriendService>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
@@ -30,7 +37,11 @@ builder.Services.AddAutoMapper(typeof(Program));
 //     mc.AddProfile(new MappingProfile());
 // });
 
-builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<ITopicFriendService, TopicFriendService>(client =>
+{
+    // TODO: Make this dynamic according to launchSettings.json
+    client.BaseAddress = new Uri(Constants.BaseHttpUri);
+});
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>
@@ -39,8 +50,6 @@ builder.Services.AddAuthentication(options =>
         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
     })
     .AddIdentityCookies();
-
-builder.Services.AddScoped<ITopicFriendRepository, TopicFriendRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
