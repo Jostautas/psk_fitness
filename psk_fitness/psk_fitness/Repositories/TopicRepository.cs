@@ -41,4 +41,12 @@ public class TopicRepository(ApplicationDbContext _applicationDbContext, IMapper
         var userDisplayTopics = _mapper.Map<List<TopicDisplayDTO>>(userTopics);
         return userDisplayTopics;
     }
+
+    public async Task DeleteTopicAsync(int topicId)
+    {
+        var topic = await _applicationDbContext.Topics.FirstOrDefaultAsync(t => t.Id == topicId)
+            ?? throw new Exception("Topic not found.");
+        _applicationDbContext.Topics.Remove(topic);
+        await _applicationDbContext.SaveChangesAsync();
+    }
 }

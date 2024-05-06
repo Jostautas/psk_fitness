@@ -37,4 +37,11 @@ public class TopicController(ITopicRepository _topicRepository) : Controller
         var json = JsonSerializer.Serialize(topics);
         return Content(json, "application/json", Encoding.UTF8);
     }
+
+    [HttpDelete("{topicId}")]
+    public async Task<IActionResult> DeleteTopicAsync(int topicId)
+    {
+        await _topicRepository.DeleteTopicAsync(topicId);
+        return Ok(topicId);
+    }
 }

@@ -26,7 +26,8 @@
         @foreach (TopicDisplayDTO topic in _topicsToDisplay)
         {
             <div class="col-md-2 mx-3">
-                <div class="card mb-3 text-center ratio ratio-1x1 max-card-width min-card-width" style=@($"background-color: {topic.CssColor}")>
+                <div @onclick=@(() => DeleteTopicAsync(topic.Id))
+                    class="card hovered mb-3 text-center ratio ratio-1x1 max-card-width min-card-width" style=@($"background-color: {topic.CssColor}")>
                     <div class="card-body d-flex justify-content-center align-items-center">
                         <h1 class="card-title text-wrap card-title-adj">@topic.Title</h1>
                     </div>
@@ -52,6 +53,9 @@ else {
     .min-card-width {
         min-width: 100px !important;
     }
+    .hovered:hover {
+        cursor: pointer;
+    }
 </style>
 
 @code {
@@ -66,9 +70,13 @@ else {
     }
 
     private async Task FetchUserTopicsAsync() {
-        @* TODO: refetch when modal is closed *@
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userEmail = authState.User.Identity.Name;
         _topicsToDisplay = await TopicService.GetUserDisplayTopicsAsync(userEmail);
+    }
+
+    private async Task DeleteTopicAsync(int topicId) {
+        await TopicService.DeleteTopicAsync(topicId);
+        await FetchUserTopicsAsync();
     }
 }

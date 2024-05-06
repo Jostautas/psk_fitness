@@ -9,4 +9,5 @@ public interface ITopicRepository
     Task<List<Topic>> GetAllTopicsAsync(); 
     Task<List<TopicDisplayDTO>> GetAllTopicsToDisplayAsync();
     Task<List<TopicDisplayDTO>> GetUserTopicsToDisplayAsync(string userEmail);
+    Task DeleteTopicAsync(int topicId);
 }
