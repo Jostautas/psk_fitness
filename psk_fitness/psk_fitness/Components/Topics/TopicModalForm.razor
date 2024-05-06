@@ -1,0 +1,118 @@
+@rendermode InteractiveServer
+
+<!-- Modal -->
+<div class="modal fade" id="newTopicModal" tabindex="-1" aria-labelledby="newTopicModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style=@($"background-color: {TopicModel.CssColor}")>
+            <div class="modal-header">
+                <h5 class="modal-title" id="newTopicModalLabel">@GetCardTitle()</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <EditForm Model=@TopicModel OnSubmit=@HandleSubmit FormName="CreateTopicForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="topicTitle" class="form-label">Title</label>
+                        <InputText @bind-Value=TopicModel.Title class="form-control" id="topicTitle" placeholder="Enter topic title" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="topicDescription" class="form-label">Description</label>
+                        <InputTextArea @bind-Value=TopicModel.Description class="form-control" id="topicDescription" rows="3"
+                            placeholder="Enter topic description"></InputTextArea>
+                    </div>
+                    <div class="mb-3 d-flex">
+                        <label for="topicColor" class="form-label">Color</label>
+                        <InputRadioGroup @bind-Value=TopicModel!.CssColor>
+                            @foreach (CssColor color in _availableCssTopicColors)
+                            {
+                                <InputRadio Value=color
+                                class=@($"color-circle {GetColorCircleSelectedStyle(color)}")
+                                style=@($"background-color: {color}")>
+                                </InputRadio>
+                            }
+                        </InputRadioGroup>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    @ChildContent
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+<style>
+    .color-circle {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 1px solid black;
+        cursor: pointer;
+    }
+
+    input[type="radio"] {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        margin-left: 10px;
+    }
+
+    .valid.modified:not([type="checkbox"]) {
+        outline: none;
+    }
+
+    .selected {
+        border: 5px solid black;
+    }
+</style>
+
+
+@code {
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public EventCallback<Task> OnTopicSubmission {get; set;}
+        
+    [Inject]
+    public ITopicService TopicService {get; set;}
+
+    [Inject]
+    AuthenticationStateProvider AuthenticationStateProvider {get; set;}
+
+    [SupplyParameterFromForm]
+    public TopicCreateDTO TopicModel {get; set;}
+
+    private List<CssColor> _availableCssTopicColors { get; set; }
+    = new() {
+        new CssColor(CssColorMode.RGBA, (255, 150, 150).ToTuple()),
+        new CssColor(CssColorMode.RGBA, (150, 255, 150).ToTuple()),
+        new CssColor(CssColorMode.RGBA, (150, 150, 255).ToTuple()),    
+    };
+
+    protected override void OnInitialized() {
+        TopicModel ??= new();
+    }
+
+    private async Task HandleSubmit() {
+        await OnTopicSubmission.InvokeAsync();
+    }
+
+    private string GetCardTitle() {
+        return String.IsNullOrEmpty(TopicModel.Title)
+            || String.IsNullOrWhiteSpace(TopicModel.Title)?
+            "New topic" : TopicModel.Title;
+    }
+
+    private string GetColorCircleSelectedStyle(CssColor color) {
+        if (TopicModel.CssColor == null) {
+            return "";
+        }
+        string style = "";
+        string modelColorCss = TopicModel.CssColor.ToString();
+        if (color.ToString().Equals(modelColorCss))
+        {
+            style = "selected";
+        }
+        return style;
+    }
+}

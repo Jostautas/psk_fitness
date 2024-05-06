@@ -16,7 +16,15 @@
                 <li><a class="dropdown-item" href="#">Invited</a></li>
             </ul>
         </div>
-        <CreateTopic OnUserCreated=@FetchUserTopicsAsync/>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTopicModal">
+            New topic
+        </button>
+        <TopicModalForm OnTopicSubmission=@FetchUserTopicsAsync>
+            @if (ModalMode.Equals("yes")) {
+                <button type="submit" class="btn btn-primary">Create</button>
+            }
+            <button @onclick=PrintSomething type="submit" class="btn btn-primary">Modify</button>
+        </TopicModalForm>
     </div>
 </div>
 
@@ -63,9 +71,12 @@ else {
     public ITopicService TopicService {get; set;}
     [Inject]
     AuthenticationStateProvider AuthenticationStateProvider {get; set;}
+
+    public string ModalMode {get; set;}
     private IEnumerable<TopicDisplayDTO> _topicsToDisplay;
 
     protected override async Task OnInitializedAsync(){
+        ModalMode = "no";
         await FetchUserTopicsAsync();
     }
 
@@ -75,8 +86,18 @@ else {
         _topicsToDisplay = await TopicService.GetUserDisplayTopicsAsync(userEmail);
     }
 
-    private async Task DeleteTopicAsync(int topicId) {
+    private async void DeleteTopicAsync(int topicId) {
         await TopicService.DeleteTopicAsync(topicId);
         await FetchUserTopicsAsync();
+    }
+
+    @* private async void CreateTopicAsync(int userEmail) {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userEmail = authState.User.Identity.Name;
+        await TopicService.CreateTopicAsync(CreateTopicModel, userEmail);
+    } *@
+
+    private void PrintSomething() {
+        Console.WriteLine("Printed");
     }
 }
