@@ -7,7 +7,7 @@
 @inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject TopicFriendService TopicFriendService
+@inject ITopicFriendService TopicFriendService
 
 
 <PageTitle>Home</PageTitle>
@@ -22,16 +22,16 @@
 
     <h3>Accessible Topics</h3>
 
-@if (topics == null)
+@if (topicIdsToDisplay == null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
     <ul>
-        @foreach (var topic in topics)
+        @foreach (var topicId in topicIdsToDisplay)
         {
-            <li>@topic.Title</li>
+            <li>@topicId</li>
         }
     </ul>
 }
@@ -43,7 +43,7 @@ else
 
 @code {
     private ApplicationUser? user;
-    private List<Topic>? topics;
+    private List<int>? topicIdsToDisplay;
 
     protected override async Task OnInitializedAsync()
     {
@@ -56,6 +56,6 @@ else
             user = await UserManager.FindByIdAsync(userId);
         }
 
-        topics = await TopicFriendService.GetAllAccessibleTopicsAsync();
+        topicIdsToDisplay = await TopicFriendService.GetAllAccessibleTopicsAsync();
     }
 }

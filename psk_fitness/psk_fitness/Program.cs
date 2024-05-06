@@ -36,6 +36,10 @@ builder.Services.AddHttpClient<ITopicService, TopicService>(client =>
     // TODO: Make this dynamic according to launchSettings.json
     client.BaseAddress = new Uri(Constants.BaseHttpUri);
 });
+builder.Services.AddHttpClient<ITopicFriendService, TopicFriendService>(client =>
+{
+    client.BaseAddress = new Uri(Constants.BaseHttpUri);
+});
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>

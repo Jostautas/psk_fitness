@@ -1,6 +1,9 @@
-﻿namespace psk_fitness.Interfaces
+﻿using psk_fitness.Data;
+
+namespace psk_fitness.Interfaces
 {
-    public class ITopicFriendService
+    public interface ITopicFriendService
     {
+        public Task<List<int>> GetAllAccessibleTopicsAsync();
     }
 }
