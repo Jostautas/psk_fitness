@@ -22,7 +22,11 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
+<<<<<<< HEAD
+builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
+=======
 builder.Services.AddScoped<IWorkoutRepository, WorkoutRepository>();
+>>>>>>> main
 
 builder.Services.AddAutoMapper(options => {
     options.AddProfile<MappingProfile>();
