@@ -1,15 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using psk_fitness.Data;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
-namespace psk_fitness.Data
+namespace psk_fitness.DTOs.WorkoutDTOs
 {
-    public class Workout
+    public class WorkoutUpdateDTO
     {
-        [Key] public int Id { get; set; }
-        [ForeignKey("Topic")]
+        public int Id { get; set; }
         public required int TopicId { get; set; }
         public required string Title { get; set; }
-        public required DateOnly Date {  get; set; }
+        public required DateOnly Date { get; set; }
         public TimeSpan? Duration { get; set; }
         public string Description { get; set; } = "";
         public string Notes { get; set; } = "";

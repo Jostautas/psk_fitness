@@ -17,14 +17,10 @@ namespace psk_fitness.Repositories
 
             var selectedTopic = await _applicationDbContext.Topics.FirstOrDefaultAsync(t => workout.TopicId == t.Id);
 
-            System.Console.WriteLine("ka");
-
             if (selectedTopic is null)
             {
                 throw new Exception("Selected topic does not exist");
             }
-
-            System.Console.WriteLine("ka");
 
             Workout newWorkout = new Workout()
             {
@@ -38,8 +34,6 @@ namespace psk_fitness.Repositories
                 Duration = workout.Duration,
                 Finished = workout.Finished,
             };
-
-            System.Console.WriteLine("ka");
 
             await _applicationDbContext.Workouts.AddAsync(newWorkout);
             await _applicationDbContext.SaveChangesAsync();
@@ -57,6 +51,31 @@ namespace psk_fitness.Repositories
         {
             var workout = await _applicationDbContext.Workouts.FirstOrDefaultAsync(w => w.Date == date);
             return workout;
+        }
+
+        public async Task<Workout?> GetByIdAsync(int workoutId)
+        {
+            var workout = await _applicationDbContext.Workouts.FirstOrDefaultAsync(w => w.Id == workoutId);
+            return workout;
+        }
+
+        public async Task<Workout> UpdateAsync(int workoutId, Workout updatedWorkout)
+        {
+            var workout = await _applicationDbContext.Workouts.FindAsync(updatedWorkout.Id);
+            if (workout == null)
+            {
+                throw new Exception("Selected workout does not exist");
+            }
+
+            _applicationDbContext.Entry(workout).CurrentValues.SetValues(updatedWorkout);
+            await _applicationDbContext.SaveChangesAsync();
+
+            return workout;
+        }
+
+        public Task<List<WorkoutsForCalendarDTO>> GetWorkoutsForCalendar()
+        {
+            throw new NotImplementedException();
         }
 
 

@@ -15,28 +15,18 @@
 
 <h4>@(char.ToUpper(DateTime.Now.ToString("MMMM", culture)[0]) + DateTime.Now.ToString("MMMM", culture).Substring(1))</h4>
 
-<div>
-    <select @bind="selectedWorkoutType">
-        <option value="">All</option>
-        @foreach (var type in workoutTypes)
-        {
-            <option value="@type">@type</option>
-        }
-    </select>
-</div>
 
 <div class="calendar">
     @for (var day = 1; day <= DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month); day++)
     {
         Workout? workout = GetWorkoutByDay(day);
-        @if (selectedWorkoutType == "" || (workout != null && workout.WorkoutType == selectedWorkoutType))
-        {
+
             <div class="calendar-day" @onmouseover="() => SetHoveredWorkout(workout)" @onmouseleave="() => SetHoveredWorkout(null)">
                 <span class="day">@day</span>
                 @if (workout != null)
                 {
                     <div class="workout-box">
-                        <span>@workout.WorkoutType</span>
+                        <span>@workout.Title</span>
                         <button class="edit-button" @onclick="() => OpenModal(workout)">Edit</button>
                     </div>
                     @if (!workout.Finished)
@@ -56,74 +46,40 @@
 				    </div>
                 }
             </div>
-        }
+        
     }
 </div>
 
 
 @code {
-    private Modal modalRef;
-    private List<Workout> workouts = new List<Workout>(); //TODO: Get from DB
-    private Workout? hoveredWorkout;
 
-    private string selectedWorkoutType = "";
-    private List<string> workoutTypes;  //TODO: Get from DB, probably id to readable words enum
+    @inject IWorkoutRepository workoutRepository;
+
+    private Modal modalRef;
+    private List<Workout> workouts;
+    private Workout? hoveredWorkout;
 
 
     protected override void OnInitialized()
     {
-        GenerateRandomWorkouts(3); //Remove after connecting to DB
-        workoutTypes = workouts.Select(w => w.WorkoutType).Distinct().ToList();
-
+        workouts = workoutRepository.GetAllWourkoutsAsync().Result;
     }
 
 
-    //TODO: Make Default values, or change to use create method
     private async Task OpenModal()
     {
-        Workout singleDayWorkout = new Workout()
-            {
-                WorkoutType = "Chest",
-                WorkoutStartHour = 1,
-                WorkoutEndHour = 2,
-                WorkoutStartMinute = 30,
-                WorkoutEndMinute = 30,
-                WorkoutNotes = "Notes"
-            };
+        WorkoutDisplayDTO selectedWorkout = new WorkoutDisplayDTO();
 
-        await modalRef.OpenAsync(singleDayWorkout);
+        await modalRef.OpenAsync(selectedWorkout);
     }
 
     private async Task OpenModal(Workout workout)
     {
-        await modalRef.OpenAsync(workout);
+        WorkoutDisplayDTO selectedWorkout = new WorkoutDisplayDTO();
+
+        await modalRef.OpenAsync(selectedWorkout);
     }
 
-
-    //Remove after connecting to DB
-    private void GenerateRandomWorkouts(int count)
-    {
-        Random random = new Random();
-        for (int i = 0; i < count; i++)
-        {
-            int randomDay = random.Next(1, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month) + 1);
-            DateTime date = new DateTime(DateTime.Now.Year, DateTime.Now.Month, randomDay);
-            Workout singleDayWorkout = new Workout()
-                {
-                    WorkoutType = "Chest",
-                    WorkoutStartHour = random.Next(24),
-                    WorkoutEndHour = random.Next(24),
-                    WorkoutStartMinute = random.Next(60),
-                    WorkoutEndMinute = random.Next(60),
-                    WorkoutNotes = "Notes",
-                    Finished = random.Next(2) == 1,
-                    Date = date
-                };
-            workouts.Add(singleDayWorkout);
-        }   
-    }
-
-    //TODO: Probably will have to check if not null
     private Workout? GetWorkoutByDay(int day)
     {
         return workouts.FirstOrDefault(workout => workout.Date.Day == day);
