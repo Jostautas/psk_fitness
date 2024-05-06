@@ -1,4 +1,4 @@
-﻿namespace psk_fitness;
+﻿namespace psk_fitness.Utilities;
 
 
 /// <summary>

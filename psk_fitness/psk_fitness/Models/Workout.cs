@@ -1,4 +1,6 @@
-﻿namespace psk_fitness.Models;
+// THIS IS TEMPORARY FILE ONLY FOR TESTING. THIS WHOLE "MODELS" FOLDER WILL BE DELETED 
+
+namespace psk_fitness.Models;
 
 public class Workout
 {

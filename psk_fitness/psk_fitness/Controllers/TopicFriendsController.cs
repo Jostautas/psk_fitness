@@ -21,7 +21,6 @@ namespace psk_fitness.Controllers
         [HttpPost("/addFriend/{topicId}")]
         public async Task<IActionResult> AddTopicFriend(int topicId, [FromBody] string email)
         {
-            Console.WriteLine("HERE");
             var response = await _topicFriendRepository.AddTopicFriend(email, topicId);
 
             if(response == null) { return BadRequest(); }

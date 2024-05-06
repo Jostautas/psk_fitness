@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
+using System.Text.Json.Serialization;
 
-namespace psk_fitness;
+namespace psk_fitness.Utilities;
 
 public enum CssColorMode {
     HSLA, RGBA
@@ -8,23 +9,29 @@ public enum CssColorMode {
 
 [TypeConverter(typeof(CssColorTypeConverter))]
 public class CssColor {
-    public CssColorMode ColorMode { get; private set; }
-    private Tuple<int, int, int, int> _colorTuple;
+    public CssColorMode CssColorMode {get; set;}
+    public Tuple<int, int, int, int> ColorTuple {get; set;}
 
-    // Main constructor overloads use
-    public CssColor(CssColorMode cssColorMode, Tuple<int, int, int, int> colorTuple) {
-        if (cssColorMode == CssColorMode.HSLA) {
-            ValidateHSLATuple(colorTuple);
+    // Somehow this is needed for serialization to work
+    [JsonConstructor]
+    public CssColor() {}
+
+    public CssColor(CssColorMode CssColorMode, Tuple<int, int, int, int> ColorTuple) {
+        if (CssColorMode == CssColorMode.HSLA) {
+            ValidateHSLATuple(ColorTuple);
         }
-        else if (cssColorMode == CssColorMode.RGBA) {
-            ValidateRGBATuple(colorTuple);
+        else if (CssColorMode == CssColorMode.RGBA) {
+            ValidateRGBATuple(ColorTuple);
         }
         else {
             throw new Exception("Only HSLA and RGBA color modes implemented");
         }
-        _colorTuple = colorTuple;
-        ColorMode = cssColorMode;
+        this.ColorTuple = ColorTuple;
+        this.CssColorMode = CssColorMode;
     }
+
+    public CssColor(CssColorMode cssColorMode, Tuple<int, int, int> colorTuple)
+    : this(cssColorMode, (colorTuple.Item1, colorTuple.Item2, colorTuple.Item3, 1).ToTuple()) {}
 
     public static CssColor FromString(string cssColorString) {
         var parts = cssColorString.Split('(', ',', ',', ',', ')');
@@ -35,9 +42,6 @@ public class CssColor {
         var colorTuple = (int.Parse(parts[1]), int.Parse(parts[2]), int.Parse(parts[3]), int.Parse(parts[4])).ToTuple();
         return new CssColor(mode, colorTuple);
     }
-
-    public CssColor(CssColorMode cssColorMode, Tuple<int, int, int> colorTuple)
-    : this(cssColorMode, new Tuple<int, int, int, int>(colorTuple.Item1, colorTuple.Item2, colorTuple.Item3, 1)) {}
 
 
     private void ValidateHSLATuple(Tuple<int, int, int, int> hslaTuple) {
@@ -73,7 +77,7 @@ public class CssColor {
     }
 
     public override string ToString() {
-        var (one, two, three, four) = _colorTuple;
-        return $"{ColorMode.ToString().ToLower()}({one}, {two}, {three}, {four})";
+        var (one, two, three, four) = ColorTuple;
+        return $"{CssColorMode.ToString().ToLower()}({one}, {two}, {three}, {four})";
     }
 }
