@@ -1,14 +1,12 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using psk_fitness.Client.Pages;
 using psk_fitness.Components;
 using psk_fitness.Components.Account;
 using psk_fitness.Data;
 using psk_fitness.Interfaces;
 using psk_fitness.Repositories;
 using psk_fitness;
-using AutoMapper;
 using psk_fitness.ClientServices;
 using psk_fitness.Properties;
 
@@ -26,18 +24,14 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
 
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
+builder.Services.AddScoped<IWorkoutRepository, WorkoutRepository>();
 builder.Services.AddScoped<ITopicFriendRepository, TopicFriendRepository>();
 
-builder.Services.AddScoped<TopicFriendService>();
+builder.Services.AddAutoMapper(options => {
+    options.AddProfile<MappingProfile>();
+});
 
-builder.Services.AddAutoMapper(typeof(Program));
-
-// var mapperConfig = new MapperConfiguration(mc =>
-// {
-//     mc.AddProfile(new MappingProfile());
-// });
-
-builder.Services.AddHttpClient<ITopicFriendService, TopicFriendService>(client =>
+builder.Services.AddHttpClient<ITopicService, TopicService>(client =>
 {
     // TODO: Make this dynamic according to launchSettings.json
     client.BaseAddress = new Uri(Constants.BaseHttpUri);
@@ -45,10 +39,10 @@ builder.Services.AddHttpClient<ITopicFriendService, TopicFriendService>(client =
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-    })
+{
+    options.DefaultScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+})
     .AddIdentityCookies();
 
 builder.Services.AddControllers();
@@ -103,4 +97,4 @@ app.MapAdditionalIdentityEndpoints();
 
 app.MapControllers();
 
-app.Run(); 
+app.Run();

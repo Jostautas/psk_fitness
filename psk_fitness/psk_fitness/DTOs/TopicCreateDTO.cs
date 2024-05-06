@@ -1,3 +1,6 @@
+using System.Text.Json.Serialization;
+using psk_fitness.Utilities;
+
 namespace psk_fitness.DTOs;
 
 public class TopicCreateDTO
