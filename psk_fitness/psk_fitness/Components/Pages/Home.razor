@@ -54,8 +54,8 @@ else
         {
             var userId = userClaimsPrincipal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             user = await UserManager.FindByIdAsync(userId);
-        }
+            topicIdsToDisplay = await TopicFriendService.GetAllAccessibleTopicsAsync(userId);
 
-        topicIdsToDisplay = await TopicFriendService.GetAllAccessibleTopicsAsync();
+        }
     }
 }

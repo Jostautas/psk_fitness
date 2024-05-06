@@ -13,9 +13,9 @@ namespace psk_fitness.ClientServices;
 
 public class TopicFriendService(HttpClient _httpClient) : ITopicFriendService
 {
-    public async Task<List<int>> GetAllAccessibleTopicsAsync()
+    public async Task<List<int>> GetAllAccessibleTopicsAsync(string userId)
     {
-        var TopicIdsToDisplay = await _httpClient.GetFromJsonAsync<List<int>>($"allAccessibleTopics");
+        var TopicIdsToDisplay = await _httpClient.GetFromJsonAsync<List<int>>($"allAccessibleTopics/{userId}");
         if (TopicIdsToDisplay == null)
         {
             throw new Exception("Failed to load topics.");
