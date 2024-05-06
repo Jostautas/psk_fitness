@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using psk_fitness.Client.Pages;
 using psk_fitness.Components;
 using psk_fitness.Components.Account;
 using psk_fitness.Data;
 using psk_fitness.Interfaces;
 using psk_fitness.Repositories;
 using psk_fitness;
-using AutoMapper;
+using psk_fitness.ClientServices;
+using psk_fitness.Properties;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,14 +24,15 @@ builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenti
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
 builder.Services.AddScoped<IWorkoutRepository, WorkoutRepository>();
 
-builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddAutoMapper(options => {
+    options.AddProfile<MappingProfile>();
+});
 
-// var mapperConfig = new MapperConfiguration(mc =>
-// {
-//     mc.AddProfile(new MappingProfile());
-// });
-
-builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<ITopicService, TopicService>(client =>
+{
+    // TODO: Make this dynamic according to launchSettings.json
+    client.BaseAddress = new Uri(Constants.BaseHttpUri);
+});
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>

@@ -1,4 +1,4 @@
-﻿namespace psk_fitness;
+﻿namespace psk_fitness.Utilities;
 using System.ComponentModel;
 
 public class CssColorTypeConverter : TypeConverter {

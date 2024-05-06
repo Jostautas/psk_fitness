@@ -235,6 +235,9 @@ ClientBin/
 *~
 *.dbmdl
 *.dbproj.schemaview
+*.db
+*.db-shm
+*.db-wal
 *.jfm
 *.pfx
 *.publishsettings

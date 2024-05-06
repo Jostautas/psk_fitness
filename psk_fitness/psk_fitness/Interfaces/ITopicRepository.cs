@@ -5,7 +5,8 @@ namespace psk_fitness.Interfaces;
 
 public interface ITopicRepository
 {
-    Task<Topic> CreateTopicAsync(TopicCreateDTO topic, string UserEmail);
+    Task<Topic> CreateTopicAsync(TopicCreateDTO topic, string userEmail);
     Task<List<Topic>> GetAllTopicsAsync(); 
     Task<List<TopicDisplayDTO>> GetAllTopicsToDisplayAsync();
+    Task<List<TopicDisplayDTO>> GetUserTopicsToDisplayAsync(string userEmail);
 }
