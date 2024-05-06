@@ -23,24 +23,8 @@ public class TopicFriendRepository : ITopicFriendRepository
 
     public async Task<TopicFriendCreateDTO?> AddTopicFriend(string email, int topicId)
     {
-        //if (_authenticationstateprovider is null || _applicationDbContext is null)
-        //{
-        //    return null;
-        //}
-
-        //var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
-        //var userClaimsPrincipal = authState.User;
-
-        //if (userClaimsPrincipal.Identity is null || userClaimsPrincipal.Identity.IsAuthenticated!)
-        //{
-        //    return null;
-        //}
-        //var currentUserId = userClaimsPrincipal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
         var topic = await _applicationDbContext.Topics.FindAsync(topicId);
         if (topic == null) return null;
-        //if (topic.ApplicationUserId != currentUserId) return null;
-
         var friend = await _applicationDbContext.Users
                                    .FirstOrDefaultAsync(u => u.Email == email);
         if (friend == null) return null;
@@ -56,8 +40,6 @@ public class TopicFriendRepository : ITopicFriendRepository
 
         _applicationDbContext.TopicFriends.Add(topicFriend);
         await _applicationDbContext.SaveChangesAsync();
-
-        //TopicFriend topicFriendDTO = _mapper.Map<TopicFriend>(topicFriendDTO);
 
         TopicFriendCreateDTO topicFriendDTO = new()
         {

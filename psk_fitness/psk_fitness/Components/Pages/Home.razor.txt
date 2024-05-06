@@ -22,20 +22,20 @@
     
     <h3>Add a Friend to a Topic</h3>
 
-    <form method="post" @onsubmit="HandleValidSubmit" @formname="AddFriendForm">
-        <AntiforgeryToken />
+    <EditForm Model="@addFriendModel" OnValidSubmit="HandleValidSubmit" FormName="AddFriendForm">
+
         <div class="form-group">
             <label for="topicId">Topic ID:</label>
-            <InputNumber @bind-Value="addFriendModel!.TopicId" id="topicId" />
+            <InputNumber @bind-Value="addFriendModel.TopicId" class="form-control" id="topicId" />
         </div>
 
         <div class="form-group">
             <label for="email">User Email:</label>
-            <InputText @bind-Value="addFriendModel!.Email" id="email" />
+            <InputText @bind-Value="addFriendModel.Email" class="form-control" id="email" />
         </div>
 
         <button type="submit" class="btn btn-primary">Add Friend</button>
-    </form>
+    </EditForm>
 
 
     <h3>Accessible Topics</h3>
@@ -62,14 +62,13 @@ else
 @code {
     private ApplicationUser? user;
     private List<int>? topicIdsToDisplay;
-
-    [SupplyParameterFromForm]
-    public AddFriendModel? addFriendModel { get; set; }
+    private AddFriendModel addFriendModel = new();
 
     private async Task HandleValidSubmit()
     {
         try
         {
+            Console.WriteLine("Home output:" + addFriendModel.TopicId + " " + addFriendModel.Email);
             var response = await TopicFriendService.AddTopicFriend(addFriendModel.TopicId, addFriendModel.Email);
             Console.WriteLine("Friend added successfully!");
         }
@@ -88,8 +87,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        addFriendModel ??= new();
-
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userClaimsPrincipal = authState.User;
 
