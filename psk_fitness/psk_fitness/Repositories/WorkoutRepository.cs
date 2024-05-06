@@ -73,11 +73,20 @@ namespace psk_fitness.Repositories
             return workout;
         }
 
-        public Task<List<WorkoutsForCalendarDTO>> GetWorkoutsForCalendar()
+        public async Task<List<WorkoutsForCalendarDTO>> GetWorkoutsForCalendar()
         {
-            throw new NotImplementedException();
-        }
+            var workouts = await _applicationDbContext.Workouts
+                .Select(w => new WorkoutsForCalendarDTO
+                {
+                    Id = w.Id,
+                    Title = w.Title,  
+                    Duration = w.Duration, 
+                    Finished = w.Finished  
+                })
+                .ToListAsync();
 
+            return workouts;
+        }
 
     }
 }
