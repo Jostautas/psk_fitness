@@ -18,7 +18,5 @@ namespace psk_fitness.Data
 
         public required virtual Topic Topic { get; set; }
         public virtual ICollection<Exercise>? Exercises { get; set; }
-
-
     }
 }

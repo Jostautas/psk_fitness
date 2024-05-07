@@ -228,7 +228,7 @@ namespace psk_fitness.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateOnly?>("Duration")
+                    b.Property<TimeSpan?>("Duration")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FriendsNotes")

@@ -10,7 +10,6 @@ using psk_fitness;
 using psk_fitness.ClientServices;
 using psk_fitness.Properties;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -24,6 +23,9 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
 
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
+<<<<<<< HEAD
+builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
+=======
 builder.Services.AddScoped<IWorkoutRepository, WorkoutRepository>();
 builder.Services.AddScoped<ITopicFriendRepository, TopicFriendRepository>();
 

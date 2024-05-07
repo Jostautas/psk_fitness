@@ -1,0 +1,43 @@
+﻿@page "/exercises"
+
+@using psk_fitness.Interfaces
+@inject IExerciseRepository ExerciseRepository
+
+@rendermode InteractiveServer
+
+<div class="d-flex align-items-center">
+    <h3 class="me-3">Exercises:</h3> 
+    <CreateExercise OnExerciseCreated="RefreshExercises" />
+</div>
+
+@if (exercises == null)
+{
+    <span>Loading...</span>
+}
+else if (exercises.Count == 0)
+{
+    <span>No exercises found.</span>
+}
+else
+{
+    @foreach (var exercise in exercises)
+    {
+        <li>@exercise.Title @exercise.Steps</li>
+    }
+}
+
+@code {
+    List<ExerciseDisplayDTO> exercises;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine("Hello from Blazor component!");
+        await RefreshExercises();
+    }
+
+    async Task RefreshExercises()
+    {
+        exercises = await ExerciseRepository.GetAllExercisesAsync();
+        StateHasChanged(); // Ensure UI refresh
+    }
+}
