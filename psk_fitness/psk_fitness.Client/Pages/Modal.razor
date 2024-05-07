@@ -1,4 +1,5 @@
 ﻿@using psk_fitness.Client.Shared
+@using psk_fitness.Client.DTOs.WorkoutDTOs
 
 @{
     var list = new List<string> { "Chest", "Back", "Calves" };
@@ -18,18 +19,34 @@
 
             </div>
             <div class="modal-body">
+                <form>
+                    <div class="time-picker">
+                        <label for="startingTimeHours" class="form-label">Workout starting hour:</label>
+                        <div class="d-flex align-items-center">
+                            @if (_doNotShowInputBoxes && selectedWorkout != null)
+                            {
+                                <span>@selectedWorkout.Duration.</span>
+                            }
+                            else
+                            {
+                                <input type="time" id="startHours" name="StartHours" required />
+                            }
+                        </div>
+                    </div>
 
-                <label for="workoutTypeDropdown" class="form-label">Workout type:</label>
-                <Dropdown id="workoutTypeDropdown" TItem="string" OnSelected="@OnSelected">
-                    <InitialTip>This is a dropdown list</InitialTip>
-                    <ChildContent>
-                        <DropdownListItem Item="list[0]">Chest</DropdownListItem>
-                        <DropdownListItem Item="list[1]">Back</DropdownListItem>
-                        <div class="dropdown-divider"></div>
-                        <DropdownListItem Item="list[2]">Calves</DropdownListItem>
-                    </ChildContent>
-                </Dropdown>
+                    <input type="time" id="endHours" name="EndHours" required />
 
+                    <label for="workoutTypeDropdown" class="form-label">Workout type:</label>
+                    <Dropdown id="workoutTypeDropdown" TItem="string" OnSelected="@OnSelected">
+                        <InitialTip>This is a dropdown list</InitialTip>
+                        <ChildContent>
+                            <DropdownListItem Item="list[0]">Chest</DropdownListItem>
+                            <DropdownListItem Item="list[1]">Back</DropdownListItem>
+                            <div class="dropdown-divider"></div>
+                            <DropdownListItem Item="list[2]">Calves</DropdownListItem>
+                        </ChildContent>
+                    </Dropdown>
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" @onclick="OnSaveWorkout" class="btn btn-primary">Save changes</button>
@@ -49,6 +66,8 @@
 
 @code {
 
+    private bool _doNotShowInputBoxes = false;
+    private WorkoutDisplayDTO selectedWorkout = new WorkoutDisplayDTO();
 
     public string ModalDisplay = "none;";
     public string ModalClass = "";
