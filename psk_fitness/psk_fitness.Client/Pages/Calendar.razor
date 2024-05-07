@@ -1,7 +1,7 @@
 ﻿@page "/calendarTwo"
 @using System.Globalization
 @using psk_fitness.Client.Interfaces
-@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+@rendermode @(new InteractiveAutoRenderMode(prerender: false))
 @{
     CultureInfo culture = new CultureInfo("en-US"); //Default to en-US calendar
 }
