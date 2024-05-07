@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "psk_fitness", "psk_fitness\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "psk_fitness.Client", "psk_fitness\psk_fitness.Client\psk_fitness.Client.csproj", "{B12FD20F-E9F5-4FEE-ABA2-179ACD2E2CCB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xUnitTests", "xUnitTests\xUnitTests.csproj", "{F658D039-6262-4D27-99BB-7550EF7DB7B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xUnitTests", "xUnitTests\xUnitTests.csproj", "{F658D039-6262-4D27-99BB-7550EF7DB7B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
