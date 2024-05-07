@@ -1,5 +1,10 @@
 ﻿@page "/calendarTwo"
+@using System.Globalization
 @rendermode InteractiveWebAssembly
+@{
+    CultureInfo culture = new CultureInfo("en-US"); //Default to en-US calendar
+}
+@inject IJSRuntime JSRuntime
 
 <h3>Calendar</h3>
 
@@ -7,6 +12,29 @@
 
 <button @onclick="() => Modal.Open()">Open Modal</button>
 
+<h4>@(char.ToUpper(DateTime.Now.ToString("MMMM", culture)[0]) + DateTime.Now.ToString("MMMM", culture).Substring(1))</h4>
+
+
+<div class="calendar">
+    @for (var day = 1; day <= DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month); day++)
+    {
+        //Workout? workout = GetWorkoutByDay(day);
+
+        <div class="calendar-day">
+            <span class="day">@day</span>
+
+                <div class="workout-box">
+                    <span>Rest</span>
+                    <button class="edit-button" @onclick="() => Modal.Open()">Create</button>
+                </div>
+            
+        </div>
+
+    }
+</div>
+
 @code {
     Modal Modal { get; set; }
+
+
 }
