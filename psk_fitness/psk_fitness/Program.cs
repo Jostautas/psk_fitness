@@ -9,6 +9,7 @@ using psk_fitness.Repositories;
 using psk_fitness;
 using psk_fitness.ClientServices;
 using psk_fitness.Properties;
+using psk_fitness.Interfaces.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenti
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
 builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
 builder.Services.AddScoped<IWorkoutRepository, WorkoutRepository>();
+builder.Services.AddScoped<IWorkoutService, WorkoutService>();
 
 builder.Services.AddAutoMapper(options => {
     options.AddProfile<MappingProfile>();

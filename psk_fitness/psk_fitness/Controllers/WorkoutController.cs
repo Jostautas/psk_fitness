@@ -2,34 +2,37 @@
 using psk_fitness.Data;
 using psk_fitness.DTOs.WorkoutDTOs;
 using psk_fitness.Interfaces;
+using psk_fitness.Interfaces.Services;
 
 namespace psk_fitness.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class WorkoutController : Controller
     {
 
         IWorkoutRepository _workoutRepository;
-
-        public WorkoutController(IWorkoutRepository workoutRepository)
+        IWorkoutService _workoutService;
+        public WorkoutController(IWorkoutRepository workoutRepository, IWorkoutService workoutService)
         {
             _workoutRepository = workoutRepository;
+            _workoutService = workoutService;
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateWorkout([FromBody] WorkoutCreateDTO workout)
         {
-
             try
             {
-                await _workoutRepository.CreateAsync(workout);
-            }catch (Exception ex)
-            {
+                Workout createdWorkout = await _workoutService.CreateWorkoutAsync(workout);
+                System.Console.WriteLine("kA10");
 
+                return Ok();
             }
-
-            return Ok(workout);
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error: " + ex.Message);
+            }
         }
 
         [HttpGet("{date}")]

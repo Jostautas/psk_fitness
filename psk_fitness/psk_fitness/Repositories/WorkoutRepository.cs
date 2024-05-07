@@ -12,33 +12,17 @@ namespace psk_fitness.Repositories
     public class WorkoutRepository(ApplicationDbContext _applicationDbContext, IMapper _mapper) : IWorkoutRepository
     {
 
-        public async Task<Workout> CreateAsync(WorkoutCreateDTO workout)
+        public async Task<Workout> CreateAsync(Workout workout)
         {
+            System.Console.WriteLine("kA4");
 
-            var selectedTopic = await _applicationDbContext.Topics.FirstOrDefaultAsync(t => workout.TopicId == t.Id);
+            await _applicationDbContext.Workouts.AddAsync(workout);
+            System.Console.WriteLine("kA5");
 
-            if (selectedTopic is null)
-            {
-                throw new Exception("Selected topic does not exist");
-            }
-
-            Workout newWorkout = new Workout()
-            {
-                Topic = selectedTopic,
-                TopicId = workout.TopicId,
-                Title = workout.Title,
-                Date = workout.Date,
-                Description = workout.Description,
-                FriendsNotes = workout.FriendsNotes,
-                Notes = workout.Notes,
-                Duration = workout.Duration,
-                Finished = workout.Finished,
-            };
-
-            await _applicationDbContext.Workouts.AddAsync(newWorkout);
             await _applicationDbContext.SaveChangesAsync();
+            System.Console.WriteLine("kA6");
 
-            return newWorkout;
+            return workout;
         }
 
         public async Task<List<Workout>> GetAllWourkoutsAsync()

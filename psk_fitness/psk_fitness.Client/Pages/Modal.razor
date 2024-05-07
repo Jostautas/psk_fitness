@@ -1,5 +1,8 @@
 ﻿@using psk_fitness.Client.Shared
 @using psk_fitness.Client.DTOs.WorkoutDTOs
+@using psk_fitness.Client.Interfaces
+
+@inject IWorkoutService WorkoutService
 
 @{
     var list = new List<string> { "Chest", "Back", "Calves" };
@@ -11,7 +14,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Modal title</h5>
-                <button type="button" @onclick="OnDeleteWorkout" class="btn btn-primary">
+                <button type="button" @onclick="() => OnDeleteWorkout()" class="btn btn-primary">
                     <span aria-hidden="true">&times;</span>
                     Delete workout
                 </button>
@@ -20,6 +23,21 @@
             </div>
             <div class="modal-body">
                 <form>
+
+                    <div class="title-form">
+                        <label for="startingTimeHours" class="form-label">Workout starting hour:</label>
+                        <div class="d-flex align-items-center">
+                            @if (_doNotShowInputBoxes && selectedWorkout != null)
+                            {
+                                <span>@selectedWorkout.Duration.</span>
+                            }
+                            else
+                            {
+                                <input type="text" id="startingTimeHours" name="TitleInput" @bind="newWorkout.Title" required />
+                            }
+                        </div>
+                    </div>
+
                     <div class="time-picker">
                         <label for="startingTimeHours" class="form-label">Workout starting hour:</label>
                         <div class="d-flex align-items-center">
@@ -29,13 +47,35 @@
                             }
                             else
                             {
-                                <input type="time" id="startHours" name="StartHours" required />
+                                <input type="time" id="startingTimeHours" name="StartHours"  required />
                             }
                         </div>
                     </div>
 
-                    <input type="time" id="endHours" name="EndHours" required />
+                    <div class="time-picker">
+                        <label for="endTimeHours" class="form-label">Workout ending hour:</label>
+                        <div class="d-flex align-items-center">
+                            @if (_doNotShowInputBoxes && selectedWorkout != null)
+                            {
 
+                            }
+                            else{
+                                <input type="time" id="endHours" name="EndHours" required />
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="dayWorkoutNotes" class="form-label">Notes</label>
+                        @if(_doNotShowInputBoxes && selectedWorkout != null)
+                        {
+                            <p>@selectedWorkout.Notes</p>
+                        }
+                        else
+                        {
+                            <textarea class="form-control" id="dayWorkoutNotes" rows="3" placeholder="Enter notes" @bind="newWorkout.Notes"></textarea>
+                        }
+                    </div>
                     <label for="workoutTypeDropdown" class="form-label">Workout type:</label>
                     <Dropdown id="workoutTypeDropdown" TItem="string" OnSelected="@OnSelected">
                         <InitialTip>This is a dropdown list</InitialTip>
@@ -49,7 +89,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" @onclick="OnSaveWorkout" class="btn btn-primary">Save changes</button>
+                <button type="button" @onclick="() => CreateWorkout()" class="btn btn-primary">Save changes</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => Close()">Close</button>
             </div>
         </div>
@@ -68,10 +108,26 @@
 
     private bool _doNotShowInputBoxes = false;
     private WorkoutDisplayDTO selectedWorkout = new WorkoutDisplayDTO();
+    private WorkoutCreateDTO newWorkout = new WorkoutCreateDTO();
 
     public string ModalDisplay = "none;";
     public string ModalClass = "";
     public bool ShowBackdrop = false;
+
+    private async Task CreateWorkout()
+    {
+        try
+        {
+            newWorkout.TopicId = 1;
+            WorkoutCreateDTO result = await WorkoutService.CreateWorkoutAsync(newWorkout);
+            Console.WriteLine("Workout created successfully!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error creating workout: {ex.Message}");
+            // Handle error, such as displaying an error message to the user
+        }
+    }
 
     private void OnSelected(string selection)
     {

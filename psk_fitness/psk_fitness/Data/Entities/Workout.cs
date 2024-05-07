@@ -15,7 +15,7 @@ namespace psk_fitness.Data
         public string Notes { get; set; } = "";
         public string FriendsNotes { get; set; } = "";
         public bool Finished { get; set; } = false;
-        public required virtual Topic Topic { get; set; }
+        public virtual Topic Topic { get; set; } 
         public virtual ICollection<Exercise>? Exercises { get; set; }
     }
 }
