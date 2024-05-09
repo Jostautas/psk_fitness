@@ -1,9 +1,5 @@
 ﻿using psk_fitness.Data;
-<<<<<<< HEAD
-=======
 using psk_fitness.DTOs;
-using psk_fitness.Migrations;
->>>>>>> main
 
 namespace psk_fitness.Interfaces
 {

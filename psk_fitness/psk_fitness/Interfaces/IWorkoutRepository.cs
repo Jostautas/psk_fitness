@@ -5,8 +5,11 @@ namespace psk_fitness.Interfaces
 {
     public interface IWorkoutRepository
     {
-        Task<Workout> CreateAsync(WorkoutCreateDTO workout);
+        Task<Workout> CreateAsync(Workout workout);
         Task<Workout?> GetByDateAsync(DateOnly date);
         Task<List<Workout>> GetAllWourkoutsAsync();
+        Task<Workout> UpdateAsync(int workoutId, Workout workout);
+        Task<Workout?> GetByIdAsync(int workoutId);
+        Task<List<WorkoutsForCalendarDTO>> GetWorkoutsForCalendar();
     }
 }

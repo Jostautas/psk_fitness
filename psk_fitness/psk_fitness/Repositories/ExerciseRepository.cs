@@ -5,7 +5,6 @@ using psk_fitness.Components.Topics;
 using psk_fitness.Data;
 using psk_fitness.DTOs;
 using psk_fitness.Interfaces;
-using psk_fitness.Models;
 
 namespace psk_fitness.Repositories
 {

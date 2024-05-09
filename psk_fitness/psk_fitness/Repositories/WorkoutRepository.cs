@@ -12,39 +12,17 @@ namespace psk_fitness.Repositories
     public class WorkoutRepository(ApplicationDbContext _applicationDbContext, IMapper _mapper) : IWorkoutRepository
     {
 
-        public async Task<Workout> CreateAsync(WorkoutCreateDTO workout)
+        public async Task<Workout> CreateAsync(Workout workout)
         {
+            System.Console.WriteLine("kA4");
 
-            var selectedTopic = await _applicationDbContext.Topics.FirstOrDefaultAsync(t => workout.TopicId == t.Id);
+            await _applicationDbContext.Workouts.AddAsync(workout);
+            System.Console.WriteLine("kA5");
 
-            System.Console.WriteLine("ka");
-
-            if (selectedTopic is null)
-            {
-                throw new Exception("Selected topic does not exist");
-            }
-
-            System.Console.WriteLine("ka");
-
-            Workout newWorkout = new Workout()
-            {
-                Topic = selectedTopic,
-                TopicId = workout.TopicId,
-                Title = workout.Title,
-                Date = workout.Date,
-                Description = workout.Description,
-                FriendsNotes = workout.FriendsNotes,
-                Notes = workout.Notes,
-                Duration = workout.Duration,
-                Finished = workout.Finished,
-            };
-
-            System.Console.WriteLine("ka");
-
-            await _applicationDbContext.Workouts.AddAsync(newWorkout);
             await _applicationDbContext.SaveChangesAsync();
+            System.Console.WriteLine("kA6");
 
-            return newWorkout;
+            return workout;
         }
 
         public async Task<List<Workout>> GetAllWourkoutsAsync()
@@ -59,6 +37,40 @@ namespace psk_fitness.Repositories
             return workout;
         }
 
+        public async Task<Workout?> GetByIdAsync(int workoutId)
+        {
+            var workout = await _applicationDbContext.Workouts.FirstOrDefaultAsync(w => w.Id == workoutId);
+            return workout;
+        }
+
+        public async Task<Workout> UpdateAsync(int workoutId, Workout updatedWorkout)
+        {
+            var workout = await _applicationDbContext.Workouts.FindAsync(updatedWorkout.Id);
+            if (workout == null)
+            {
+                throw new Exception("Selected workout does not exist");
+            }
+
+            _applicationDbContext.Entry(workout).CurrentValues.SetValues(updatedWorkout);
+            await _applicationDbContext.SaveChangesAsync();
+
+            return workout;
+        }
+
+        public async Task<List<WorkoutsForCalendarDTO>> GetWorkoutsForCalendar()
+        {
+            var workouts = await _applicationDbContext.Workouts
+                .Select(w => new WorkoutsForCalendarDTO
+                {
+                    Id = w.Id,
+                    Title = w.Title,  
+                    Duration = w.Duration, 
+                    Finished = w.Finished  
+                })
+                .ToListAsync();
+
+            return workouts;
+        }
 
     }
 }
