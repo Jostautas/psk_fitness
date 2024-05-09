@@ -40,5 +40,12 @@
 @code {
     Modal Modal { get; set; }
 
+    List<WorkoutForCalendarDTO> Workouts { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Workouts = await WorkoutService.GetByMonth(DateTime.Now.Year, DateTime.Now.Month);
+        Console.WriteLine(Workouts);
+    }
 
 }

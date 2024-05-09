@@ -25,7 +25,6 @@ namespace psk_fitness.Controllers
             try
             {
                 Workout createdWorkout = await _workoutService.CreateWorkoutAsync(workout);
-                System.Console.WriteLine("kA10");
 
                 return Ok();
             }
@@ -35,7 +34,24 @@ namespace psk_fitness.Controllers
             }
         }
 
-        [HttpGet("{date}")]
+        [HttpGet("by-month/{year:int}/{month:int}")]
+        public async Task<IActionResult> GetWorkoutForCurrentMonth(int year, int month)
+        {
+
+            List<WorkoutForCalendarDTO> workouts = await _workoutService.GetWorkoutForCurrentMonth(year, month);
+
+            if (workouts == null || workouts.Count == 0)
+            {
+                return NotFound($"No workouts found for {month}/{year}.");
+            }
+
+            return Ok(workouts);
+
+        }
+
+
+
+        [HttpGet("by-date/{date}")]
         public async Task<IActionResult> GetWorkoutByDate(string date)
         {
             if (!DateOnly.TryParse(date, out DateOnly parsedDate))

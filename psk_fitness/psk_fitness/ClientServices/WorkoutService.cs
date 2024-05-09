@@ -4,6 +4,7 @@ using psk_fitness.Interfaces;
 using psk_fitness.DTOs.WorkoutDTOs;
 using Microsoft.EntityFrameworkCore;
 using BootstrapBlazor.Components;
+using AutoMapper;
 
 namespace psk_fitness.ClientServices
 {
@@ -11,21 +12,20 @@ namespace psk_fitness.ClientServices
     {
         private readonly IWorkoutRepository _workoutRepository;
         private readonly ApplicationDbContext _applicationDbContext;
-
-        public WorkoutService(IWorkoutRepository workoutRepository, ApplicationDbContext applicationDbContext)
+        private readonly IMapper _mapper;
+        
+        public WorkoutService(IWorkoutRepository workoutRepository, ApplicationDbContext applicationDbContext, IMapper mapper)
         {
             _workoutRepository = workoutRepository;
             _applicationDbContext = applicationDbContext;
+            _mapper = mapper;
         }
 
         public async Task<Workout> CreateWorkoutAsync(WorkoutCreateDTO workout)
         {
 
-            // Check if the topic exists
-            System.Console.WriteLine("kA1");
             var selectedTopic = await _applicationDbContext.Topics
                 .FirstOrDefaultAsync(t => t.Id == workout.TopicId);
-            System.Console.WriteLine("kA2");
 
             selectedTopic.Workouts = null;
 
@@ -46,10 +46,20 @@ namespace psk_fitness.ClientServices
                 Duration = workout.Duration,
                 Finished = workout.Finished,
             };
-            System.Console.WriteLine("kA3");
 
             return await _workoutRepository.CreateAsync(newWorkout);
         }
+
+        public async Task<List<WorkoutForCalendarDTO>> GetWorkoutForCurrentMonth(int year, int month)
+        {
+            List<Workout> workouts = await _workoutRepository.GetWorkoutForCurrentMonth(year, month);
+            List<WorkoutForCalendarDTO> calendarWorkouts = _mapper.Map<List<WorkoutForCalendarDTO>>(workouts);
+
+            return calendarWorkouts;
+        }
+
+
+
     }
 
 }

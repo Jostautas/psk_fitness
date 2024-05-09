@@ -10,6 +10,6 @@ namespace psk_fitness.Interfaces
         Task<List<Workout>> GetAllWourkoutsAsync();
         Task<Workout> UpdateAsync(int workoutId, Workout workout);
         Task<Workout?> GetByIdAsync(int workoutId);
-        Task<List<WorkoutsForCalendarDTO>> GetWorkoutsForCalendar();
+        Task<List<Workout>> GetWorkoutForCurrentMonth(int year, int month);
     }
 }

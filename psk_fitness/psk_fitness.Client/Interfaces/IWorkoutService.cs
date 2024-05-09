@@ -4,6 +4,7 @@ namespace psk_fitness.Client.Interfaces
 {
     public interface IWorkoutService
     {
+        Task<List<WorkoutForCalendarDTO>> GetByMonth(int year, int month);
         Task<WorkoutCreateDTO> CreateWorkoutAsync(WorkoutCreateDTO workout);
     }
 }
