@@ -44,7 +44,7 @@ builder.Services.AddHttpClient<ITopicFriendService, TopicFriendService>(client =
 });
 builder.Services.AddScoped<IWorkoutService, WorkoutService>();
 
-builder.`s.AddAuthorization();
+builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = IdentityConstants.ApplicationScheme;

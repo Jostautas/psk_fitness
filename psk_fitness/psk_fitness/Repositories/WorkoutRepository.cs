@@ -14,13 +14,10 @@ namespace psk_fitness.Repositories
 
         public async Task<Workout> CreateAsync(Workout workout)
         {
-            System.Console.WriteLine("kA4");
 
             await _applicationDbContext.Workouts.AddAsync(workout);
-            System.Console.WriteLine("kA5");
 
             await _applicationDbContext.SaveChangesAsync();
-            System.Console.WriteLine("kA6");
 
             return workout;
         }
@@ -57,17 +54,14 @@ namespace psk_fitness.Repositories
             return workout;
         }
 
-        public async Task<List<WorkoutsForCalendarDTO>> GetWorkoutsForCalendar()
+        public async Task<List<Workout>> GetWorkoutForCurrentMonth(int year, int month)
         {
+            var startDate = new DateOnly(year, month, 1);
+            var endDate = startDate.AddMonths(1).AddDays(-1);
+
             var workouts = await _applicationDbContext.Workouts
-                .Select(w => new WorkoutsForCalendarDTO
-                {
-                    Id = w.Id,
-                    Title = w.Title,  
-                    Duration = w.Duration, 
-                    Finished = w.Finished  
-                })
-                .ToListAsync();
+                            .Where(w => w.Date >= startDate && w.Date <= endDate)
+                            .ToListAsync();
 
             return workouts;
         }

@@ -1,4 +1,4 @@
-﻿@page "/calendarTwo"
+﻿@page "/calendar"
 @using System.Globalization
 @using psk_fitness.Client.Interfaces
 @rendermode @(new InteractiveAutoRenderMode(prerender: false))
@@ -22,16 +22,25 @@
 <div class="calendar">
     @for (var day = 1; day <= DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month); day++)
     {
-        //Workout? workout = GetWorkoutByDay(day);
-
+        var workout = Workouts?.FirstOrDefault(w => w.Day == day);
+        
         <div class="calendar-day">
             <span class="day">@day</span>
-
+            @if (workout == null)
+            {
                 <div class="workout-box">
                     <span>Rest</span>
                     <button class="edit-button" @onclick="() => Modal.Open()">Create</button>
                 </div>
-            
+            }
+            else
+            {
+                <div class="workout-box">
+                    <span>@workout.Title</span>
+                    <button class="edit-button" @onclick="() => Modal.Open(workout.Id)">Edit</button>
+                </div>
+            }
+
         </div>
 
     }
@@ -40,5 +49,12 @@
 @code {
     Modal Modal { get; set; }
 
+    List<WorkoutForCalendarDTO> Workouts { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Workouts = await WorkoutService.GetByMonth(DateTime.Now.Year, DateTime.Now.Month);
+        Console.WriteLine(Workouts);
+    }
 
 }

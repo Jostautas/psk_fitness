@@ -43,6 +43,14 @@ public class MappingProfile : Profile
                 dest => dest.Color,
                 opt => opt.MapFrom(src => src.CssColor.ToString()));
         CreateMap<TopicFriend, TopicFriendCreateDTO>().ReverseMap();
+       
+        
         CreateMap<Workout, WorkoutCreateDTO>().ReverseMap();
+        CreateMap<Workout, WorkoutForCalendarDTO>()
+                   .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                   .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.Date.Day)) 
+                   .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+                   .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Duration))
+                   .ForMember(dest => dest.Finished, opt => opt.MapFrom(src => src.Finished));
     }
 }
