@@ -22,10 +22,12 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
+
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
 builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
 builder.Services.AddScoped<IWorkoutRepository, WorkoutRepository>();
-builder.Services.AddScoped<IWorkoutService, WorkoutService>();
+builder.Services.AddScoped<ITopicFriendRepository, TopicFriendRepository>();
+
 
 builder.Services.AddAutoMapper(options => {
     options.AddProfile<MappingProfile>();
@@ -36,16 +38,19 @@ builder.Services.AddHttpClient<ITopicService, TopicService>(client =>
     // TODO: Make this dynamic according to launchSettings.json
     client.BaseAddress = new Uri(Constants.BaseHttpUri);
 });
+builder.Services.AddHttpClient<ITopicFriendService, TopicFriendService>(client =>
+{
+    client.BaseAddress = new Uri(Constants.BaseHttpUri);
+});
+builder.Services.AddScoped<IWorkoutService, WorkoutService>();
 
-builder.Services.AddAuthorization();
+builder.`s.AddAuthorization();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = IdentityConstants.ApplicationScheme;
     options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
 })
     .AddIdentityCookies();
-
-builder.Services.AddScoped<ITopicFriendRepository, TopicFriendRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
