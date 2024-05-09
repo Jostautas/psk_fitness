@@ -20,6 +20,8 @@ namespace psk_fitness.Client.Services
 
             return await response.Content.ReadFromJsonAsync<WorkoutCreateDTO>();
         }
+
+
     }
 
 }
