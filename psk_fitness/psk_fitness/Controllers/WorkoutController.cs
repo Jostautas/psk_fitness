@@ -49,6 +49,21 @@ namespace psk_fitness.Controllers
 
         }
 
+        [HttpGet("by-id/{id}")]
+        public async Task<IActionResult> GetWorkoutById(int id)
+        {
+
+
+            var workout = await _workoutService.GetByIdAsync(id);
+            
+            if (workout == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(workout);
+        }
+
 
 
         [HttpGet("by-date/{date}")]

@@ -37,7 +37,7 @@
             {
                 <div class="workout-box">
                     <span>@workout.Title</span>
-                    <button class="edit-button" @onclick="() => Modal.Open()">Create</button>
+                    <button class="edit-button" @onclick="() => Modal.Open(workout.Id)">Edit</button>
                 </div>
             }
 

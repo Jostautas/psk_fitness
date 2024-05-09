@@ -152,6 +152,18 @@
         StateHasChanged();
     }
 
+    public async Task Open(int id)
+    {
+        newWorkout = await WorkoutService.GetByIdAsync(id);
+
+        Console.WriteLine(newWorkout.Title);
+
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
     public void Close()
     {
         ModalDisplay = "none";

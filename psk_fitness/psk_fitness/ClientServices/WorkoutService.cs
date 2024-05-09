@@ -58,7 +58,13 @@ namespace psk_fitness.ClientServices
             return calendarWorkouts;
         }
 
+        public async Task<WorkoutCreateDTO?> GetByIdAsync(int id)
+        {
+            Workout? workout = await _workoutRepository.GetByIdAsync(id);
+            WorkoutCreateDTO? workoutCreateDTO = _mapper.Map<WorkoutCreateDTO>(workout);
 
+            return workoutCreateDTO;
+        }
 
     }
 
