@@ -44,7 +44,6 @@
 
 @if (_topicsToDisplay != null) {
 <div class="container mt-4 mx-0">
-<div class="container mt-4 mx-0">
     <div class="row">
         @foreach (var topic in _topicsToDisplay)
         {
@@ -214,6 +213,12 @@ else
     private string _modalMode {get; set;} = "create";
     private IEnumerable<TopicDTO> _topicsToDisplay;
 
+    private ApplicationUser user;
+
+    private AddFriendModel addFriendModel;
+
+    private List<int> accessableTopicIdsToDisplay;
+
     protected override async Task OnInitializedAsync() {
         InitializeTopicModel();
         Container.PutObject(TopicModel, TopicModel.GetHashCode());
@@ -302,17 +307,7 @@ else
     }
 
     private async void DeleteTopicAsync(int topicId) {
-        await TopicService.DeleteTopicAsync(topicId);
+        await TopicClientService.DeleteTopicAsync(topicId);
         await FetchUserTopicsAsync();
-    }
-
-    @* private async void CreateTopicAsync(int userEmail) {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var userEmail = authState.User.Identity.Name;
-        await TopicService.CreateTopicAsync(CreateTopicModel, userEmail);
-    } *@
-
-    private void PrintSomething() {
-        Console.WriteLine("Printed");
     }
 }

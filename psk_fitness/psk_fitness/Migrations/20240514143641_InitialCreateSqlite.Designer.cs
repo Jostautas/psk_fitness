@@ -11,11 +11,7 @@ using psk_fitness.Data;
 namespace psk_fitness.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-<<<<<<<< HEAD:psk_fitness/psk_fitness/Migrations/20240513082713_InitialCreateSqlite.Designer.cs
-    [Migration("20240513082713_InitialCreateSqlite")]
-========
-    [Migration("20240514135057_InitialCreateSqlite")]
->>>>>>>> main:psk_fitness/psk_fitness/Migrations/20240514135057_InitialCreateSqlite.Designer.cs
+    [Migration("20240514143641_InitialCreateSqlite")]
     partial class InitialCreateSqlite
     {
         /// <inheritdoc />

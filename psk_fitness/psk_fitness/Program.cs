@@ -10,6 +10,7 @@ using psk_fitness;
 using psk_fitness.ClientServices;
 using psk_fitness.Properties;
 using psk_fitness.Interfaces.Services;
+using psk_fitness.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -22,11 +22,17 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.DurationSeconds, opt => opt.MapFrom(src => src.Duration.HasValue ? (int?)src.Duration.Value.Hours : null))
             .ForMember(dest => dest.DurationMinutes, opt => opt.MapFrom(src => src.Duration.HasValue ? (int?)src.Duration.Value.Minutes : null))
             .ForMember(dest => dest.DurationHours, opt => opt.MapFrom(src => src.Duration.HasValue ? (int?)src.Duration.Value.Seconds : null));
-        // TODO: refactor mapping by - same types, different names or for same types
+
         CreateMap<TopicDTO, Topic>()
             .ForMember(
                 dest => dest.Color,
                 opt => opt.MapFrom(src => src.CssColor.ToString()));
+
+        CreateMap<Topic, TopicDTO>()
+            .ForMember(
+                dest => dest.CssColor,
+                opt => opt.MapFrom(src => CssColor.FromString(src.Color)));
+
         CreateMap<TopicFriend, TopicFriendCreateDTO>().ReverseMap();
        
         
