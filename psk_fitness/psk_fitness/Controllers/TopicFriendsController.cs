@@ -27,5 +27,14 @@ namespace psk_fitness.Controllers
 
             return Created(String.Empty, response);
         }
+
+        [HttpGet("/allAccessibleTopics/{userId}")]
+        public async Task<IActionResult> GetAllAccessibleTopics(string userId)
+        {
+            var response = await _topicFriendRepository.GetAllAccessibleTopics(userId);
+
+            if (response == null) { return BadRequest(); }
+            return Ok(response);
+        }
     }
 }

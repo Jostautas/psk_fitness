@@ -3,23 +3,20 @@
 @using System.Security.Claims
 @using psk_fitness.Data
 @using Microsoft.AspNetCore.Components.Authorization
+@using psk_fitness.ClientServices
 @inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ITopicFriendService TopicFriendService
 
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, @user?.UserName</h1>
-@if (user != null)
-{
+@if(user != null){
+    <h1>Hello, @user?.UserName</h1>
     <p>Height: @user.Height cm</p>
     <p>Weight: @user.Weight kg</p>
     <p>Age: @user.Age years</p>
-}
-else
-{
-    <p>>Please log in to see the details</P>
 }
 
 @code {

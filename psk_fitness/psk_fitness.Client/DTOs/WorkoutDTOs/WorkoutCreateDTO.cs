@@ -1,6 +1,6 @@
-﻿using psk_fitness.Data;
+﻿
 
-namespace psk_fitness.DTOs.WorkoutDTOs
+namespace psk_fitness.Client.DTOs.WorkoutDTOs
 {
     public class WorkoutCreateDTO
     {
@@ -11,6 +11,7 @@ namespace psk_fitness.DTOs.WorkoutDTOs
         public string Notes { get; set; } = "";
         public string FriendsNotes { get; set; } = "";
         public bool Finished { get; set; } = false;
+
         public int TopicId { get; set; }
     }
 }

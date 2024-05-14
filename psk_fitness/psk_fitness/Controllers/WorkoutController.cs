@@ -2,37 +2,71 @@
 using psk_fitness.Data;
 using psk_fitness.DTOs.WorkoutDTOs;
 using psk_fitness.Interfaces;
+using psk_fitness.Interfaces.Services;
 
 namespace psk_fitness.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class WorkoutController : Controller
     {
 
         IWorkoutRepository _workoutRepository;
-
-        public WorkoutController(IWorkoutRepository workoutRepository)
+        IWorkoutService _workoutService;
+        public WorkoutController(IWorkoutRepository workoutRepository, IWorkoutService workoutService)
         {
             _workoutRepository = workoutRepository;
+            _workoutService = workoutService;
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateWorkout([FromBody] WorkoutCreateDTO workout)
         {
-
             try
             {
-                await _workoutRepository.CreateAsync(workout);
-            }catch (Exception ex)
-            {
+                Workout createdWorkout = await _workoutService.CreateWorkoutAsync(workout);
 
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error: " + ex.Message);
+            }
+        }
+
+        [HttpGet("by-month/{year:int}/{month:int}")]
+        public async Task<IActionResult> GetWorkoutForCurrentMonth(int year, int month)
+        {
+
+            List<WorkoutForCalendarDTO> workouts = await _workoutService.GetWorkoutForCurrentMonth(year, month);
+
+            if (workouts == null || workouts.Count == 0)
+            {
+                return NotFound($"No workouts found for {month}/{year}.");
+            }
+
+            return Ok(workouts);
+
+        }
+
+        [HttpGet("by-id/{id}")]
+        public async Task<IActionResult> GetWorkoutById(int id)
+        {
+
+
+            var workout = await _workoutService.GetByIdAsync(id);
+            
+            if (workout == null)
+            {
+                return NotFound();
             }
 
             return Ok(workout);
         }
 
-        [HttpGet("{date}")]
+
+
+        [HttpGet("by-date/{date}")]
         public async Task<IActionResult> GetWorkoutByDate(string date)
         {
             if (!DateOnly.TryParse(date, out DateOnly parsedDate))

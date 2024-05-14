@@ -34,4 +34,12 @@ public class TopicRepository(ApplicationDbContext _applicationDbContext) : ITopi
         _applicationDbContext.Topics.Update(topic);
         await _applicationDbContext.SaveChangesAsync();
     }
+
+    public async Task DeleteTopicAsync(int topicId)
+    {
+        var topic = await _applicationDbContext.Topics.FirstOrDefaultAsync(t => t.Id == topicId)
+            ?? throw new Exception("Topic not found.");
+        _applicationDbContext.Topics.Remove(topic);
+        await _applicationDbContext.SaveChangesAsync();
+    }
 }

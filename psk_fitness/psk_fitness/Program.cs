@@ -9,7 +9,7 @@ using psk_fitness.Repositories;
 using psk_fitness;
 using psk_fitness.ClientServices;
 using psk_fitness.Properties;
-using psk_fitness.Services;
+using psk_fitness.Interfaces.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,12 +22,16 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
+
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
+builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
 builder.Services.AddScoped<IWorkoutRepository, WorkoutRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITopicService, TopicService>();
 
 builder.Services.AddScoped<StateContainer>();
+builder.Services.AddScoped<ITopicFriendRepository, TopicFriendRepository>();
+
 
 builder.Services.AddAutoMapper(options => {
     options.AddProfile<MappingProfile>();
@@ -38,6 +42,11 @@ builder.Services.AddHttpClient<ITopicClientService, TopicClientService>(client =
     // TODO: Make this dynamic according to launchSettings.json
     client.BaseAddress = new Uri(Constants.BaseHttpUri);
 });
+builder.Services.AddHttpClient<ITopicFriendService, TopicFriendService>(client =>
+{
+    client.BaseAddress = new Uri(Constants.BaseHttpUri);
+});
+builder.Services.AddScoped<IWorkoutService, WorkoutService>();
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>
@@ -46,8 +55,6 @@ builder.Services.AddAuthentication(options =>
     options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
 })
     .AddIdentityCookies();
-
-builder.Services.AddScoped<ITopicFriendRepository, TopicFriendRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

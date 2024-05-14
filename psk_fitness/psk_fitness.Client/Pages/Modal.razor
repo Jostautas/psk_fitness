@@ -1,0 +1,174 @@
+﻿@using psk_fitness.Client.Shared
+@using psk_fitness.Client.DTOs.WorkoutDTOs
+@using psk_fitness.Client.Interfaces
+
+@inject IWorkoutService WorkoutService
+
+@{
+    var list = new List<string> { "Chest", "Back", "Calves" };
+}
+
+
+<div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+                <button type="button" @onclick="() => OnDeleteWorkout()" class="btn btn-primary">
+                    <span aria-hidden="true">&times;</span>
+                    Delete workout
+                </button>
+
+
+            </div>
+            <div class="modal-body">
+                <form>
+
+                    <div class="title-form">
+                        <label for="startingTimeHours" class="form-label">Workout starting hour:</label>
+                        <div class="d-flex align-items-center">
+                            @if (_doNotShowInputBoxes && selectedWorkout != null)
+                            {
+                                <span>@selectedWorkout.Duration.</span>
+                            }
+                            else
+                            {
+                                <input type="text" id="startingTimeHours" name="TitleInput" @bind="newWorkout.Title" required />
+                            }
+                        </div>
+                    </div>
+
+                    <div class="time-picker">
+                        <label for="startingTimeHours" class="form-label">Workout starting hour:</label>
+                        <div class="d-flex align-items-center">
+                            @if (_doNotShowInputBoxes && selectedWorkout != null)
+                            {
+                                <span>@selectedWorkout.Duration.</span>
+                            }
+                            else
+                            {
+                                <input type="time" id="startingTimeHours" name="StartHours"  required />
+                            }
+                        </div>
+                    </div>
+
+                    <div class="time-picker">
+                        <label for="endTimeHours" class="form-label">Workout ending hour:</label>
+                        <div class="d-flex align-items-center">
+                            @if (_doNotShowInputBoxes && selectedWorkout != null)
+                            {
+
+                            }
+                            else{
+                                <input type="time" id="endHours" name="EndHours" required />
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="dayWorkoutNotes" class="form-label">Notes</label>
+                        @if(_doNotShowInputBoxes && selectedWorkout != null)
+                        {
+                            <p>@selectedWorkout.Notes</p>
+                        }
+                        else
+                        {
+                            <textarea class="form-control" id="dayWorkoutNotes" rows="3" placeholder="Enter notes" @bind="newWorkout.Notes"></textarea>
+                        }
+                    </div>
+                    <label for="workoutTypeDropdown" class="form-label">Workout type:</label>
+                    <Dropdown id="workoutTypeDropdown" TItem="string" OnSelected="@OnSelected">
+                        <InitialTip>This is a dropdown list</InitialTip>
+                        <ChildContent>
+                            <DropdownListItem Item="list[0]">Chest</DropdownListItem>
+                            <DropdownListItem Item="list[1]">Back</DropdownListItem>
+                            <div class="dropdown-divider"></div>
+                            <DropdownListItem Item="list[2]">Calves</DropdownListItem>
+                        </ChildContent>
+                    </Dropdown>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" @onclick="() => CreateWorkout()" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => Close()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+
+@code {
+
+    private bool _doNotShowInputBoxes = false;
+    private WorkoutDisplayDTO selectedWorkout = new WorkoutDisplayDTO();
+    private WorkoutCreateDTO newWorkout = new WorkoutCreateDTO();
+
+    public string ModalDisplay = "none;";
+    public string ModalClass = "";
+    public bool ShowBackdrop = false;
+
+    private async Task CreateWorkout()
+    {
+        try
+        {
+            newWorkout.TopicId = 1;
+            WorkoutCreateDTO result = await WorkoutService.CreateWorkoutAsync(newWorkout);
+            Console.WriteLine("Workout created successfully!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error creating workout: {ex.Message}");
+            // Handle error, such as displaying an error message to the user
+        }
+    }
+
+    private void OnSelected(string selection)
+    {
+        Console.WriteLine(selection);
+    }
+
+    public void OnDeleteWorkout()
+    {
+        Console.WriteLine("Delete");
+    }
+
+    public void OnSaveWorkout()
+    {
+        Console.WriteLine("Save");
+    }
+
+    public void Open()
+    {
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    public async Task Open(int id)
+    {
+        newWorkout = await WorkoutService.GetByIdAsync(id);
+
+        Console.WriteLine(newWorkout.Title);
+
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        ModalDisplay = "none";
+        ModalClass = "";
+        ShowBackdrop = false;
+        StateHasChanged();
+    }
+}

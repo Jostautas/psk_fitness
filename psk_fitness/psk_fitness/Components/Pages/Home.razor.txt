@@ -1,0 +1,101 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
+@using psk_fitness.Data
+@using Microsoft.AspNetCore.Components.Authorization
+@using psk_fitness.ClientServices
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ITopicFriendService TopicFriendService
+
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, @user?.UserName</h1>
+@if (user != null)
+{
+    <p>Height: @user.Height cm</p>
+    <p>Weight: @user.Weight kg</p>
+    <p>Age: @user.Age years</p>
+
+    
+    <h3>Add a Friend to a Topic</h3>
+
+    <EditForm Model="@addFriendModel" OnValidSubmit="HandleValidSubmit" FormName="AddFriendForm">
+
+        <div class="form-group">
+            <label for="topicId">Topic ID:</label>
+            <InputNumber @bind-Value="addFriendModel.TopicId" class="form-control" id="topicId" />
+        </div>
+
+        <div class="form-group">
+            <label for="email">User Email:</label>
+            <InputText @bind-Value="addFriendModel.Email" class="form-control" id="email" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Friend</button>
+    </EditForm>
+
+
+    <h3>Accessible Topics</h3>
+
+@if (topicIdsToDisplay == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <ul>
+        @foreach (var topicId in topicIdsToDisplay)
+        {
+            <li>@topicId</li>
+        }
+    </ul>
+}
+}
+else
+{
+    <p>>Please log in to see the details</P>
+}
+
+@code {
+    private ApplicationUser? user;
+    private List<int>? topicIdsToDisplay;
+    private AddFriendModel addFriendModel = new();
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            Console.WriteLine("Home output:" + addFriendModel.TopicId + " " + addFriendModel.Email);
+            var response = await TopicFriendService.AddTopicFriend(addFriendModel.TopicId, addFriendModel.Email);
+            Console.WriteLine("Friend added successfully!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+    public class AddFriendModel             // It may seem odd to have this model here instead of a DTO, but appearantly it's good practice
+                                            // to have view-specific models contained only in that view component.
+    {
+        public int TopicId { get; set; }
+        public string? Email { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userClaimsPrincipal = authState.User;
+
+        if (userClaimsPrincipal.Identity.IsAuthenticated)
+        {
+            var userId = userClaimsPrincipal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            user = await UserManager.FindByIdAsync(userId);
+            topicIdsToDisplay = await TopicFriendService.GetAllAccessibleTopicsAsync(userId);
+
+        }
+    }
+}
