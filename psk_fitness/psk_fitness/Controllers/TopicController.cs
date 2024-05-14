@@ -13,35 +13,39 @@ namespace psk_fitness.Controllers;
 [ApiController]
 // TODO: interpolate psk_fitness.Properties.Constants.ApiEndpointPrefix in route
 [Route("api/topics")]
-public class TopicController(ITopicRepository _topicRepository) : Controller
+public class TopicController(ITopicService _topicService) : Controller
 {
 
     [HttpPost]
-    public async Task<IActionResult> CreateTopicAsync([FromBody] TopicCreateDTO topic, [Required] string userEmail) 
+    public async Task<IActionResult> CreateTopicAsync([FromBody] TopicDTO topic, [Required] string userEmail) 
     {
-        await _topicRepository.CreateTopicAsync(topic, userEmail);
+        await _topicService.CreateTopicAsync(topic, userEmail);
         return Ok(topic);
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetDisplayTopicsAsync(string userEmail="")
+    public async Task<IActionResult> GetDisplayTopicsAsync([Required] string userEmail)
     {
-        List<TopicDisplayDTO>? topics;
-        // branch out for different "filtering" params
-        if (userEmail.IsNullOrEmpty()) {
-            topics = await _topicRepository.GetAllTopicsToDisplayAsync();
-        }
-        else {
-            topics = await _topicRepository.GetUserTopicsToDisplayAsync(userEmail);
-        }
+        var topics = await _topicService.GetUserTopicsAsync(userEmail);
         var json = JsonSerializer.Serialize(topics);
         return Content(json, "application/json", Encoding.UTF8);
+    }
+
+    [HttpPut("{topicId}")]
+    public async Task<IActionResult> UpdateTopicAsync([FromBody] TopicDTO topic, int topicId)
+    {
+        if (topic.Id != topicId)
+        {
+            return BadRequest("Invalid topic id.");
+        }
+        await _topicService.UpdateTopicAsync(topic);
+        return Ok(topic.Id);
     }
 
     [HttpDelete("{topicId}")]
     public async Task<IActionResult> DeleteTopicAsync(int topicId)
     {
-        await _topicRepository.DeleteTopicAsync(topicId);
+        await _topicService.DeleteTopicAsync(topicId);
         return Ok(topicId);
     }
 }

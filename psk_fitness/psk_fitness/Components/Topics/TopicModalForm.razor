@@ -8,7 +8,7 @@
                 <h5 class="modal-title" id="newTopicModalLabel">@GetCardTitle()</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <EditForm Model=@TopicModel OnSubmit=@HandleSubmit FormName="CreateTopicForm">
+            <EditForm Model=@TopicModel FormName="CreateTopicForm">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="topicTitle" class="form-label">Title</label>
@@ -71,16 +71,17 @@
 	public RenderFragment ChildContent { get; set; }
 
     [Parameter]
-    public EventCallback<Task> OnTopicSubmission {get; set;}
-        
-    [Inject]
-    public ITopicService TopicService {get; set;}
+    public int TopicHash {get; set;}
+
+    [SupplyParameterFromForm]
+    public TopicDTO TopicModel {get; set;}
+
 
     [Inject]
     AuthenticationStateProvider AuthenticationStateProvider {get; set;}
 
-    [SupplyParameterFromForm]
-    public TopicCreateDTO TopicModel {get; set;}
+    [Inject]
+    StateContainer Container {get; set;}
 
     private List<CssColor> _availableCssTopicColors { get; set; }
     = new() {
@@ -90,11 +91,7 @@
     };
 
     protected override void OnInitialized() {
-        TopicModel ??= new();
-    }
-
-    private async Task HandleSubmit() {
-        await OnTopicSubmission.InvokeAsync();
+        TopicModel = Container.PopObject<TopicDTO>(TopicHash);
     }
 
     private string GetCardTitle() {

@@ -158,7 +158,6 @@ namespace psk_fitness.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")

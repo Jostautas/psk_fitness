@@ -16,14 +16,20 @@
                 <li><a class="dropdown-item" href="#">Invited</a></li>
             </ul>
         </div>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTopicModal">
+        <button @onclick=@ManageCreateTopic type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTopicModal">
             New topic
         </button>
-        <TopicModalForm OnTopicSubmission=@FetchUserTopicsAsync>
-            @if (ModalMode.Equals("yes")) {
-                <button type="submit" class="btn btn-primary">Create</button>
+        <TopicModalForm TopicHash=@(TopicModel.GetHashCode())>
+            @if (_modalMode.Equals("create")) {
+                <button @onclick=CreateTopicAsync type="submit" class="btn btn-primary" data-bs-dismiss="modal">Create</button>
             }
-            <button @onclick=PrintSomething type="submit" class="btn btn-primary">Modify</button>
+            else if (_modalMode.Equals("modify")) {
+                <button @onclick=UpdateTopicAsync type="submit" class="btn btn-primary" data-bs-dismiss="modal">Modify</button>
+                <button @onclick=DeleteTopicAsync type="submit" class="btn btn-danger" data-bs-dismiss="modal">Delete</button>
+            }
+            else {
+                <p>Reached invalid state, pls test and fix</p>
+            }
         </TopicModalForm>
     </div>
 </div>
@@ -31,11 +37,19 @@
 @if (_topicsToDisplay != null) {
 <div class="container mt-4 mx-0">
     <div class="row">
-        @foreach (TopicDisplayDTO topic in _topicsToDisplay)
+        @foreach (var topic in _topicsToDisplay)
         {
             <div class="col-md-2 mx-3">
-                <div @onclick=@(() => DeleteTopicAsync(topic.Id))
-                    class="card hovered mb-3 text-center ratio ratio-1x1 max-card-width min-card-width" style=@($"background-color: {topic.CssColor}")>
+                <div
+                    class="pointer-events-none card mb-3 text-center ratio ratio-1x1 max-card-width min-card-width" style=@($"background-color: {topic.CssColor}")>
+                    <div class="card-header">
+                        <div
+                        @onclick=@(() => ManageSelectedTopic(topic))
+                        class="pointer-events-all bi bi-pencil-square mx-auto icon-width"
+                        data-bs-toggle="modal"
+                        data-bs-target="#newTopicModal">
+                        </div>
+                    </div>
                     <div class="card-body d-flex justify-content-center align-items-center">
                         <h1 class="card-title text-wrap card-title-adj">@topic.Title</h1>
                     </div>
@@ -51,9 +65,18 @@ else {
 
 <style>
     .card-title-adj {
-        font-size: 90%;
+        font-size: max(120%, 1.5vw);
         max-width: 100%;
         word-wrap: break-word;
+    }
+    .pointer-events-none {
+        pointer-events: none;
+    }
+    .pointer-events-all {
+        pointer-events: all;
+    }
+    .pointer-events-all:hover {
+        cursor: pointer;
     }
     .max-card-width {
         max-width: 200px;
@@ -61,43 +84,84 @@ else {
     .min-card-width {
         min-width: 100px !important;
     }
-    .hovered:hover {
-        cursor: pointer;
+    .icon-width {
+        min-width: 25px;
+        width: 25px;
+        font-size: max(120%, 1.5vw);
     }
 </style>
 
 @code {
     [Inject]
-    public ITopicService TopicService {get; set;}
+    ITopicClientService TopicClientService {get; set;}
     [Inject]
     AuthenticationStateProvider AuthenticationStateProvider {get; set;}
+    [Inject]
+    StateContainer Container {get; set;}
 
-    public string ModalMode {get; set;}
-    private IEnumerable<TopicDisplayDTO> _topicsToDisplay;
+    private static List<CssColor> _availableCssTopicColors { get; set; }
+    = new() {
+        new CssColor(CssColorMode.RGBA, (255, 150, 150).ToTuple()),
+        new CssColor(CssColorMode.RGBA, (150, 255, 150).ToTuple()),
+        new CssColor(CssColorMode.RGBA, (150, 150, 255).ToTuple()),    
+    };
+    public TopicDTO TopicModel {get; set;}
 
-    protected override async Task OnInitializedAsync(){
-        ModalMode = "no";
+    private string _modalMode {get; set;} = "create";
+    private IEnumerable<TopicDTO> _topicsToDisplay;
+
+    protected override async Task OnInitializedAsync() {
+        InitializeTopicModel();
+        Container.PutObject(TopicModel, TopicModel.GetHashCode());
         await FetchUserTopicsAsync();
     }
 
     private async Task FetchUserTopicsAsync() {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userEmail = authState.User.Identity.Name;
-        _topicsToDisplay = await TopicService.GetUserDisplayTopicsAsync(userEmail);
+        _topicsToDisplay = await TopicClientService.GetUserTopicsAsync(userEmail);
     }
 
-    private async void DeleteTopicAsync(int topicId) {
-        await TopicService.DeleteTopicAsync(topicId);
+    private async void DeleteTopicAsync() {
+        await TopicClientService.DeleteTopicAsync(TopicModel.Id);
         await FetchUserTopicsAsync();
+        await InvokeAsync(StateHasChanged);
     }
 
-    @* private async void CreateTopicAsync(int userEmail) {
+    private void InitializeTopicModel() {
+        TopicModel = new() {
+        Title = "New Topic",
+        Description = "New Topic Description",
+        CssColor = new CssColor(CssColorMode.RGBA, (255, 150, 150).ToTuple())};
+    }
+
+    private async void CreateTopicAsync() {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userEmail = authState.User.Identity.Name;
-        await TopicService.CreateTopicAsync(CreateTopicModel, userEmail);
-    } *@
+        await TopicClientService.CreateTopicAsync(TopicModel, userEmail);
+        await FetchUserTopicsAsync();
+        await InvokeAsync(StateHasChanged);
+    }
 
-    private void PrintSomething() {
-        Console.WriteLine("Printed");
+    private async void UpdateTopicAsync() {
+        await TopicClientService.UpdateTopicAsync(TopicModel);
+        await FetchUserTopicsAsync();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void ManageSelectedTopic(TopicDTO topic) {
+        _modalMode = "modify";
+        TopicModel.Id = topic.Id;
+        TopicModel.Title = topic.Title;
+        TopicModel.Description = topic.Description;
+        TopicModel.CssColor = topic.CssColor;
+    }
+
+    private void ManageCreateTopic() {
+        _modalMode = "create";
+        TopicModel.Id = 0;
+        TopicModel.Title = "";
+        TopicModel.Description = "";
+        TopicModel.CssColor = new CssColor(CssColorMode.RGBA, (255, 150, 150).ToTuple());
     }
 }
