@@ -12,84 +12,18 @@
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, @user?.UserName</h1>
-@if (user != null)
-{
+@if(user != null){
+    <h1>Hello, @user?.UserName</h1>
     <p>Height: @user.Height cm</p>
     <p>Weight: @user.Weight kg</p>
     <p>Age: @user.Age years</p>
-
-    
-    <h3>Add a Friend to a Topic</h3>
-
-    <form method="post" @onsubmit="HandleValidSubmit" @formname="AddFriendForm">
-        <AntiforgeryToken />
-        <div class="form-group">
-            <label for="topicId">Topic ID:</label>
-            <InputNumber @bind-Value="addFriendModel!.TopicId" id="topicId" />
-        </div>
-
-        <div class="form-group">
-            <label for="email">User Email:</label>
-            <InputText @bind-Value="addFriendModel!.Email" id="email" />
-        </div>
-
-        <button type="submit" class="btn btn-primary">Add Friend</button>
-    </form>
-
-
-    <h3>Accessible Topics</h3>
-
-@if (topicIdsToDisplay == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <ul>
-        @foreach (var topicId in topicIdsToDisplay)
-        {
-            <li>@topicId</li>
-        }
-    </ul>
-}
-}
-else
-{
-    <p>>Please log in to see the details</P>
 }
 
 @code {
     private ApplicationUser? user;
-    private List<int>? topicIdsToDisplay;
-
-    [SupplyParameterFromForm]
-    public AddFriendModel? addFriendModel { get; set; }
-
-    private async Task HandleValidSubmit()
-    {
-        try
-        {
-            var response = await TopicFriendService.AddTopicFriend(addFriendModel.TopicId, addFriendModel.Email);
-            Console.WriteLine("Friend added successfully!");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error: {ex.Message}");
-        }
-    }
-
-    public class AddFriendModel             // It may seem odd to have this model here instead of a DTO, but appearantly it's good practice
-                                            // to have view-specific models contained only in that view component.
-    {
-        public int TopicId { get; set; }
-        public string? Email { get; set; }
-    }
 
     protected override async Task OnInitializedAsync()
     {
-        addFriendModel ??= new();
-
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userClaimsPrincipal = authState.User;
 
@@ -97,8 +31,6 @@ else
         {
             var userId = userClaimsPrincipal.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             user = await UserManager.FindByIdAsync(userId);
-            topicIdsToDisplay = await TopicFriendService.GetAllAccessibleTopicsAsync(userId);
-
         }
     }
 }
