@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
-using BootstrapBlazor.Components;
 using Microsoft.EntityFrameworkCore;
 using psk_fitness.Data;
-using psk_fitness.DTOs;
 using psk_fitness.DTOs.WorkoutDTOs;
 using psk_fitness.Interfaces;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace psk_fitness.Repositories
 {

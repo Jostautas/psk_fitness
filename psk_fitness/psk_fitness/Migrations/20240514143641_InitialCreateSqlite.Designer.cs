@@ -11,8 +11,8 @@ using psk_fitness.Data;
 namespace psk_fitness.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240510073219_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20240514143641_InitialCreateSqlite")]
+    partial class InitialCreateSqlite
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
