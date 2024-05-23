@@ -34,6 +34,18 @@
             else if (_modalMode.Equals("modify")) {
                 <button @onclick=UpdateTopicAsync type="submit" class="btn btn-primary" data-bs-dismiss="modal">Modify</button>
                 <button @onclick=DeleteTopicAsync type="submit" class="btn btn-danger" data-bs-dismiss="modal">Delete</button>
+
+                <form method="post" @onsubmit="HandleValidSubmit" @formname="AddFriendForm">
+                    <AntiforgeryToken />
+                    <div class="form-group">
+                        <label for="email">User Email:</label>
+                        <InputText @bind-Value="addFriendModel!.Email" id="email" />
+                    </div>
+                    <div class="@textClass">
+                        @displayText
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Friend</button>
+                </form>
             }
             else {
                 <p>Reached invalid state, pls test and fix</p>
@@ -73,23 +85,6 @@ else {
 @if (user != null)
 {   
     <div class="container">
-        <h3>Add a Friend to a Topic</h3>
-            
-        <form method="post" onsubmit="HandleValidSubmit" name="AddFriendForm">
-            <input type="hidden" asp-antiforgery="true" />
-            <div class="form-group">
-                <label for="topicId">Topic ID:</label>
-                <input type="number" asp-for="addFriendModel.TopicId" id="topicId" class="form-control" />
-            </div>
-
-            <div class="form-group">
-                <label for="email">User Email:</label>
-                <input type="email" asp-for="addFriendModel.Email" id="email" class="form-control" />
-            </div>
-
-            <button type="submit" class="btn btn-primary">Add Friend</button>
-        </form>
-
     <h3>Accessible Topics</h3>
 
     @if (accessableTopicIdsToDisplay == null)
@@ -216,6 +211,8 @@ else
     private ApplicationUser user;
 
     private AddFriendModel addFriendModel;
+    private string displayText = "";
+    private string textClass = "d-none";
 
     private List<int> accessableTopicIdsToDisplay;
 
@@ -242,11 +239,13 @@ else
         try
         {
             var response = await TopicFriendService.AddTopicFriend(addFriendModel.TopicId, addFriendModel.Email);
-            Console.WriteLine("Friend added successfully!");
+            displayText = "Friend added.";
+            textClass = "text-dark bg-success border border-dark p-3";
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error: {ex.Message}");
+            displayText = ex.Message;
+            textClass = "text-dark bg-danger border border-dark p-3";
         }
     }
 
@@ -293,6 +292,7 @@ else
     private void ManageSelectedTopic(TopicDTO topic) {
         _modalMode = "modify";
         TopicModel.Id = topic.Id;
+        addFriendModel.TopicId = TopicModel.Id;
         TopicModel.Title = topic.Title;
         TopicModel.Description = topic.Description;
         TopicModel.CssColor = topic.CssColor;
