@@ -20,10 +20,10 @@ else if (exercises.Count == 0)
 }
 else
 {
-    @foreach (var exercise in exercises)
-    {
-        <li>@exercise.Title @exercise.Steps</li>
-    }
+        @foreach (var exercise in exercises)
+        {
+            <ExerciseItem exercise="@exercise" OnExerciseDeleted="RefreshExercises" OnExerciseEditRequested="EditExercise" />
+        }
 }
 
 @code {
@@ -39,5 +39,10 @@ else
     {
         exercises = await ExerciseRepository.GetAllExercisesAsync();
         StateHasChanged(); // Ensure UI refresh
+    }
+
+
+    void EditExercise(int exerciseId)
+    {
     }
 }

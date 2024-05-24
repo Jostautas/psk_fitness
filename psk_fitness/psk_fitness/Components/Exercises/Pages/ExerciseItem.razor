@@ -1,0 +1,178 @@
+﻿@using psk_fitness.Client.DTOs.WorkoutDTOs
+@using psk_fitness.Interfaces
+@inject IExerciseRepository ExerciseRepository
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<li class="exercise-item custom-background">
+    <div class="exercise-header d-flex align-items-center justify-content-between">
+        <span class="exercise-title">@exercise.Title</span>
+        <div>
+            <button @onclick="ToggleDetails" class="btn btn-link">
+                @if (showDetails)
+                {
+                    <i class="fas fa-chevron-up"></i> <!-- Up arrow -->
+                }
+                else
+                {
+                    <i class="fas fa-chevron-down"></i> <!-- Down arrow -->
+                }
+            </button>
+            <button @onclick="EditExercise" class="btn btn-link text-warning">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button @onclick="DeleteExercise" class="btn btn-link text-danger">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </div>
+    </div>
+    @if (showDetails)
+    {
+        <div class="exercise-details">
+            <div class="info-container">
+                <div class="info-field duration-field">
+                    <p class="exercise-info">
+                        <strong>Duration:</strong> @exercise.DurationHours hrs @exercise.DurationMinutes min @exercise.DurationSeconds sec
+                    </p>
+                </div>
+                <div class="info-field sets-reps-field">
+                    <p class="exercise-info">
+                        <strong>Sets/Reps:</strong> @($"{exercise.Sets}x{exercise.Reps}")
+                    </p>
+                </div>
+            </div>
+            <p class="exercise-description">@exercise.Description</p>
+            <div class="steps-section">
+                <ol>
+                    @foreach (var step in GetSteps())
+                    {
+                        <li>@step</li>
+                    }
+                </ol>
+            </div>
+            <p><strong>Notes:</strong> @exercise.Notes</p>
+        </div>
+    }
+</li>
+
+<style>
+    .exercise-list {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .exercise-item {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+    }
+
+    .custom-background {
+        background-color: #F5E9B0; /* Lighter background color */
+        /* Alternatively, for a darker background, use: background-color: #333; color: #fff; */
+    }
+
+    .exercise-header {
+        font-size: 1.2em;
+    }
+
+    .exercise-title {
+        font-weight: bold;
+    }
+
+    .exercise-details {
+        margin-top: 10px;
+    }
+
+    .info-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .info-field {
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+    }
+
+    .duration-field {
+        flex: 1;
+        min-width: 150px;
+    }
+
+    .sets-reps-field {
+        flex: 0 1 auto;
+    }
+
+    .exercise-info {
+        display: flex;
+        align-items: center;
+        margin: 0;
+    }
+
+        .exercise-info strong {
+            margin-right: 5px; /* Adjust the value to create the desired gap */
+        }
+
+    .info-value {
+        margin-right: 10px; /* Adjust the value to create the desired gap */
+    }
+
+    .exercise-description {
+        font-style: italic;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .steps-section {
+        background-color: #E6A739; /* Background color for steps section */
+        padding: 10px;
+        border-radius: 10px;
+        margin-top: 10px;
+    }
+
+        .steps-section ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .steps-section li {
+            margin-bottom: 5px;
+        }
+</style>
+
+@code {
+    [Parameter] public ExerciseDisplayDTO exercise { get; set; }
+    [Parameter] public EventCallback OnExerciseDeleted { get; set; }
+    [Parameter] public EventCallback<int> OnExerciseEditRequested { get; set; }
+    private bool showDetails = false;
+
+    private void ToggleDetails()
+    {
+        showDetails = !showDetails;
+    }
+
+    private async Task DeleteExercise()
+    {
+        await ExerciseRepository.DeleteExerciseAsync(exercise.Id);
+        await OnExerciseDeleted.InvokeAsync(null);
+    }
+
+    private async Task EditExercise()
+    {
+        await OnExerciseEditRequested.InvokeAsync(exercise.Id);
+    }
+
+    private IEnumerable<string> GetSteps()
+    {
+        if (string.IsNullOrEmpty(exercise.Steps))
+        {
+            return Array.Empty<string>();
+        }
+
+        return exercise.Steps.Split('>').Select(step => step.Trim()).Where(step => !string.IsNullOrWhiteSpace(step));
+    }
+}
