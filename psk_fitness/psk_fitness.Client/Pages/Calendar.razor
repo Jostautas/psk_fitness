@@ -23,21 +23,22 @@
     @for (var day = 1; day <= DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month); day++)
     {
         var workout = Workouts?.FirstOrDefault(w => w.Day == day);
-        
+        var currcentDay = day;
+
         <div class="calendar-day">
             <span class="day">@day</span>
             @if (workout == null)
             {
                 <div class="workout-box">
                     <span>Rest</span>
-                    <button class="edit-button" @onclick="() => Modal.Open()">Create</button>
+                    <button class="edit-button" @onclick="() => Modal.Open(currcentDay)">Create</button>
                 </div>
             }
             else
             {
                 <div class="workout-box">
                     <span>@workout.Title</span>
-                    <button class="edit-button" @onclick="() => Modal.Open(workout.Id)">Edit</button>
+                    <button class="edit-button" @onclick="() => Modal.Open(workout.Id, currcentDay)">Edit</button>
                 </div>
             }
 

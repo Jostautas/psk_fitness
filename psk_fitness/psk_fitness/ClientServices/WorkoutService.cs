@@ -39,7 +39,7 @@ namespace psk_fitness.ClientServices
                 Topic = selectedTopic,
                 TopicId = workout.TopicId,
                 Title = workout.Title,
-                Date = DateOnly.FromDateTime(DateTime.Now),
+                Date = workout.Date,
                 Description = workout.Description,
                 FriendsNotes = workout.FriendsNotes,
                 Notes = workout.Notes,

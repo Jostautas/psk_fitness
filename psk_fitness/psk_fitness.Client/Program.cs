@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using psk_fitness.Client;
-using Microsoft.Extensions.DependencyInjection;
 using psk_fitness.Client.Interfaces;
 using psk_fitness.Client.Services;
 

@@ -114,10 +114,18 @@
     public string ModalClass = "";
     public bool ShowBackdrop = false;
 
+    private int _selectedDayOnCalendar;
+
     private async Task CreateWorkout()
     {
+        Console.WriteLine("Starting to create a workout");
         try
         {
+            Console.WriteLine(DateTime.Now.Year);
+            Console.WriteLine(DateTime.Now.Month);
+            Console.WriteLine(_selectedDayOnCalendar);
+
+            newWorkout.Date = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, _selectedDayOnCalendar);
             newWorkout.TopicId = 1;
             WorkoutCreateDTO result = await WorkoutService.CreateWorkoutAsync(newWorkout);
             Console.WriteLine("Workout created successfully!");
@@ -152,7 +160,16 @@
         StateHasChanged();
     }
 
-    public async Task Open(int id)
+    public void Open(int day)
+    {
+        _selectedDayOnCalendar = day;
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    public async Task Open(int id, int day)
     {
         newWorkout = await WorkoutService.GetByIdAsync(id);
 
