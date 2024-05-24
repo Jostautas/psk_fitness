@@ -11,18 +11,18 @@
 @using Microsoft.AspNetCore.Components
 
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newExerciseModal">
+<button type="button" class="btn btn-primary" @onclick="OpenModal">
     New Exercise
 </button>
 
-<EditForm Model="exerciseDTO" OnSubmit="HandleSubmit">
-    <div class="modal fade" id="newExerciseModal" tabindex="-1" aria-labelledby="newExerciseModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="newExerciseModalLabel">Create New Exercise</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
+<div class="@ModalDisplayClass" tabindex="-1" aria-labelledby="newExerciseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newExerciseModalLabel">Create New Exercise</h5>
+                <button type="button" class="btn-close" @onclick="CloseModal" aria-label="Close"></button>
+            </div>
+            <EditForm Model="exerciseDTO" OnSubmit="HandleSubmit">
                 <div class="modal-body">
                     <div class="mb-3 d-flex align-items-center">
                         <label for="exerciseName" class="form-label me-1" style="margin-bottom: 0;">Name:</label>
@@ -70,14 +70,14 @@
                             }
                         </ul>
                     </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Create</button>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Create</button>
-                </div>
-            </div>
+            </EditForm>
         </div>
     </div>
-</EditForm>
+</div>
 
 @code {
     [Parameter]
@@ -85,6 +85,21 @@
 
     private ExerciseCreateDTO exerciseDTO = new ExerciseCreateDTO();
     private List<string> steps = new List<string>();
+    private bool isModalOpen = false;
+
+    private string ModalDisplayClass => isModalOpen ? "modal fade show d-block" : "modal fade";
+
+    private void OpenModal()
+    {
+        isModalOpen = true;
+        StateHasChanged();
+    }
+
+    private void CloseModal()
+    {
+        isModalOpen = false;
+        StateHasChanged();
+    }
 
     private void AddStep()
     {
@@ -125,6 +140,6 @@
         steps.Clear();
 
         // Close the modal
-        await JsRuntime.InvokeVoidAsync("hideModal", "newExerciseModal");
+        CloseModal();
     }
 }
