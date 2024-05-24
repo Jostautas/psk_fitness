@@ -365,3 +365,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /psk_fitness/psk_fitness/mydatabase.db
+/.idea
