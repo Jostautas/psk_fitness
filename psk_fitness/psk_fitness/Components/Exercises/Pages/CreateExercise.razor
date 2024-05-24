@@ -20,7 +20,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="newExerciseModalLabel">Create New Exercise</h5>
+                <h5 class="modal-title" id="newExerciseModalLabel">@ModalTitle</h5>
                 <button type="button" class="btn-close" @onclick="CloseModal" aria-label="Close"></button>
             </div>
             <EditForm Model="exerciseDTO" OnSubmit="HandleSubmit">
@@ -62,23 +62,15 @@
                             </div>
                         }
                     </div>
-                    <div>
-                        <p>Debug output:</p>
-                        <ul>
-                            @foreach (var step in steps)
-                            {
-                                <li>@step</li>
-                            }
-                        </ul>
-                    </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Create</button>
+                        <button type="submit" class="btn btn-primary">@SubmitButtonText</button>
                     </div>
                 </div>
             </EditForm>
         </div>
     </div>
 </div>
+
 
 @code {
     [Parameter] public int? exerciseId { get; set; }
@@ -87,6 +79,10 @@
     private ExerciseCreateDTO exerciseDTO = new ExerciseCreateDTO();
     private List<string> steps = new List<string>();
     private bool isModalOpen = false;
+
+    private string ModalTitle => exerciseId.HasValue && exerciseId.Value != 0 ? "Edit Exercise" : "Create New Exercise";
+    private string SubmitButtonText => exerciseId.HasValue && exerciseId.Value != 0 ? "Save" : "Create";
+    private string ModalDisplayClass => isModalOpen ? "modal fade show d-block" : "modal fade";
 
     protected override async Task OnParametersSetAsync()
     {
@@ -119,8 +115,6 @@
         await OnParametersSetAsync();
         OpenModal();
     }
-
-    private string ModalDisplayClass => isModalOpen ? "modal fade show d-block" : "modal fade";
 
     private void OpenModal()
     {
