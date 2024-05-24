@@ -4,12 +4,10 @@
 @using Microsoft.Extensions.Logging
 @using psk_fitness.Data
 @using psk_fitness.Interfaces
-@inject IJSRuntime JsRuntime
-@inject NavigationManager Navigation
-@inject IExerciseRepository ExerciseRepository
-@inject ILogger<CreateExercise> Logger
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components
+
+@inject IExerciseRepository ExerciseRepository
 
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" @onclick="OpenModal">
@@ -71,7 +69,6 @@
     </div>
 </div>
 
-
 @code {
     [Parameter] public int? exerciseId { get; set; }
     [Parameter] public EventCallback OnExerciseCreated { get; set; }
@@ -107,6 +104,10 @@
                 steps = exerciseDTO.Steps.Split('>').ToList();
             }
         }
+        else
+        {
+            ResetModal();
+        }
     }
 
     public async Task OpenModalForEdit(int exerciseId)
@@ -124,6 +125,7 @@
 
     private void CloseModal()
     {
+        ResetModal();
         isModalOpen = false;
         StateHasChanged();
     }
@@ -131,24 +133,19 @@
     private void AddStep()
     {
         steps.Add(string.Empty);
-        Logger.LogInformation("Step Added, Total Steps: {Count}", steps.Count);
     }
 
     private void RemoveStep(string step)
     {
-        Logger.LogInformation("Remove Step Called, Step: {Step}, Steps Count Before: {Count}", step, steps.Count);
         steps.Remove(step);
-        Logger.LogInformation("Step Removed, Total Steps After: {Count}", steps.Count);
     }
 
     private void UpdateStep(string value, string oldStep)
     {
-        Logger.LogInformation("UPDATE STEP CALLED with value " + value + " for step " + oldStep);
         int index = steps.IndexOf(oldStep);
         if (index >= 0 && index < steps.Count)
         {
             steps[index] = value;
-            Logger.LogInformation("Step Updated, Index: {Index}, Value: {Value}", index, value);
         }
     }
 
@@ -166,15 +163,15 @@
         }
         await OnExerciseCreated.InvokeAsync(null); // Notify parent component
 
-        // Debug output
-        Logger.LogInformation("Submitted exercise: {ExerciseDTO}", JsonSerializer.Serialize(exerciseDTO));
-
         // Clear form after submission
+        ResetModal();
+        CloseModal();
+    }
+
+    private void ResetModal()
+    {
         exerciseDTO = new ExerciseCreateDTO();
         steps.Clear();
-        exerciseId = 0;
-
-        // Close the modal
-        CloseModal();
+        exerciseId = null;
     }
 }
