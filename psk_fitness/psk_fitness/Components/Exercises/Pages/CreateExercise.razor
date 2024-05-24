@@ -1,4 +1,5 @@
 ﻿@page "/edit-exercise"
+@page "/edit-exercise/{exerciseId:int}"
 @using System.Text.Json
 @using Microsoft.Extensions.Logging
 @using psk_fitness.Data
@@ -80,12 +81,44 @@
 </div>
 
 @code {
-    [Parameter]
-    public EventCallback OnExerciseCreated { get; set; }
+    [Parameter] public int? exerciseId { get; set; }
+    [Parameter] public EventCallback OnExerciseCreated { get; set; }
 
     private ExerciseCreateDTO exerciseDTO = new ExerciseCreateDTO();
     private List<string> steps = new List<string>();
     private bool isModalOpen = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (exerciseId.HasValue && exerciseId.Value != 0)
+        {
+            var exercise = await ExerciseRepository.GetExerciseAsync(exerciseId.Value);
+            if (exercise != null)
+            {
+                exerciseDTO = new ExerciseCreateDTO
+                    {
+                        Title = exercise.Title,
+                        Description = exercise.Description,
+                        DurationHours = exercise.DurationHours,
+                        DurationMinutes = exercise.DurationMinutes,
+                        DurationSeconds = exercise.DurationSeconds,
+                        Sets = exercise.Sets,
+                        Reps = exercise.Reps,
+                        Notes = exercise.Notes,
+                        Steps = exercise.Steps,
+                        WorkoutId = exercise.WorkoutId
+                    };
+                steps = exerciseDTO.Steps.Split('>').ToList();
+            }
+        }
+    }
+
+    public async Task OpenModalForEdit(int exerciseId)
+    {
+        this.exerciseId = exerciseId;
+        await OnParametersSetAsync();
+        OpenModal();
+    }
 
     private string ModalDisplayClass => isModalOpen ? "modal fade show d-block" : "modal fade";
 
@@ -128,8 +161,15 @@
     private async Task HandleSubmit()
     {
         exerciseDTO.Steps = string.Join(">", steps); // Combine steps into a single string
-        exerciseDTO.WorkoutId = 1;
-        await ExerciseRepository.AddExerciseAsync(exerciseDTO);
+        if (exerciseId.HasValue && exerciseId.Value != 0)
+        {
+            await ExerciseRepository.UpdateExerciseAsync(exerciseId.Value, exerciseDTO);
+        }
+        else
+        {
+            exerciseDTO.WorkoutId = 1;
+            await ExerciseRepository.AddExerciseAsync(exerciseDTO);
+        }
         await OnExerciseCreated.InvokeAsync(null); // Notify parent component
 
         // Debug output
@@ -138,6 +178,7 @@
         // Clear form after submission
         exerciseDTO = new ExerciseCreateDTO();
         steps.Clear();
+        exerciseId = 0;
 
         // Close the modal
         CloseModal();
