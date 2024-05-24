@@ -1,4 +1,4 @@
-﻿@page "/exercises"
+﻿@page "/exercises/{workoutId:int}"
 
 @using psk_fitness.Interfaces
 @inject IExerciseRepository ExerciseRepository
@@ -6,7 +6,7 @@
 @rendermode InteractiveServer
 
 <div class="d-flex align-items-center">
-    <h3 class="me-3">Exercises:</h3> 
+    <h3 class="me-3">Exercises:</h3>
     <CreateExercise OnExerciseCreated="RefreshExercises" />
 </div>
 
@@ -20,29 +20,27 @@ else if (exercises.Count == 0)
 }
 else
 {
+    <ul class="exercise-list">
         @foreach (var exercise in exercises)
         {
-            <ExerciseItem exercise="@exercise" OnExerciseDeleted="RefreshExercises" OnExerciseEditRequested="EditExercise" />
+            <ExerciseItem exercise="@exercise" OnExerciseDeleted="RefreshExercises" />
         }
+    </ul>
 }
 
 @code {
+    [Parameter] public int workoutId { get; set; }
     List<ExerciseDisplayDTO> exercises;
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("Hello from Blazor component!");
+        Console.WriteLine($"Fetching exercises for workout ID: {workoutId}");
         await RefreshExercises();
     }
 
     async Task RefreshExercises()
     {
-        exercises = await ExerciseRepository.GetAllExercisesAsync();
+        exercises = await ExerciseRepository.GetExercisesByWorkoutId(workoutId);
         StateHasChanged(); // Ensure UI refresh
     }
-
-
-    void EditExercise(int exerciseId)
-    {
-    }
-}
+} 
