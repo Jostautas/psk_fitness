@@ -7,7 +7,7 @@
 
 <div class="d-flex align-items-center">
     <h3 class="me-3">Exercises:</h3>
-    <CreateExercise OnExerciseCreated="RefreshExercises" />
+    <CreateExercise @ref="createExerciseComponent" OnExerciseCreated="RefreshExercises" />
 </div>
 
 @if (exercises == null)
@@ -23,7 +23,7 @@ else
     <ul class="exercise-list">
         @foreach (var exercise in exercises)
         {
-            <ExerciseItem exercise="@exercise" OnExerciseDeleted="RefreshExercises" />
+            <ExerciseItem exercise="@exercise" OnExerciseDeleted="RefreshExercises" OnExerciseEditRequested="EditExercise" />
         }
     </ul>
 }
@@ -31,6 +31,7 @@ else
 @code {
     [Parameter] public int workoutId { get; set; }
     List<ExerciseDisplayDTO> exercises;
+    CreateExercise createExerciseComponent;
 
     protected override async Task OnInitializedAsync()
     {
@@ -43,4 +44,9 @@ else
         exercises = await ExerciseRepository.GetExercisesByWorkoutId(workoutId);
         StateHasChanged(); // Ensure UI refresh
     }
-} 
+
+    void EditExercise(int exerciseId)
+    {
+        createExerciseComponent.OpenModalForEdit(exerciseId);
+    }
+}
