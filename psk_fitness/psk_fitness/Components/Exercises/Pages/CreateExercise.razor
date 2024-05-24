@@ -21,26 +21,28 @@
                 <h5 class="modal-title" id="newExerciseModalLabel">@ModalTitle</h5>
                 <button type="button" class="btn-close" @onclick="CloseModal" aria-label="Close"></button>
             </div>
-            <EditForm Model="exerciseDTO" OnSubmit="HandleSubmit">
+            <EditForm Model="exerciseDTO" OnValidSubmit="HandleSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
                 <div class="modal-body">
                     <div class="mb-3 d-flex align-items-center">
                         <label for="exerciseName" class="form-label me-1" style="margin-bottom: 0;">Name:</label>
-                        <InputText @bind-Value="exerciseDTO.Title" class="form-control" style="width: 100%" />
+                        <InputText @bind-Value="exerciseDTO.Title" class="form-control" style="width: 100%" required />
                     </div>
                     <div class="mb-3">
                         <label for="exerciseDescription" class="form-label">Description:</label>
-                        <textarea @bind="exerciseDTO.Description" class="form-control" style="width: 100%"></textarea>
+                        <textarea @bind="exerciseDTO.Description" class="form-control" style="width: 100%" required></textarea>
                     </div>
                     <div class="mb-3 d-flex align-items-center">
                         <label for="exerciseTimeHours" class="form-label">Time:</label>
-                        <InputNumber @bind-Value="exerciseDTO.DurationHours" style="width: 67px;" />
-                        <InputNumber @bind-Value="exerciseDTO.DurationMinutes" style="width: 67px;" />
-                        <InputNumber @bind-Value="exerciseDTO.DurationSeconds" style="width: 67px;" />
+                        <InputNumber @bind-Value="exerciseDTO.DurationHours" style="width: 67px;" min="0" max="23" />
+                        <InputNumber @bind-Value="exerciseDTO.DurationMinutes" style="width: 67px;" min="0" max="59" />
+                        <InputNumber @bind-Value="exerciseDTO.DurationSeconds" style="width: 67px;" min="0" max="59" />
                         <div style="width:40px"></div>
                         <label for="exerciseSets" class="form-label mx-1">Sets:</label>
-                        <InputNumber @bind-Value="exerciseDTO.Sets" style="width: 65px;" />
+                        <InputNumber @bind-Value="exerciseDTO.Sets" style="width: 65px;" min="0" />
                         <label for="exerciseReps" class="form-label mx-1">Reps:</label>
-                        <InputNumber @bind-Value="exerciseDTO.Reps" style="width: 65px;" />
+                        <InputNumber @bind-Value="exerciseDTO.Reps" style="width: 65px;" min="0" />
                     </div>
                     <div class="mb-3">
                         <label for="exerciseNotes" class="form-label">Notes:</label>
@@ -60,6 +62,7 @@
                             </div>
                         }
                     </div>
+                    <div class="text-danger">@errorMessage</div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">@SubmitButtonText</button>
                     </div>
@@ -76,6 +79,7 @@
     private ExerciseCreateDTO exerciseDTO = new ExerciseCreateDTO();
     private List<string> steps = new List<string>();
     private bool isModalOpen = false;
+    private string errorMessage;
 
     private string ModalTitle => exerciseId.HasValue && exerciseId.Value != 0 ? "Edit Exercise" : "Create New Exercise";
     private string SubmitButtonText => exerciseId.HasValue && exerciseId.Value != 0 ? "Save" : "Create";
@@ -152,6 +156,16 @@
     private async Task HandleSubmit()
     {
         exerciseDTO.Steps = string.Join(">", steps); // Combine steps into a single string
+
+        // Custom validation
+        if (steps.Count == 0 || steps.All(string.IsNullOrWhiteSpace))
+        {
+            errorMessage = "Exercise must have at least one step.";
+            return;
+        }
+
+        errorMessage = string.Empty;
+
         if (exerciseId.HasValue && exerciseId.Value != 0)
         {
             await ExerciseRepository.UpdateExerciseAsync(exerciseId.Value, exerciseDTO);
