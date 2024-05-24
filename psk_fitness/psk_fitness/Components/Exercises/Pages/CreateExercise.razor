@@ -1,23 +1,21 @@
-﻿@using System.Text.Json
+﻿@page "/edit-exercise"
+@using System.Text.Json
+@using Microsoft.Extensions.Logging
 @using psk_fitness.Data
 @using psk_fitness.Interfaces
-@page "/edit-exercise"
-@page "/edit-exercise/{id:int}"
-
-@rendermode InteractiveServer
 @inject IJSRuntime JsRuntime
-
 @inject NavigationManager Navigation
 @inject IExerciseRepository ExerciseRepository
-
+@inject ILogger<CreateExercise> Logger
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components
 
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newExerciseModal">
     New Exercise
 </button>
 
-<!-- Modal -->
-<EditForm Model="exerciseDTO" OnSubmit="HandleSubmit" FormName="ExerciseForm">
+<EditForm Model="exerciseDTO" OnSubmit="HandleSubmit">
     <div class="modal fade" id="newExerciseModal" tabindex="-1" aria-labelledby="newExerciseModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -25,7 +23,6 @@
                     <h5 class="modal-title" id="newExerciseModalLabel">Create New Exercise</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-
                 <div class="modal-body">
                     <div class="mb-3 d-flex align-items-center">
                         <label for="exerciseName" class="form-label me-1" style="margin-bottom: 0;">Name:</label>
@@ -35,33 +32,43 @@
                         <label for="exerciseDescription" class="form-label">Description:</label>
                         <textarea @bind="exerciseDTO.Description" class="form-control" style="width: 100%"></textarea>
                     </div>
-
                     <div class="mb-3 d-flex align-items-center">
                         <label for="exerciseTimeHours" class="form-label">Time:</label>
-                        <InputNumber @bind-Value="exerciseDTO.DurationHours" style="width: 67px;"> </InputNumber>
-                        <InputNumber @bind-Value="exerciseDTO.DurationMinutes" style="width: 67px;"> </InputNumber>
-                        <InputNumber @bind-Value="exerciseDTO.DurationSeconds" style="width: 67px;"> </InputNumber>
+                        <InputNumber @bind-Value="exerciseDTO.DurationHours" style="width: 67px;" />
+                        <InputNumber @bind-Value="exerciseDTO.DurationMinutes" style="width: 67px;" />
+                        <InputNumber @bind-Value="exerciseDTO.DurationSeconds" style="width: 67px;" />
                         <div style="width:40px"></div>
-
-
-                        <label for="exerciseSets" class="form-label mx-1">Sets:</label> <!-- Increased margin from mx-1 to mx-3 -->
-                        <InputNumber @bind-Value="exerciseDTO.Sets" style="width: 65px;"> </InputNumber>
-
+                        <label for="exerciseSets" class="form-label mx-1">Sets:</label>
+                        <InputNumber @bind-Value="exerciseDTO.Sets" style="width: 65px;" />
                         <label for="exerciseReps" class="form-label mx-1">Reps:</label>
-                        <InputNumber @bind-Value="exerciseDTO.Reps" style="width: 65px;"> </InputNumber>
+                        <InputNumber @bind-Value="exerciseDTO.Reps" style="width: 65px;" />
                     </div>
-
                     <div class="mb-3">
                         <label for="exerciseNotes" class="form-label">Notes:</label>
                         <textarea @bind="exerciseDTO.Notes" class="form-control" style="width: 100%"></textarea>
                     </div>
                     <div class="mb-3 d-flex align-items-center">
                         <label class="form-label me-2">Steps:</label>
-                        <button type="button" class="btn btn-primary btn-sm me-2" onclick="addStep()" style="height: 30px; width: 30px;">+</button> <!-- Adjusted button size -->
+                        <button type="button" class="btn btn-primary btn-sm me-2" @onclick="AddStep" style="height: 30px; width: 30px;">+</button>
                     </div>
                     <div class="mb-3">
-                        <div id="exerciseSteps">
-                        </div>
+                        @foreach (var step in steps)
+                        {
+                            <div class="step-container d-flex align-items-center">
+                                <label class="form-label me-2">@($"{steps.IndexOf(step) + 1}.")</label>
+                                <InputText Value="@step" ValueChanged="@(value => UpdateStep(value, step))" ValueExpression="@(() => step)" class="form-control mb-2" style="width: 100%;" />
+                                <button type="button" class="btn btn-danger btn-sm ms-2" @onclick="@(() => RemoveStep(step))" style="height: 30px; width: 30px;">-</button>
+                            </div>
+                        }
+                    </div>
+                    <div>
+                        <p>Debug output:</p>
+                        <ul>
+                            @foreach (var step in steps)
+                            {
+                                <li>@step</li>
+                            }
+                        </ul>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -72,75 +79,52 @@
     </div>
 </EditForm>
 
-<script>
-    function addStep() {
-        var stepCount = document.querySelectorAll('#exerciseSteps .step-container').length + 1;
-        var newStepDiv = document.createElement('div');
-        newStepDiv.classList.add('step-container', 'd-flex', 'align-items-center');
-        newStepDiv.innerHTML = '<label class="form-label me-2">' + stepCount + '.</label><input type="text" class="form-control mb-2" name="Steps[' + (stepCount - 1) + ']" /><button type="button" class="btn btn-danger btn-sm ms-2" onclick="removeStep(this)">-</button>'; // Added delete button
-        document.getElementById('exerciseSteps').appendChild(newStepDiv);
-    }
-
-    function removeStep(button) {
-        var stepContainer = button.parentNode;
-        stepContainer.parentNode.removeChild(stepContainer);
-        // Update step numbers
-        var stepContainers = document.querySelectorAll('#exerciseSteps .step-container');
-        stepContainers.forEach(function (stepContainer, index) {
-            stepContainer.querySelector('.form-label').innerText = (index + 1) + '.';
-        });
-    }
-
-    window.getHtmlContent = function () {
-        return document.documentElement.outerHTML;
-    }
-</script>
-
 @code {
-    [Parameter]
-    public int? Id { get; set; }
-
     [Parameter]
     public EventCallback OnExerciseCreated { get; set; }
 
-    [SupplyParameterFromForm]
-    ExerciseCreateDTO exerciseDTO { get; set; } = new ExerciseCreateDTO(); // Initialize a new Exercise object
+    private ExerciseCreateDTO exerciseDTO = new ExerciseCreateDTO();
+    private List<string> steps = new List<string>();
 
-    List<string> exerciseSteps = new List<string>();
-
-
-
-    string htmlContent = ""; // Receive HTML content containing the steps
-
-    public CreateExercise()
+    private void AddStep()
     {
+        steps.Add(string.Empty);
+        Logger.LogInformation("Step Added, Total Steps: {Count}", steps.Count);
     }
 
-    async Task HandleSubmit()
+    private void RemoveStep(string step)
     {
-        // Parse HTML content with HTML Agility Pack
+        Logger.LogInformation("Remove Step Called, Step: {Step}, Steps Count Before: {Count}", step, steps.Count);
+        steps.Remove(step);
+        Logger.LogInformation("Step Removed, Total Steps After: {Count}", steps.Count);
+    }
 
-        htmlContent = await JsRuntime.InvokeAsync<string>("getHtmlContent");
-
-        var htmlDocument = new HtmlAgilityPack.HtmlDocument();
-        htmlDocument.LoadHtml(htmlContent);
-
-        // Extract steps from the HTML document
-        var stepNodes = htmlDocument.DocumentNode.SelectNodes("//div[@id='exerciseSteps']//input[@type='text']");
-        if (stepNodes != null)
+    private void UpdateStep(string value, string oldStep)
+    {
+        Logger.LogInformation("UPDATE STEP CALLED with value " + value + " for step " + oldStep);
+        int index = steps.IndexOf(oldStep);
+        if (index >= 0 && index < steps.Count)
         {
-            foreach (var stepNode in stepNodes)
-            {
-                string stepValue = stepNode.InnerText.Trim();
-                //System.Diagnostics.Debug.WriteLine("Step Value: " + stepValue);
-                exerciseSteps.Add(stepValue);
-            }
-
-            exerciseDTO.WorkoutId = 1;
-            exerciseDTO.Steps = string.Join(";", exerciseSteps); ; //here excract all the steps into list of strings and make it into one string using delimiter ";"
-            
+            steps[index] = value;
+            Logger.LogInformation("Step Updated, Index: {Index}, Value: {Value}", index, value);
         }
+    }
+
+    private async Task HandleSubmit()
+    {
+        exerciseDTO.Steps = string.Join(">", steps); // Combine steps into a single string
         exerciseDTO.WorkoutId = 1;
         await ExerciseRepository.AddExerciseAsync(exerciseDTO);
+        await OnExerciseCreated.InvokeAsync(null); // Notify parent component
+
+        // Debug output
+        Logger.LogInformation("Submitted exercise: {ExerciseDTO}", JsonSerializer.Serialize(exerciseDTO));
+
+        // Clear form after submission
+        exerciseDTO = new ExerciseCreateDTO();
+        steps.Clear();
+
+        // Close the modal
+        await JsRuntime.InvokeVoidAsync("hideModal", "newExerciseModal");
     }
 }
