@@ -37,7 +37,7 @@
                 </div>
                 <div class="info-field sets-reps-field">
                     <p class="exercise-info">
-                        <strong>Sets/Reps:</strong> @($"{exercise.Sets}x{exercise.Reps}")
+                        <strong>Sets/Reps:</strong> @($"{exercise.Sets ?? 0}x{exercise.Reps ?? 0}")
                     </p>
                 </div>
             </div>
