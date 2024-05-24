@@ -16,15 +16,15 @@
 
 <div class="@ModalDisplayClass" tabindex="-1" aria-labelledby="newExerciseModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
+        <div class="modal-content custom-background">
+            <div class="modal-header custom-background">
                 <h5 class="modal-title" id="newExerciseModalLabel">@ModalTitle</h5>
                 <button type="button" class="btn-close" @onclick="CloseModal" aria-label="Close"></button>
             </div>
             <EditForm Model="exerciseDTO" OnValidSubmit="HandleSubmit">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
-                <div class="modal-body">
+                <div class="modal-body custom-background">
                     <div class="mb-3 d-flex align-items-center">
                         <label for="exerciseName" class="form-label me-1" style="margin-bottom: 0;">Name:</label>
                         <InputText @bind-Value="exerciseDTO.Title" class="form-control" style="width: 100%" required />
@@ -58,12 +58,14 @@
                             <div class="step-container d-flex align-items-center">
                                 <label class="form-label me-2">@($"{steps.IndexOf(step) + 1}.")</label>
                                 <InputText Value="@step" ValueChanged="@(value => UpdateStep(value, step))" ValueExpression="@(() => step)" class="form-control mb-2" style="width: 100%;" />
-                                <button type="button" class="btn btn-danger btn-sm ms-2" @onclick="@(() => RemoveStep(step))" style="height: 30px; width: 30px;">-</button>
+                                <button type="button" class="btn btn-danger btn-sm ms-2" @onclick="@(() => RemoveStep(step))" style="height: 30px; width: 30px;">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
                             </div>
                         }
                     </div>
                     <div class="text-danger">@errorMessage</div>
-                    <div class="modal-footer">
+                    <div class="modal-footer custom-background">
                         <button type="submit" class="btn btn-primary">@SubmitButtonText</button>
                     </div>
                 </div>
@@ -71,6 +73,14 @@
         </div>
     </div>
 </div>
+
+<style>
+    .custom-background {
+        background-color: #F5E9B0; /* Matching background color */
+        border-radius: 10px;
+        padding: 10px;
+    }
+</style>
 
 @code {
     [Parameter] public int? exerciseId { get; set; }
