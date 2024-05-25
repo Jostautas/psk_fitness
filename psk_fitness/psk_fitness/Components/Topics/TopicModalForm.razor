@@ -1,43 +1,39 @@
-﻿@rendermode InteractiveServer
-
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTopicModal">
-    New topic
-</button>
+@rendermode InteractiveServer
 
 <!-- Modal -->
 <div class="modal fade" id="newTopicModal" tabindex="-1" aria-labelledby="newTopicModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content" style=@($"background-color: {CreateTopicModel.CssColor}")>
+        <div class="modal-content" style=@($"background-color: {TopicModel.CssColor}")>
             <div class="modal-header">
                 <h5 class="modal-title" id="newTopicModalLabel">@GetCardTitle()</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <EditForm Model=@CreateTopicModel OnSubmit=@HandleSubmit FormName="CreateTopicForm">
+            <EditForm Model=@TopicModel FormName="CreateTopicForm">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="topicTitle" class="form-label">Title</label>
-                        <InputText @bind-Value=CreateTopicModel.Title class="form-control" id="topicTitle" placeholder="Enter topic title" />
+                        <InputText @bind-Value=TopicModel.Title class="form-control" id="topicTitle" placeholder="Enter topic title" />
                     </div>
                     <div class="mb-3">
                         <label for="topicDescription" class="form-label">Description</label>
-                        <InputTextArea @bind-Value=CreateTopicModel.Description class="form-control" id="topicDescription" rows="3"
+                        <InputTextArea @bind-Value=TopicModel.Description class="form-control" id="topicDescription" rows="3"
                             placeholder="Enter topic description"></InputTextArea>
                     </div>
                     <div class="mb-3 d-flex">
                         <label for="topicColor" class="form-label">Color</label>
-                        <InputRadioGroup @bind-Value=CreateTopicModel!.CssColor>
+                        <InputRadioGroup @bind-Value=TopicModel!.CssColor>
                             @foreach (CssColor color in _availableCssTopicColors)
                             {
-                                <InputRadio Value=color class="color-circle"
-                                    style=@($"background-color: {color}")>
+                                <InputRadio Value=color
+                                class=@($"color-circle {GetColorCircleSelectedStyle(color)}")
+                                style=@($"background-color: {color}")>
                                 </InputRadio>
                             }
                         </InputRadioGroup>
                     </div>
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
-                    <button type="submit" class="btn btn-primary">Create</button>
+                    @ChildContent
                 </div>
             </EditForm>
         </div>
@@ -64,23 +60,28 @@
         outline: none;
     }
 
-    input[type="radio"]:checked {
+    .selected {
         border: 5px solid black;
     }
 </style>
 
 
 @code {
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+
     [Parameter]
-    public EventCallback<Task> OnUserCreated {get; set;}
-    [Inject]
-    public ITopicService TopicService {get; set;}
+    public int TopicHash {get; set;}
+
+    [SupplyParameterFromForm]
+    public TopicDTO TopicModel {get; set;}
+
 
     [Inject]
     AuthenticationStateProvider AuthenticationStateProvider {get; set;}
 
-    [SupplyParameterFromForm]
-    public TopicCreateDTO CreateTopicModel {get; set;}
+    [Inject]
+    StateContainer Container {get; set;}
 
     private List<CssColor> _availableCssTopicColors { get; set; }
     = new() {
@@ -89,20 +90,26 @@
         new CssColor(CssColorMode.RGBA, (150, 150, 255).ToTuple()),    
     };
 
-    protected override void OnInitialized(){
-        CreateTopicModel ??= new();
-    }
-
-    private async Task HandleSubmit() {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var userEmail = authState.User.Identity.Name;
-        await TopicService.CreateTopicAsync(CreateTopicModel, userEmail);
-        await OnUserCreated.InvokeAsync();
+    protected override void OnInitialized() {
+        TopicModel = Container.PopObject<TopicDTO>(TopicHash);
     }
 
     private string GetCardTitle() {
-        return String.IsNullOrEmpty(CreateTopicModel.Title)
-            || String.IsNullOrWhiteSpace(CreateTopicModel.Title)?
-            "New topic" : CreateTopicModel.Title;
+        return String.IsNullOrEmpty(TopicModel.Title)
+            || String.IsNullOrWhiteSpace(TopicModel.Title)?
+            "New topic" : TopicModel.Title;
+    }
+
+    private string GetColorCircleSelectedStyle(CssColor color) {
+        if (TopicModel.CssColor == null) {
+            return "";
+        }
+        string style = "";
+        string modelColorCss = TopicModel.CssColor.ToString();
+        if (color.ToString().Equals(modelColorCss))
+        {
+            style = "selected";
+        }
+        return style;
     }
 }

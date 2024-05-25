@@ -11,8 +11,8 @@ using psk_fitness.Data;
 namespace psk_fitness.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240502071016_newBranchMigration")]
-    partial class newBranchMigration
+    [Migration("20240514143641_InitialCreateSqlite")]
+    partial class InitialCreateSqlite
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -231,7 +231,7 @@ namespace psk_fitness.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateOnly?>("Duration")
+                    b.Property<TimeSpan?>("Duration")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FriendsNotes")
