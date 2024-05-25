@@ -11,6 +11,7 @@ using psk_fitness.ClientServices;
 using psk_fitness.Properties;
 using psk_fitness.Interfaces.Services;
 using psk_fitness.Services;
+using psk_fitness.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,8 @@ builder.Services.AddScoped<ITopicService, TopicService>();
 builder.Services.AddScoped<StateContainer>();
 builder.Services.AddScoped<ITopicFriendRepository, TopicFriendRepository>();
 
+builder.Services.Configure<CustomLoggingOptions>(
+    builder.Configuration.GetSection(CustomLoggingOptions.SectionName));
 
 builder.Services.AddAutoMapper(options => {
     options.AddProfile<MappingProfile>();
@@ -98,6 +101,8 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+app.UseMiddleware<LoggingMiddleware>();
 
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
