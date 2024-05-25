@@ -44,7 +44,9 @@ namespace psk_fitness.Data
 
             modelBuilder.Entity<ApplicationUser>(entity =>
             {
-                entity.Property(e => e.ConcurrencyStamp).HasColumnType("TEXT");
+                entity.Property(e => e.ConcurrencyStamp)
+                .IsConcurrencyToken()
+                .HasColumnType("TEXT");
             });
         }
 

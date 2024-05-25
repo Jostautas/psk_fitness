@@ -12,8 +12,11 @@ using psk_fitness.Properties;
 using psk_fitness.Interfaces.Services;
 using psk_fitness.Services;
 using psk_fitness.Middleware;
+using psk_fitness.ClientServices.Decorators;
 
 var builder = WebApplication.CreateBuilder(args);
+var useDecoratedService = bool.Parse(Environment.GetEnvironmentVariable("UseDecoratedTopicClientService") ?? "false");
+
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -29,6 +32,21 @@ builder.Services.AddScoped<ITopicRepository, TopicRepository>();
 builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
 builder.Services.AddScoped<IWorkoutRepository, WorkoutRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(Constants.BaseHttpUri) });
+
+if (useDecoratedService)
+{
+    builder.Services.AddScoped<TopicClientService>();
+
+    builder.Services.AddScoped<ITopicClientService, SortingTopicClientServiceDecorator>(provider =>
+        new SortingTopicClientServiceDecorator(provider.GetRequiredService<TopicClientService>()));
+}
+else
+{
+    builder.Services.AddScoped<ITopicClientService, TopicClientService>();
+}
+
 builder.Services.AddScoped<ITopicService, TopicService>();
 
 builder.Services.AddScoped<StateContainer>();
@@ -41,15 +59,12 @@ builder.Services.AddAutoMapper(options => {
     options.AddProfile<MappingProfile>();
 });
 
-builder.Services.AddHttpClient<ITopicClientService, TopicClientService>(client =>
-{
-    // TODO: Make this dynamic according to launchSettings.json
-    client.BaseAddress = new Uri(Constants.BaseHttpUri);
-});
 builder.Services.AddHttpClient<ITopicFriendService, TopicFriendService>(client =>
 {
     client.BaseAddress = new Uri(Constants.BaseHttpUri);
 });
+
+
 builder.Services.AddScoped<IWorkoutService, WorkoutService>();
 
 builder.Services.AddAuthorization();
