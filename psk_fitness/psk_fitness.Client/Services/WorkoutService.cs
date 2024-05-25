@@ -45,6 +45,14 @@ namespace psk_fitness.Client.Services
             return workout;
         }
 
+        public async Task<WorkoutUpdateDTO> UpdateById(int id, WorkoutUpdateDTO workout)
+        {
+            var response = await _httpClient.PutAsJsonAsync("api/Workout/update", workout);
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<WorkoutCreateDTO>();
+        }
+
     }
 
 }
