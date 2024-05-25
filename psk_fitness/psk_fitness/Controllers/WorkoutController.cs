@@ -91,31 +91,31 @@ namespace psk_fitness.Controllers
         }
 
 
-        [HttpPut("update")]
-        public async Task<IActionResult> UpdateWorkout([FromBody] WorkoutUpdateDTO workoutUpdateDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+    //    [HttpPut("update")]
+    //    public async Task<IActionResult> UpdateWorkout([FromBody] WorkoutUpdateDTO workoutUpdateDto)
+    //    {
+    //        if (!ModelState.IsValid)
+    //        {
+    //            return BadRequest(ModelState);
+    //        }
 
-            try
-            {
-                var updateResult = await _workoutService.UpdateWorkoutAsync(workoutUpdateDto);
-                if (updateResult)
-                {
-                    return Ok(new { success = true, message = "Workout updated successfully." });
-                }
-                else
-                {
-                    return NotFound(new { success = false, message = "Workout not found." });
-                }
-            }
-            catch (Exception ex)
-            {
+    //        try
+    //        {
+    //            var updateResult = await _workoutService.UpdateWorkoutAsync(workoutUpdateDto);
+    //            if (updateResult)
+    //            {
+    //                return Ok(new { success = true, message = "Workout updated successfully." });
+    //            }
+    //            else
+    //            {
+    //                return NotFound(new { success = false, message = "Workout not found." });
+    //           }
+    //        }
+    //        catch (Exception ex)
+    //        {
                 // Log the exception details here for debugging and error tracing
-                return StatusCode(500, new { success = false, message = $"An error occurred while updating the workout. {ex.Message}" });
-            }
-        }
+    //            return StatusCode(500, new { success = false, message = $"An error occurred while updating the workout. {ex.Message}" });
+    //        }
+    //    }
     }
 }

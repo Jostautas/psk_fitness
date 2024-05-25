@@ -6,13 +6,14 @@
     CultureInfo culture = new CultureInfo("en-US"); //Default to en-US calendar
 }
 @inject IWorkoutService WorkoutService
+@inject ITopicService TopicService
 
 @inject IJSRuntime JSRuntime
 
 
 <h3>Calendar</h3>
 
-<Modal @ref="Modal"></Modal>
+<Modal @ref="Modal" Topics="@Topics"></Modal>
 
 <button @onclick="() => Modal.Open()">Open Modal</button>
 
@@ -51,9 +52,12 @@
     Modal Modal { get; set; }
 
     List<WorkoutForCalendarDTO> Workouts { get; set; }
+    IEnumerable<TopicForWorkoutDTO> Topics { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+
+        Topics = await TopicService.GetTopicsForWorkout("email@eemail.com");
         Workouts = await WorkoutService.GetByMonth(DateTime.Now.Year, DateTime.Now.Month);
         Console.WriteLine(Workouts);
     }

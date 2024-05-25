@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using psk_fitness.Client.DTOs.TopicDTOs;
 
 namespace psk_fitness.Client.DTOs.WorkoutDTOs
 {
@@ -14,7 +15,6 @@ namespace psk_fitness.Client.DTOs.WorkoutDTOs
         public string Notes { get; set; } = "";
         public string FriendsNotes { get; set; } = "";
         public bool Finished { get; set; } = false;
-        public required virtual Topic Topic { get; set; }
-        public virtual ICollection<Exercise>? Exercises { get; set; }
+        public required virtual TopicForWorkoutDTO Topic { get; set; }
     }
 }

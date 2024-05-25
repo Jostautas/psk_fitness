@@ -50,7 +50,7 @@ namespace psk_fitness.Client.Services
             var response = await _httpClient.PutAsJsonAsync("api/Workout/update", workout);
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadFromJsonAsync<WorkoutCreateDTO>();
+            return await response.Content.ReadFromJsonAsync<WorkoutUpdateDTO>();
         }
 
     }

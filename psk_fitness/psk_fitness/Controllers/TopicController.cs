@@ -33,9 +33,12 @@ public class TopicController(ITopicService _topicService) : Controller
     }
 
     [HttpGet("for-workout/{userEmail}")]
-    public async Task<IActionResult> GetTopocsForWorkoutAsync([Required] string userEmail)
+    public async Task<IActionResult> GetTopocsForWorkoutAsync([FromRoute] string userEmail)
     {
+        Console.WriteLine("Reached the controller");
         var topics = await _topicService.GetTopicsForWorkout(userEmail);
+        Console.WriteLine("Got the results in the controller");
+
         var json = JsonSerializer.Serialize(topics);
         return Content(json, "application/json", Encoding.UTF8);
     }

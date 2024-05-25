@@ -77,13 +77,14 @@
                         }
                     </div>
                     <label for="workoutTypeDropdown" class="form-label">Workout type:</label>
-                    <Dropdown id="workoutTypeDropdown" TItem="string" OnSelected="@OnSelected">
-                        <InitialTip>This is a dropdown list</InitialTip>
+                    <Dropdown id="workoutTypeDropdown" TItem="TopicForWorkoutDTO" OnSelected="@OnSelected">
+                        <InitialTip>Select a topic</InitialTip>
                         <ChildContent>
-                            <DropdownListItem Item="list[0]">Chest</DropdownListItem>
-                            <DropdownListItem Item="list[1]">Back</DropdownListItem>
-                            <div class="dropdown-divider"></div>
-                            <DropdownListItem Item="list[2]">Calves</DropdownListItem>
+                            @foreach (TopicForWorkoutDTO topic in Topics)
+                            {
+                                <DropdownListItem Item="@topic">@topic.Title</DropdownListItem>
+                                <div class="dropdown-divider"></div>
+                            }
                         </ChildContent>
                     </Dropdown>
                 </form>
@@ -105,6 +106,9 @@
 
 
 @code {
+
+    [Parameter]
+    public IEnumerable<TopicForWorkoutDTO> Topics { get; set; }
 
     private bool _doNotShowInputBoxes = false;
     private WorkoutDisplayDTO selectedWorkout = new WorkoutDisplayDTO();
@@ -137,9 +141,10 @@
         }
     }
 
-    private void OnSelected(string selection)
+    private void OnSelected(TopicForWorkoutDTO topic)
     {
-        Console.WriteLine(selection);
+        Console.WriteLine(topic.Title);
+        newWorkout.TopicId = topic.Id;
     }
 
     public void OnDeleteWorkout()
@@ -171,6 +176,7 @@
 
     public async Task Open(int id, int day)
     {
+
         newWorkout = await WorkoutService.GetByIdAsync(id);
 
         Console.WriteLine(newWorkout.Title);
