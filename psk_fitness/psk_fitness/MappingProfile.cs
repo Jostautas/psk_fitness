@@ -32,7 +32,8 @@ public class MappingProfile : Profile
             .ForMember(
                 dest => dest.CssColor,
                 opt => opt.MapFrom(src => CssColor.FromString(src.Color)));
-
+        
+        CreateMap<Topic, TopicForWorkoutDTO>().ReverseMap();
         CreateMap<TopicFriend, TopicFriendCreateDTO>().ReverseMap();
        
         

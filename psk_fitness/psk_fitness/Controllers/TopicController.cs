@@ -32,6 +32,14 @@ public class TopicController(ITopicService _topicService) : Controller
         return Content(json, "application/json", Encoding.UTF8);
     }
 
+    [HttpGet("for-workout/{userEmail}")]
+    public async Task<IActionResult> GetTopocsForWorkoutAsync([Required] string userEmail)
+    {
+        var topics = await _topicService.GetTopicsForWorkout(userEmail);
+        var json = JsonSerializer.Serialize(topics);
+        return Content(json, "application/json", Encoding.UTF8);
+    }
+
     [HttpPut("{topicId}")]
     public async Task<IActionResult> UpdateTopicAsync([FromBody] TopicDTO topic, int topicId)
     {

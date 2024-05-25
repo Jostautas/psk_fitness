@@ -19,6 +19,15 @@ public class TopicService(
         return topic;
     }
 
+    public async Task<List<TopicForWorkoutDTO>> GetTopicsForWorkout(string userEmail)
+    {
+        var user = await _userRepository.GetUserByIdAsync(userEmail);
+        var userTopics = await _topicRepository.GetTopicsByUserIdAsync(user.Id);
+        
+        var topicsForWorkout = _mapper.Map<List<TopicForWorkoutDTO>>(userTopics);
+        return topicsForWorkout;
+    }
+
     public async Task<List<TopicDTO>> GetUserTopicsAsync(string userEmail)
     {
         var user = await _userRepository.GetUserByIdAsync(userEmail);
