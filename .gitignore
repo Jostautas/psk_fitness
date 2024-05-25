@@ -365,4 +365,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /psk_fitness/psk_fitness/mydatabase.db
-/.idea
+/psk_fitness/psk_fitness/Migrations/20240524110910_exerciseMigrations.cs
+/psk_fitness/psk_fitness/Migrations/20240524110910_exerciseMigrations.Designer.cs
