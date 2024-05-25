@@ -10,5 +10,6 @@ public static class Constants
     };
     public static readonly string BaseHttpUri = "http://localhost:5197";
     public static readonly string ApiEndpointPrefix = "api";
-    public static readonly string RegisteredUserTestEmail = "example@gmail.com";
+
+    // public static readonly string LogFilePath = "logs/logs.log";
 }
