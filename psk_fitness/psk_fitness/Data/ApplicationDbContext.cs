@@ -18,6 +18,13 @@ namespace psk_fitness.Data
                 .HasKey(tf => new { tf.TopicId, tf.ApplicationUserId });
 
             // Configuring the one-to-many relationship between ApplicationUsers and Topics
+
+            modelBuilder.Entity<Exercise>()
+                .HasOne(t => t.ApplicationUser)
+                .WithMany(au => au.Exercise) 
+                .HasForeignKey(t => t.ApplicationUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             modelBuilder.Entity<Topic>()
                 .HasOne(t => t.ApplicationUser)
                 .WithMany(au => au.Topics) // Assuming ApplicationUser has a Topics collection
@@ -34,12 +41,6 @@ namespace psk_fitness.Data
                 .HasOne(w => w.Topic)
                 .WithMany(t => t.Workouts)
                 .HasForeignKey(w => w.TopicId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Workout>()
-                .HasMany(w => w.Exercises)
-                .WithOne(e => e.Workout)
-                .HasForeignKey(e => e.WorkoutId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ApplicationUser>(entity =>

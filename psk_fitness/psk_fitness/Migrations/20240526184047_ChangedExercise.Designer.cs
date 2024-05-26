@@ -11,8 +11,8 @@ using psk_fitness.Data;
 namespace psk_fitness.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240514143641_InitialCreateSqlite")]
-    partial class InitialCreateSqlite
+    [Migration("20240526184047_ChangedExercise")]
+    partial class ChangedExercise
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -227,6 +227,10 @@ namespace psk_fitness.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -256,10 +260,12 @@ namespace psk_fitness.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("WorkoutId")
+                    b.Property<int?>("WorkoutId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("WorkoutId");
 
@@ -410,13 +416,17 @@ namespace psk_fitness.Migrations
 
             modelBuilder.Entity("psk_fitness.Data.Exercise", b =>
                 {
-                    b.HasOne("psk_fitness.Data.Workout", "Workout")
-                        .WithMany("Exercises")
-                        .HasForeignKey("WorkoutId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("psk_fitness.Data.ApplicationUser", "ApplicationUser")
+                        .WithMany("Exercise")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Workout");
+                    b.HasOne("psk_fitness.Data.Workout", null)
+                        .WithMany("Exercises")
+                        .HasForeignKey("WorkoutId");
+
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("psk_fitness.Data.Topic", b =>
@@ -462,6 +472,8 @@ namespace psk_fitness.Migrations
 
             modelBuilder.Entity("psk_fitness.Data.ApplicationUser", b =>
                 {
+                    b.Navigation("Exercise");
+
                     b.Navigation("Topics");
                 });
 

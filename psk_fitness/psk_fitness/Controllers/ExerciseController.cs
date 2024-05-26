@@ -18,7 +18,6 @@ namespace psk_fitness.Controllers
             this.exerciseService = exerciseService;
         }
 
-
         [HttpGet]
         public async Task<ActionResult<List<ExerciseDisplayDTO>>> GetAllExercisesAsync()
         {

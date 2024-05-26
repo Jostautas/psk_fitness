@@ -9,6 +9,8 @@
 
 @inject NavigationManager Navigation
 @inject IExerciseRepository ExerciseRepository
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IUserRepository userRepository
 
 
 <!-- Button trigger modal -->
@@ -125,6 +127,10 @@
         var htmlDocument = new HtmlAgilityPack.HtmlDocument();
         htmlDocument.LoadHtml(htmlContent);
 
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userEmail = authState.User.Identity.Name;
+        ApplicationUser user = userRepository.GetUserByIdAsync(userEmail).Result;
+
         // Extract steps from the HTML document
         var stepNodes = htmlDocument.DocumentNode.SelectNodes("//div[@id='exerciseSteps']//input[@type='text']");
         if (stepNodes != null)
@@ -136,11 +142,11 @@
                 exerciseSteps.Add(stepValue);
             }
 
-            exerciseDTO.WorkoutId = 1;
+            exerciseDTO.ApplicationUserId = user.Id;
             exerciseDTO.Steps = string.Join(";", exerciseSteps); ; //here excract all the steps into list of strings and make it into one string using delimiter ";"
             
         }
-        exerciseDTO.WorkoutId = 1;
+        exerciseDTO.ApplicationUserId = user.Id;
         await ExerciseRepository.AddExerciseAsync(exerciseDTO);
     }
 }

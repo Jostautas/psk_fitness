@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace psk_fitness.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreateSqlite : Migration
+    public partial class ChangedExercise : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -238,7 +238,7 @@ namespace psk_fitness.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    WorkoutId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ApplicationUserId = table.Column<string>(type: "TEXT", nullable: false),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
                     Duration = table.Column<TimeSpan>(type: "TEXT", nullable: true),
                     Sets = table.Column<int>(type: "INTEGER", nullable: true),
@@ -246,17 +246,22 @@ namespace psk_fitness.Migrations
                     Description = table.Column<string>(type: "TEXT", nullable: false),
                     Notes = table.Column<string>(type: "TEXT", nullable: false),
                     FriendsNotes = table.Column<string>(type: "TEXT", nullable: false),
-                    Steps = table.Column<string>(type: "TEXT", nullable: false)
+                    Steps = table.Column<string>(type: "TEXT", nullable: false),
+                    WorkoutId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Exercise", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Exercise_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_Exercise_Workouts_WorkoutId",
                         column: x => x.WorkoutId,
                         principalTable: "Workouts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -295,6 +300,11 @@ namespace psk_fitness.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Exercise_ApplicationUserId",
+                table: "Exercise",
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Exercise_WorkoutId",

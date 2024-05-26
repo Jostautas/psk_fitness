@@ -2,7 +2,7 @@
 {
     public class ExerciseCreateDTO
     {
-        public int WorkoutId { get; set; }
+        public string ApplicationUserId { get; set; }
         public string Title { get; set; }
         public int? DurationSeconds { get; set; }
         public int? DurationMinutes { get; set; }
