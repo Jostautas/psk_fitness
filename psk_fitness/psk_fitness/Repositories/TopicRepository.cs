@@ -14,8 +14,18 @@ public class TopicRepository(ApplicationDbContext _applicationDbContext) : ITopi
 
     public async Task<Topic> GetTopicById(int topicId)
     {
-        return await _applicationDbContext.Topics.FirstOrDefaultAsync(t => t.Id.Equals(topicId))
-            ?? throw new Exception("Topic not found.");
+
+
+        try
+        {
+            return await _applicationDbContext.Topics.FirstOrDefaultAsync(t => t.Id.Equals(topicId))
+                ?? throw new Exception("Topic not found.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+            throw;
+        }
     }
 
     public async Task<List<Topic>> GetTopicsByUserIdAsync(string userId)
@@ -37,9 +47,17 @@ public class TopicRepository(ApplicationDbContext _applicationDbContext) : ITopi
 
     public async Task DeleteTopicAsync(int topicId)
     {
-        var topic = await _applicationDbContext.Topics.FirstOrDefaultAsync(t => t.Id == topicId)
-            ?? throw new Exception("Topic not found.");
-        _applicationDbContext.Topics.Remove(topic);
-        await _applicationDbContext.SaveChangesAsync();
+        try
+        {
+            var topic = await _applicationDbContext.Topics.FirstOrDefaultAsync(t => t.Id == topicId)
+                ?? throw new Exception("Topic not found.");
+            _applicationDbContext.Topics.Remove(topic);
+            await _applicationDbContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+            throw;
+        }
     }
 }

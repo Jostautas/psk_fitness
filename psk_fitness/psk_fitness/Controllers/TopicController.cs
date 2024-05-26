@@ -46,7 +46,15 @@ public class TopicController(ITopicService _topicService) : Controller
     [HttpDelete("{topicId}")]
     public async Task<IActionResult> DeleteTopicAsync(int topicId)
     {
-        await _topicService.DeleteTopicAsync(topicId);
-        return Ok(topicId);
+        try
+        {
+            await _topicService.DeleteTopicAsync(topicId);
+            return Ok(topicId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while deleting the topic.");
+        }
     }
 }
