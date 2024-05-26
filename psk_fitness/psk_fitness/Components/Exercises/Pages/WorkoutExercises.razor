@@ -1,0 +1,64 @@
+﻿@page "/exercises/{workoutId:int}"
+
+@using psk_fitness.Interfaces
+@inject IExerciseRepository ExerciseRepository
+@inject IUserRepository userRepository
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@rendermode InteractiveServer
+
+<div class="d-flex align-items-center">
+    <h3 class="me-3">Exercises:</h3>
+    <CreateExercise @ref="createExerciseComponent" OnExerciseCreated="RefreshExercises" />
+</div>
+
+@if (exercises == null)
+{
+    <span>Loading...</span>
+}
+else if (exercises.Count == 0)
+{
+    <span>No exercises found.</span>
+}
+else
+{
+    <ul class="exercise-list">
+        @foreach (var exercise in exercises)
+        {
+            <ExerciseItem exercise="@exercise" OnExerciseDeleted="RefreshExercises" OnExerciseEditRequested="EditExercise" />
+        }
+    </ul>
+}
+
+@code {
+    [Parameter] public int workoutId { get; set; }
+    List<ExerciseDisplayDTO> exercises;
+    CreateExercise createExerciseComponent;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine($"Fetching exercises for workout ID: {workoutId}");
+        await RefreshExercises();
+    }
+
+    async Task RefreshExercises()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userEmail = authState.User.Identity.Name;
+        ApplicationUser user = userRepository.GetUserByIdAsync(userEmail).Result;
+
+        exercises = await ExerciseRepository.GetExercisesForUser(user.Id);
+
+        foreach (ExerciseDisplayDTO ex in exercises)
+        {
+            Console.WriteLine(ex.Title);
+        }
+
+        StateHasChanged(); StateHasChanged(); // Ensure UI refresh
+    }
+
+    void EditExercise(int exerciseId)
+    {
+        createExerciseComponent.OpenModalForEdit(exerciseId);
+    }
+}

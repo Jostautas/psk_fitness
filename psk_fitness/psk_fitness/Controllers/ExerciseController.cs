@@ -61,5 +61,13 @@ namespace psk_fitness.Controllers
                 return NotFound("Exercise not found.");
             return Ok("Exercise was removed.");
         }
+
+        [HttpGet("byWorkout/{workoutId}")]
+        public async Task<ActionResult<List<ExerciseDisplayDTO>>> GetExercisesByWorkoutIdAsync(int workoutId)
+        {
+            var exercises = await exerciseService.GetExercisesByWorkoutId(workoutId);
+
+            return Ok(exercises);
+        }
     }
 }
