@@ -45,6 +45,7 @@ public class MappingProfile : Profile
                    .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.Date.Day)) 
                    .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
                    .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Duration))
-                   .ForMember(dest => dest.Finished, opt => opt.MapFrom(src => src.Finished));
+                   .ForMember(dest => dest.Finished, opt => opt.MapFrom(src => src.Finished))
+                   .ForMember(dest => dest.ExerciseTitles, opt => opt.MapFrom(src => src.Exercises.Select(e => e.Title).ToList())); ;
     }
 }

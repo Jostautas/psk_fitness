@@ -47,6 +47,17 @@ namespace psk_fitness.Controllers
             return Ok(exercises);
         }
 
+        [HttpGet("for-calendar/{workoutId}")]
+        public async Task<ActionResult<List<ExerciseForWorkoutDTO>>> GetExerciseForCalendar([FromRoute] int workoutId)
+        {
+            Console.WriteLine("Request is correct");
+            var exercises = await exerciseService.GetExercisesByWorkoutId(workoutId);
+            if (exercises is null)
+                return NotFound("Exercise not found.");
+
+            return Ok(exercises);
+        }
+
         [HttpPost]
         public async Task<ActionResult<ExerciseDisplayDTO>> AddExerciseAsync(ExerciseCreateDTO newExercise)
         {

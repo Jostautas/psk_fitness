@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using psk_fitness.Components;
 using psk_fitness.Components.Exercises.Pages;
 using psk_fitness.Components.Topics;
 using psk_fitness.Data;
@@ -80,6 +81,17 @@ namespace psk_fitness.Repositories
             var user = await _userRepository.GetUserByIdAsync(userEmail);
             var exercises = await context.Exercise.Where(t => t.ApplicationUserId.Equals(user.Id)).ToListAsync();
             return mapper.Map<List<ExerciseForWorkoutDTO>>(exercises);
+        }
+
+        public async Task<List<ExerciseForWorkoutDTO>> GetExercisesByWorkoutId(int workoutId)
+        {
+            
+            var exercises = await context.Workouts
+                .Where(w => w.Id == workoutId)
+                .SelectMany(w => w.Exercises)
+            .ToListAsync();
+
+            return mapper.Map<List<ExerciseForWorkoutDTO>>(exercises);   
         }
     }
 }

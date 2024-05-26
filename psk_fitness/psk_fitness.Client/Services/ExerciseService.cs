@@ -26,5 +26,16 @@ namespace psk_fitness.Client.Services
 
            return exercises;
         }
+
+        public async Task<List<ExerciseForWorkoutDTO>> GetExercisesForCalendar(int workoutId)
+        {
+            var response = await _httpClient.GetAsync($"Exercise/for-calendar/{workoutId}");
+            response.EnsureSuccessStatusCode();
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            var exercises = JsonConvert.DeserializeObject<List<ExerciseForWorkoutDTO>>(jsonString);
+
+            return exercises;
+        }
     }
 }

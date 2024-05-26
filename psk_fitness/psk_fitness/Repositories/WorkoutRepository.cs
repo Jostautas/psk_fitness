@@ -58,6 +58,7 @@ namespace psk_fitness.Repositories
 
             var workouts = await _applicationDbContext.Workouts
                             .Where(w => w.Date >= startDate && w.Date <= endDate)
+                            .Include(w => w.Exercises)
                             .ToListAsync();
 
             return workouts;

@@ -37,7 +37,11 @@
             }
             else
             {
+                <div>
+                    <span style="margin: 0 10px;">Ex1. @workout.ExerciseTitles.First()</span>
+                </div>
                 <div class="workout-box">
+
                     <span>@workout.Title</span>
                     <button class="edit-button" @onclick="() => Modal.Open(workout.Id, currcentDay)">Edit</button>
                 </div>
@@ -62,11 +66,13 @@
         Exercises = await ExerciseService.GetExercisesForWorkout("email@eemail.com");
         Workouts = await WorkoutService.GetByMonth(DateTime.Now.Year, DateTime.Now.Month);
 
-        foreach (ExerciseForWorkoutDTO ex in Exercises)
+        foreach (WorkoutForCalendarDTO ex in Workouts)
         {
-            Console.WriteLine(ex.Title);
+            foreach(string title in ex.ExerciseTitles)
+            {
+                Console.WriteLine(title);
+            }
         }
-
         Console.WriteLine(Workouts);
     }
 

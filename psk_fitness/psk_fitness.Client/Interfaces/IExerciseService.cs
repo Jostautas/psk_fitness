@@ -5,6 +5,8 @@ namespace psk_fitness.Client.Interfaces
 {
     public interface IExerciseService
     {
+        Task<List<ExerciseForWorkoutDTO>> GetExercisesForCalendar(int workoutId);
+
         Task<List<ExerciseForWorkoutDTO>> GetExercisesForWorkout(string userEmail);
     }
 }
