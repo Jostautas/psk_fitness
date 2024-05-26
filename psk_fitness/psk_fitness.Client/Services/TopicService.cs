@@ -16,7 +16,6 @@ namespace psk_fitness.Client.Services
 
         public async Task<IEnumerable<TopicForWorkoutDTO>> GetTopicsForWorkout(string userEmail)
         {
-            Console.WriteLine("UI service get");
             var response = await _httpClient.GetAsync($"api/topics/for-workout/{userEmail}");
             response.EnsureSuccessStatusCode();
 

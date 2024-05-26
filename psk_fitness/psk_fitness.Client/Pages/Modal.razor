@@ -87,8 +87,31 @@
                             }
                         </ChildContent>
                     </Dropdown>
+
+
+
+                    <label for="exerciseButton" class="form-label">Exercises:</label>
+
+                    @foreach (var exercise in selectedExercises)
+                    {
+                        <div style="margin-bottom: 5px;">
+                            <Dropdown id="exerciseDropdown" TItem="ExerciseForWorkoutDTO" OnSelected="OnExerciseSelected">
+                                <InitialTip>Select an exercise</InitialTip>
+                                <ChildContent>
+                                    @foreach (var availableExercise in availableExercises)
+                                    {
+                                        <DropdownListItem Item="@availableExercise">@availableExercise.Title</DropdownListItem>
+                                        <div class="dropdown-divider"></div>
+                                    }
+                                </ChildContent>
+                            </Dropdown>
+                        </div>
+                    }
+                    <button id="exerciseButton" type="button" class="btn btn-primary" @onclick="AddExerciseDropdown" style="background-color: red;">Add exercise</button>
+
                 </form>
             </div>
+
             <div class="modal-footer">
                 <button type="button" @onclick="() => CreateWorkout()" class="btn btn-primary">Save changes</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => Close()">Close</button>
@@ -106,6 +129,26 @@
 
 
 @code {
+
+    List<ExerciseForWorkoutDTO> selectedExercises = new List<ExerciseForWorkoutDTO>();
+    List<ExerciseForWorkoutDTO> availableExercises = new List<ExerciseForWorkoutDTO>()
+    {
+        new ExerciseForWorkoutDTO { Id = 1, Title = "Push-up" },
+        new ExerciseForWorkoutDTO { Id = 2, Title = "Pull-up" },
+        new ExerciseForWorkoutDTO { Id = 3, Title = "Squat" },
+        new ExerciseForWorkoutDTO { Id = 4, Title = "Plank" }
+    };
+
+    void AddExerciseDropdown()
+    {
+        if (availableExercises.Any())
+            selectedExercises.Add(availableExercises.First()); // Default to the first exercise
+    }
+
+    void OnExerciseSelected(ExerciseForWorkoutDTO exercise)
+    {
+        Console.WriteLine(exercise.Title);
+    }
 
     [Parameter]
     public IEnumerable<TopicForWorkoutDTO> Topics { get; set; }
@@ -125,10 +168,6 @@
         Console.WriteLine("Starting to create a workout");
         try
         {
-            Console.WriteLine(DateTime.Now.Year);
-            Console.WriteLine(DateTime.Now.Month);
-            Console.WriteLine(_selectedDayOnCalendar);
-
             newWorkout.Date = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, _selectedDayOnCalendar);
             newWorkout.TopicId = 1;
             WorkoutCreateDTO result = await WorkoutService.CreateWorkoutAsync(newWorkout);

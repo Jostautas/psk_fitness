@@ -1,3 +1,4 @@
+using psk_fitness.Client.DTOs.TopicDTOs;
 using psk_fitness.Data;
 using psk_fitness.DTOs;
 
