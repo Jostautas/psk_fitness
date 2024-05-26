@@ -62,5 +62,11 @@ namespace psk_fitness.Repositories
             }
             return mapper.Map<ExerciseDisplayDTO>(exercise);
         }
+
+        public async Task<List<ExerciseDisplayDTO>> GetExercisesForUser(string userId)
+        {
+            var exercises = await context.Exercise.Where(t => t.ApplicationUserId.Equals(userId)).ToListAsync();
+            return mapper.Map<List<ExerciseDisplayDTO>>(exercises);
+        }
     }
 }

@@ -5,6 +5,7 @@ namespace psk_fitness.Interfaces
 {
     public interface IExerciseRepository
     {
+        Task<List<ExerciseDisplayDTO>> GetExercisesForUser(string userEmail);
         Task<List<ExerciseDisplayDTO>> GetAllExercisesAsync();
         Task<ExerciseDisplayDTO> GetExerciseAsync(int id);
         Task<ExerciseDisplayDTO> AddExerciseAsync(ExerciseCreateDTO newExercise);

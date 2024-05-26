@@ -2,6 +2,8 @@
 
 @using psk_fitness.Interfaces
 @inject IExerciseRepository ExerciseRepository
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IUserRepository userRepository
 
 @rendermode InteractiveServer
 
@@ -31,13 +33,23 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("Hello from Blazor component!");
+        Console.WriteLine("Hello world from Blazor component!");
         await RefreshExercises();
     }
 
     async Task RefreshExercises()
     {
-        exercises = await ExerciseRepository.GetAllExercisesAsync();
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userEmail = authState.User.Identity.Name;
+        ApplicationUser user = userRepository.GetUserByIdAsync(userEmail).Result;
+
+
+        exercises = await ExerciseRepository.GetExercisesForUser(user.Id);
+
+        foreach (ExerciseDisplayDTO ex in exercises){
+            Console.WriteLine(ex.Title);
+        }
+
         StateHasChanged(); // Ensure UI refresh
     }
 }
