@@ -145,6 +145,21 @@ namespace psk_fitness.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("WorkoutExercise", b =>
+                {
+                    b.Property<int>("ExerciseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("WorkoutId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ExerciseId", "WorkoutId");
+
+                    b.HasIndex("WorkoutId");
+
+                    b.ToTable("WorkoutExercises", (string)null);
+                });
+
             modelBuilder.Entity("psk_fitness.Data.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -257,14 +272,9 @@ namespace psk_fitness.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("WorkoutId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
-
-                    b.HasIndex("WorkoutId");
 
                     b.ToTable("Exercise");
                 });
@@ -411,6 +421,21 @@ namespace psk_fitness.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("WorkoutExercise", b =>
+                {
+                    b.HasOne("psk_fitness.Data.Exercise", null)
+                        .WithMany()
+                        .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("psk_fitness.Data.Workout", null)
+                        .WithMany()
+                        .HasForeignKey("WorkoutId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("psk_fitness.Data.Exercise", b =>
                 {
                     b.HasOne("psk_fitness.Data.ApplicationUser", "ApplicationUser")
@@ -418,10 +443,6 @@ namespace psk_fitness.Migrations
                         .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.HasOne("psk_fitness.Data.Workout", null)
-                        .WithMany("Exercises")
-                        .HasForeignKey("WorkoutId");
 
                     b.Navigation("ApplicationUser");
                 });
@@ -479,11 +500,6 @@ namespace psk_fitness.Migrations
                     b.Navigation("TopicFriends");
 
                     b.Navigation("Workouts");
-                });
-
-            modelBuilder.Entity("psk_fitness.Data.Workout", b =>
-                {
-                    b.Navigation("Exercises");
                 });
 #pragma warning restore 612, 618
         }

@@ -141,7 +141,7 @@
 
     void OnExerciseSelected(ExerciseForWorkoutDTO exercise)
     {
-        Console.WriteLine(exercise.Title);
+        newWorkout.ExreciseIds.Add(exercise.Id);
     }
 
     [Parameter]
@@ -164,8 +164,7 @@
         Console.WriteLine("Starting to create a workout");
         try
         {
-            newWorkout.Date = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, _selectedDayOnCalendar);
-            newWorkout.TopicId = 1;
+            newWorkout.Date = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, _selectedDayOnCalendar);     
             WorkoutCreateDTO result = await WorkoutService.CreateWorkoutAsync(newWorkout);
             Console.WriteLine("Workout created successfully!");
         }
@@ -178,7 +177,6 @@
 
     private void OnSelected(TopicForWorkoutDTO topic)
     {
-        Console.WriteLine(topic.Title);
         newWorkout.TopicId = topic.Id;
     }
 

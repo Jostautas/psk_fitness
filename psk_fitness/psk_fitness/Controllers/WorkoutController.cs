@@ -22,6 +22,7 @@ namespace psk_fitness.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateWorkout([FromBody] WorkoutCreateDTO workout)
         {
+            Console.WriteLine("Server Controller create");
             try
             {
                 Workout createdWorkout = await _workoutService.CreateWorkoutAsync(workout);
@@ -52,8 +53,6 @@ namespace psk_fitness.Controllers
         [HttpGet("by-id/{id}")]
         public async Task<IActionResult> GetWorkoutById(int id)
         {
-
-
             var workout = await _workoutService.GetByIdAsync(id);
             
             if (workout == null)

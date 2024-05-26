@@ -23,11 +23,21 @@ namespace psk_fitness.ClientServices
 
         public async Task<Workout> CreateWorkoutAsync(WorkoutCreateDTO workout)
         {
+            System.Console.WriteLine("Server service create");
 
             var selectedTopic = await _applicationDbContext.Topics
                 .FirstOrDefaultAsync(t => t.Id == workout.TopicId);
 
-            selectedTopic.Workouts = null;
+            var selectedExercises = await _applicationDbContext.Exercise
+                .Where(exercise => workout.ExreciseIds.Contains(exercise.Id))
+                .ToListAsync();
+
+            System.Console.WriteLine("Here are the exercises");
+
+            foreach (var item in selectedExercises)
+            {
+                System.Console.WriteLine(item.Title);
+            }
 
             if (selectedTopic == null)
             {
@@ -45,6 +55,7 @@ namespace psk_fitness.ClientServices
                 Notes = workout.Notes,
                 Duration = workout.Duration,
                 Finished = workout.Finished,
+                Exercises = selectedExercises
             };
 
             return await _workoutRepository.CreateAsync(newWorkout);

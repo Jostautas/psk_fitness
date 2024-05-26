@@ -43,6 +43,22 @@ namespace psk_fitness.Data
                 .HasForeignKey(w => w.TopicId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Workout>()
+            .HasMany(w => w.Exercises)
+            .WithMany()  // Leave blank as Exercises do not reference back to Workouts
+            .UsingEntity<Dictionary<string, object>>(
+                "WorkoutExercise",  // Name of the join table
+                j => j.HasOne<Exercise>()
+                      .WithMany()
+                      .HasForeignKey("ExerciseId"),
+                j => j.HasOne<Workout>()
+                      .WithMany()
+                      .HasForeignKey("WorkoutId"),
+                j =>
+                {
+                    j.ToTable("WorkoutExercises");  // Naming the join table
+                });
+
             modelBuilder.Entity<ApplicationUser>(entity =>
             {
                 entity.Property(e => e.ConcurrencyStamp)
