@@ -1,5 +1,7 @@
 ﻿@page "/edit-exercise"
 @page "/edit-exercise/{exerciseId:int}"
+@rendermode InteractiveServer
+
 @using System.Text.Json
 @using Microsoft.Extensions.Logging
 @using psk_fitness.Data
@@ -13,7 +15,7 @@
 
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" @onclick="OpenModal">
-    New Exercise
+    New ExerciseS
 </button>
 
 <div class="@ModalDisplayClass" tabindex="-1" aria-labelledby="newExerciseModalLabel" aria-hidden="true">
