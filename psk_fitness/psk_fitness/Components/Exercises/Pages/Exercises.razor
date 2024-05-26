@@ -1,4 +1,4 @@
-﻿@page "/exercises"
+﻿@page "/exercises/{workoutId:int}"
 
 @using psk_fitness.Interfaces
 @inject IExerciseRepository ExerciseRepository
@@ -8,8 +8,8 @@
 @rendermode InteractiveServer
 
 <div class="d-flex align-items-center">
-    <h3 class="me-3">Exercises:</h3> 
-    <CreateExercise OnExerciseCreated="RefreshExercises" />
+    <h3 class="me-3">Exercises:</h3>
+    <CreateExercise @ref="createExerciseComponent" OnExerciseCreated="RefreshExercises" />
 </div>
 
 @if (exercises == null)
@@ -22,18 +22,22 @@ else if (exercises.Count == 0)
 }
 else
 {
-    @foreach (var exercise in exercises)
-    {
-        <li>@exercise.Title @exercise.Steps</li>
-    }
+    <ul class="exercise-list">
+        @foreach (var exercise in exercises)
+        {
+            <ExerciseItem exercise="@exercise" OnExerciseDeleted="RefreshExercises" OnExerciseEditRequested="EditExercise" />
+        }
+    </ul>
 }
 
 @code {
+    [Parameter] public int workoutId { get; set; }
     List<ExerciseDisplayDTO> exercises;
+    CreateExercise createExerciseComponent;
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("Hello world from Blazor component!");
+        Console.WriteLine($"Fetching exercises for workout ID: {workoutId}");
         await RefreshExercises();
     }
 
@@ -43,13 +47,19 @@ else
         var userEmail = authState.User.Identity.Name;
         ApplicationUser user = userRepository.GetUserByIdAsync(userEmail).Result;
 
-
         exercises = await ExerciseRepository.GetExercisesForUser(user.Id);
 
-        foreach (ExerciseDisplayDTO ex in exercises){
+        foreach (ExerciseDisplayDTO ex in exercises)
+        {
             Console.WriteLine(ex.Title);
         }
 
         StateHasChanged(); // Ensure UI refresh
     }
+
+    void EditExercise(int exerciseId)
+    {
+        createExerciseComponent.OpenModalForEdit(exerciseId);
+    }
 }
+
