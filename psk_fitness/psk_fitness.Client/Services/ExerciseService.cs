@@ -1,11 +1,12 @@
 ﻿using Newtonsoft.Json;
 using psk_fitness.Client.DTOs.ExerciseDTOs;
 using psk_fitness.Client.DTOs.TopicDTOs;
+using psk_fitness.Client.Interfaces;
 using System.Net.Http;
 
 namespace psk_fitness.Client.Services
 {
-    public class ExerciseService
+    public class ExerciseService : IExerciseService
     {
 
         private readonly HttpClient _httpClient;
@@ -15,7 +16,7 @@ namespace psk_fitness.Client.Services
             _httpClient = httpClient;
         }
 
-        public async Task<IEnumerable<ExerciseForWorkoutDTO>> GetExercisesForWorkout(string userEmail)
+        public async Task<List<ExerciseForWorkoutDTO>> GetExercisesForWorkout(string userEmail)
         {
            var response = await _httpClient.GetAsync($"Exercise/for-workout/{userEmail}");
            response.EnsureSuccessStatusCode();

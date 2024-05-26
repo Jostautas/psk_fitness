@@ -98,7 +98,7 @@
                             <Dropdown id="exerciseDropdown" TItem="ExerciseForWorkoutDTO" OnSelected="OnExerciseSelected">
                                 <InitialTip>Select an exercise</InitialTip>
                                 <ChildContent>
-                                    @foreach (var availableExercise in availableExercises)
+                                    @foreach (var availableExercise in AvailableExercises)
                                     {
                                         <DropdownListItem Item="@availableExercise">@availableExercise.Title</DropdownListItem>
                                         <div class="dropdown-divider"></div>
@@ -131,18 +131,12 @@
 @code {
 
     List<ExerciseForWorkoutDTO> selectedExercises = new List<ExerciseForWorkoutDTO>();
-    List<ExerciseForWorkoutDTO> availableExercises = new List<ExerciseForWorkoutDTO>()
-    {
-        new ExerciseForWorkoutDTO { Id = 1, Title = "Push-up" },
-        new ExerciseForWorkoutDTO { Id = 2, Title = "Pull-up" },
-        new ExerciseForWorkoutDTO { Id = 3, Title = "Squat" },
-        new ExerciseForWorkoutDTO { Id = 4, Title = "Plank" }
-    };
+
 
     void AddExerciseDropdown()
     {
-        if (availableExercises.Any())
-            selectedExercises.Add(availableExercises.First()); // Default to the first exercise
+        if (AvailableExercises.Any())
+            selectedExercises.Add(AvailableExercises.First()); // Default to the first exercise
     }
 
     void OnExerciseSelected(ExerciseForWorkoutDTO exercise)
@@ -152,6 +146,8 @@
 
     [Parameter]
     public IEnumerable<TopicForWorkoutDTO> Topics { get; set; }
+    [Parameter]
+    public List<ExerciseForWorkoutDTO> AvailableExercises { get; set; }
 
     private bool _doNotShowInputBoxes = false;
     private WorkoutDisplayDTO selectedWorkout = new WorkoutDisplayDTO();

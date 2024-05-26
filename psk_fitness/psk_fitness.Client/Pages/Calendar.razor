@@ -7,13 +7,13 @@
 }
 @inject IWorkoutService WorkoutService
 @inject ITopicService TopicService
-
+@inject IExerciseService ExerciseService
 @inject IJSRuntime JSRuntime
 
 
 <h3>Calendar</h3>
 
-<Modal @ref="Modal" Topics="@Topics"></Modal>
+<Modal @ref="Modal" Topics="@Topics" AvailableExercises="@Exercises"></Modal>
 
 <button @onclick="() => Modal.Open()">Open Modal</button>
 
@@ -53,12 +53,20 @@
 
     List<WorkoutForCalendarDTO> Workouts { get; set; }
     IEnumerable<TopicForWorkoutDTO> Topics { get; set; }
+    List<ExerciseForWorkoutDTO> Exercises { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
 
         Topics = await TopicService.GetTopicsForWorkout("email@eemail.com");
+        Exercises = await ExerciseService.GetExercisesForWorkout("email@eemail.com");
         Workouts = await WorkoutService.GetByMonth(DateTime.Now.Year, DateTime.Now.Month);
+
+        foreach (ExerciseForWorkoutDTO ex in Exercises)
+        {
+            Console.WriteLine(ex.Title);
+        }
+
         Console.WriteLine(Workouts);
     }
 

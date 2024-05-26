@@ -17,6 +17,10 @@ builder.Services.AddHttpClient<ITopicService, TopicService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7032");
 });
+builder.Services.AddHttpClient<IExerciseService, ExerciseService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7032");
+});
 builder.Services.AddScoped(sp => {
     var clientFactory = sp.GetRequiredService<IHttpClientFactory>();
     var client = clientFactory.CreateClient("WorkoutServiceClient");
@@ -26,5 +30,10 @@ builder.Services.AddScoped(sp => {
     var clientFactory = sp.GetRequiredService<IHttpClientFactory>();
     var client = clientFactory.CreateClient("TopicServiceClient");
     return new TopicService(client);
+});
+builder.Services.AddScoped(sp => {
+    var clientFactory = sp.GetRequiredService<IHttpClientFactory>();
+    var client = clientFactory.CreateClient("ExerciseServiceClient");
+    return new ExerciseService(client);
 });
 await builder.Build().RunAsync();

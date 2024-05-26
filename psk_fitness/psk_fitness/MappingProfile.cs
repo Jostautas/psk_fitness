@@ -18,6 +18,7 @@ public class MappingProfile : Profile
                 src.DurationMinutes ?? 0,
                 src.DurationSeconds ?? 0
             )));
+        CreateMap<Exercise, ExerciseForWorkoutDTO>().ReverseMap();
 
         CreateMap<Exercise, ExerciseDisplayDTO>()
             .ForMember(dest => dest.DurationSeconds, opt => opt.MapFrom(src => src.Duration.HasValue ? (int?)src.Duration.Value.Hours : null))

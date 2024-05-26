@@ -11,12 +11,15 @@ namespace psk_fitness.Repositories
     public class ExerciseRepository : IExerciseRepository
     {
         private readonly ApplicationDbContext context;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper mapper;
 
-        public ExerciseRepository(ApplicationDbContext context, IMapper mapper)
+
+        public ExerciseRepository(ApplicationDbContext context, IUserRepository userRepository, IMapper mapper)
         {
             this.context = context;
             this.mapper = mapper;
+            _userRepository = userRepository;
         }
 
 
@@ -67,8 +70,16 @@ namespace psk_fitness.Repositories
 
         public async Task<List<ExerciseDisplayDTO>> GetExercisesForUser(string userId)
         {
-            var exercises = await context.Exercise.Where(t => t.ApplicationUserId.Equals(userId)).ToListAsync();
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            var exercises = await context.Exercise.Where(t => t.ApplicationUserId.Equals(user.Id)).ToListAsync();
             return mapper.Map<List<ExerciseDisplayDTO>>(exercises);
+        }
+
+        public async Task<List<ExerciseForWorkoutDTO>> GetExercisesForWorkout(string userEmail)
+        {
+            var user = await _userRepository.GetUserByIdAsync(userEmail);
+            var exercises = await context.Exercise.Where(t => t.ApplicationUserId.Equals(user.Id)).ToListAsync();
+            return mapper.Map<List<ExerciseForWorkoutDTO>>(exercises);
         }
     }
 }
