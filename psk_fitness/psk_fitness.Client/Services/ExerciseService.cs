@@ -15,15 +15,15 @@ namespace psk_fitness.Client.Services
             _httpClient = httpClient;
         }
 
-        //public async Task<IEnumerable<ExerciseForWorkoutDTO>> GetExercisesForWorkout(string userEmail)
-        //{
-        //   var response = await _httpClient.GetAsync($"Exercise");
-        //    response.EnsureSuccessStatusCode();
+        public async Task<IEnumerable<ExerciseForWorkoutDTO>> GetExercisesForWorkout(string userEmail)
+        {
+           var response = await _httpClient.GetAsync($"Exercise/for-workout/{userEmail}");
+           response.EnsureSuccessStatusCode();
 
-        //    var jsonString = await response.Content.ReadAsStringAsync();
-        //    var topics = JsonConvert.DeserializeObject<List<TopicForWorkoutDTO>>(jsonString);
+           var jsonString = await response.Content.ReadAsStringAsync();
+           var exercises = JsonConvert.DeserializeObject<List<ExerciseForWorkoutDTO>>(jsonString);
 
-        //    return topics;
-        //}
+           return exercises;
+        }
     }
 }

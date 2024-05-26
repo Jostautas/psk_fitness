@@ -36,6 +36,16 @@ namespace psk_fitness.Controllers
             return Ok(exercise);
         }
 
+        [HttpGet("for-workout/{userEmail}")]
+        public async Task<ActionResult<List<ExerciseForWorkout>>> GetExerciseForWorkout([FromRoute] string userEmail)
+        {
+            var exercises = await exerciseService.GetExercisesForUser(userEmail);
+            if (exercises is null)
+                return NotFound("Exercise not found.");
+
+            return Ok(exercises);
+        }
+
         [HttpPost]
         public async Task<ActionResult<ExerciseDisplayDTO>> AddExerciseAsync(ExerciseCreateDTO newExercise)
         {
