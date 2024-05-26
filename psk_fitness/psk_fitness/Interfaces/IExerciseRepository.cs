@@ -11,6 +11,5 @@ namespace psk_fitness.Interfaces
         Task<ExerciseDisplayDTO> AddExerciseAsync(ExerciseCreateDTO newExercise);
         Task<ExerciseDisplayDTO> UpdateExerciseAsync(int id, ExerciseCreateDTO updatedExercise);
         Task<ExerciseDisplayDTO> DeleteExerciseAsync(int id);
-        Task<List<ExerciseDisplayDTO>> GetExercisesByWorkoutId(int id);
     }
 }
