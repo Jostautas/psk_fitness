@@ -76,7 +76,7 @@ namespace psk_fitness.Repositories
             return mapper.Map<List<ExerciseDisplayDTO>>(exercises);
         }
 
-        public async Task<List<ExerciseForWorkoutDTO>> GetExercisesForWorkout(string userEmail)
+        public async Task<List<ExerciseForWorkoutDTO>> GetExercisesForCreatingWorkout(string userEmail)
         {
             var user = await _userRepository.GetUserByIdAsync(userEmail);
             var exercises = await context.Exercise.Where(t => t.ApplicationUserId.Equals(user.Id)).ToListAsync();

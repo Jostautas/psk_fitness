@@ -31,7 +31,7 @@ namespace psk_fitness.ClientServices
                 .FirstOrDefaultAsync(t => t.Id == workout.TopicId);
 
             var selectedExercises = await _applicationDbContext.Exercise
-                .Where(exercise => workout.ExreciseIds.Contains(exercise.Id))
+                .Where(exercise => workout.ExeeciseIds.Contains(exercise.Id))
                 .ToListAsync();
 
             System.Console.WriteLine("Here are the exercises");
