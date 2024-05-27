@@ -3,7 +3,7 @@
 @using psk_fitness.Client.Interfaces
 @using System.Security.Claims
 
-@rendermode @(new InteractiveAutoRenderMode(prerender: false))
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 @{
     CultureInfo culture = new CultureInfo("en-US"); //Default to en-US calendar
 }

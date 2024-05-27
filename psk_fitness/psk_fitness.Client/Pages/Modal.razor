@@ -13,27 +13,26 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Modal title</h5>
+                <h5 class="modal-title">Add workout</h5>
                 <button type="button" @onclick="() => OnDeleteWorkout()" class="btn btn-primary">
                     <span aria-hidden="true">&times;</span>
                     Delete workout
                 </button>
-
 
             </div>
             <div class="modal-body">
                 <form>
 
                     <div class="title-form">
-                        <label for="startingTimeHours" class="form-label">Workout starting hour:</label>
+                        <label for="workoutTitle" class="form-label">Workout Title:</label>
                         <div class="d-flex align-items-center">
                             @if (_doNotShowInputBoxes && selectedWorkout != null)
                             {
-                                <span>@selectedWorkout.Duration.</span>
+                                <span>@selectedWorkout.Title.</span>
                             }
                             else
                             {
-                                <input type="text" id="startingTimeHours" name="TitleInput" @bind="newWorkout.Title" required />
+                                <input type="text" id="workoutTitle" name="TitleInput" @bind="newWorkout.Title" required />
                             }
                         </div>
                     </div>
@@ -80,10 +79,16 @@
                     <Dropdown id="workoutTypeDropdown" TItem="TopicForWorkoutDTO" OnSelected="@OnSelected">
                         <InitialTip>Select a topic</InitialTip>
                         <ChildContent>
-                            @foreach (TopicForWorkoutDTO topic in Topics)
+                            @if (Topics != null)
                             {
-                                <DropdownListItem Item="@topic">@topic.Title</DropdownListItem>
-                                <div class="dropdown-divider"></div>
+                                @foreach (TopicForWorkoutDTO topic in Topics)
+                                {
+                                    @if (topic.Title != null)
+                                    {
+                                        <DropdownListItem Item="@topic">@topic.Title</DropdownListItem>
+                                        <div class="dropdown-divider"></div>
+                                    }
+                                }
                             }
                         </ChildContent>
                     </Dropdown>
@@ -91,21 +96,23 @@
 
 
                     <label for="exerciseButton" class="form-label">Exercises:</label>
-
-                    @foreach (var exercise in selectedExercises)
+                    @if (selectedExercises != null)
                     {
-                        <div style="margin-bottom: 5px;">
-                            <Dropdown id="exerciseDropdown" TItem="ExerciseForWorkoutDTO" OnSelected="OnExerciseSelected">
-                                <InitialTip>Select an exercise</InitialTip>
-                                <ChildContent>
-                                    @foreach (var availableExercise in AvailableExercises)
-                                    {
-                                        <DropdownListItem Item="@availableExercise">@availableExercise.Title</DropdownListItem>
-                                        <div class="dropdown-divider"></div>
-                                    }
-                                </ChildContent>
-                            </Dropdown>
-                        </div>
+                        @foreach (var exercise in selectedExercises)
+                        {
+                            <div style="margin-bottom: 5px;">
+                                <Dropdown id="exerciseDropdown" TItem="ExerciseForWorkoutDTO" OnSelected="OnExerciseSelected">
+                                    <InitialTip>Select an exercise</InitialTip>
+                                    <ChildContent>
+                                        @foreach (var availableExercise in AvailableExercises)
+                                        {
+                                            <DropdownListItem Item="@availableExercise">@availableExercise.Title</DropdownListItem>
+                                            <div class="dropdown-divider"></div>
+                                        }
+                                    </ChildContent>
+                                </Dropdown>
+                            </div>
+                        }
                     }
                     <button id="exerciseButton" type="button" class="btn btn-primary" @onclick="AddExerciseDropdown" style="background-color: red;">Add exercise</button>
 
@@ -161,12 +168,10 @@
 
     private async Task CreateWorkout()
     {
-        Console.WriteLine("Starting to create a workout");
         try
         {
-            newWorkout.Date = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, _selectedDayOnCalendar);     
+            newWorkout.Date = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, _selectedDayOnCalendar);
             WorkoutCreateDTO result = await WorkoutService.CreateWorkoutAsync(newWorkout);
-            Console.WriteLine("Workout created successfully!");
         }
         catch (Exception ex)
         {
