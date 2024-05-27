@@ -35,11 +35,11 @@ namespace psk_fitness.Controllers
             }
         }
 
-        [HttpGet("by-month/{year:int}/{month:int}")]
-        public async Task<IActionResult> GetWorkoutForCurrentMonth(int year, int month)
+        [HttpGet("by-month/{year:int}/{month:int}/{userEmail}")]
+        public async Task<IActionResult> GetWorkoutForCurrentMonth(int year, int month, string userEmail)
         {
 
-            List<WorkoutForCalendarDTO> workouts = await _workoutService.GetWorkoutForCurrentMonth(year, month);
+            List<WorkoutForCalendarDTO> workouts = await _workoutService.GetWorkoutForCurrentMonth(year, month, userEmail);
 
             if (workouts == null || workouts.Count == 0)
             {

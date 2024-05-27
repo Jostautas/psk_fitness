@@ -1,6 +1,8 @@
 ﻿@page "/calendar"
 @using System.Globalization
 @using psk_fitness.Client.Interfaces
+@using System.Security.Claims
+
 @rendermode @(new InteractiveAutoRenderMode(prerender: false))
 @{
     CultureInfo culture = new CultureInfo("en-US"); //Default to en-US calendar
@@ -9,6 +11,7 @@
 @inject ITopicService TopicService
 @inject IExerciseService ExerciseService
 @inject IJSRuntime JSRuntime
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 
 <h3>Calendar</h3>
@@ -61,10 +64,20 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userClaimsPrincipal = authState.User;
 
-        Topics = await TopicService.GetTopicsForWorkout("email@eemail.com");
-        Exercises = await ExerciseService.GetExercisesForWorkout("email@eemail.com");
-        Workouts = await WorkoutService.GetByMonth(DateTime.Now.Year, DateTime.Now.Month);
+        if (userClaimsPrincipal.Identity.IsAuthenticated)
+        {
+            var userEmail = userClaimsPrincipal.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
+            Console.WriteLine("This is the email");
+            Console.WriteLine(userEmail);
+            Topics = await TopicService.GetTopicsForWorkout(userEmail);
+            Exercises = await ExerciseService.GetExercisesForWorkout(userEmail);
+            Workouts = await WorkoutService.GetByMonth(DateTime.Now.Year, DateTime.Now.Month, userEmail);
+
+        }
+        
 
         foreach (WorkoutForCalendarDTO ex in Workouts)
         {

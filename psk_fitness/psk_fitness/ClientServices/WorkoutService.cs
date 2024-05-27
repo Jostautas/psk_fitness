@@ -11,12 +11,14 @@ namespace psk_fitness.ClientServices
     public class WorkoutService : IWorkoutService
     {
         private readonly IWorkoutRepository _workoutRepository;
+        private readonly IUserRepository _userRepository;
         private readonly ApplicationDbContext _applicationDbContext;
         private readonly IMapper _mapper;
         
-        public WorkoutService(IWorkoutRepository workoutRepository, ApplicationDbContext applicationDbContext, IMapper mapper)
+        public WorkoutService(IUserRepository userRepository, IWorkoutRepository workoutRepository, ApplicationDbContext applicationDbContext, IMapper mapper)
         {
             _workoutRepository = workoutRepository;
+            _userRepository = userRepository;
             _applicationDbContext = applicationDbContext;
             _mapper = mapper;
         }
@@ -61,9 +63,10 @@ namespace psk_fitness.ClientServices
             return await _workoutRepository.CreateAsync(newWorkout);
         }
 
-        public async Task<List<WorkoutForCalendarDTO>> GetWorkoutForCurrentMonth(int year, int month)
+        public async Task<List<WorkoutForCalendarDTO>> GetWorkoutForCurrentMonth(int year, int month, string userEmail)
         {
-            List<Workout> workouts = await _workoutRepository.GetWorkoutForCurrentMonth(year, month);
+            var userId = await _userRepository.GetUserByIdAsync(userEmail);
+            List<Workout> workouts = await _workoutRepository.GetWorkoutForCurrentMonth(year, month, userId.Id);
             List<WorkoutForCalendarDTO> calendarWorkouts = _mapper.Map<List<WorkoutForCalendarDTO>>(workouts);
 
             return calendarWorkouts;

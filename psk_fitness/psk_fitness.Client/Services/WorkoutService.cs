@@ -24,9 +24,9 @@ namespace psk_fitness.Client.Services
             return await response.Content.ReadFromJsonAsync<WorkoutCreateDTO>();
         }
 
-        public async Task<List<WorkoutForCalendarDTO>> GetByMonth(int year, int month)
+        public async Task<List<WorkoutForCalendarDTO>> GetByMonth(int year, int month, string userEmail)
         {
-            var response = await _httpClient.GetAsync($"api/Workout/by-month/{year}/{month}");
+            var response = await _httpClient.GetAsync($"api/Workout/by-month/{year}/{month}/{userEmail}");
             response.EnsureSuccessStatusCode();
             
             var jsonString = await response.Content.ReadAsStringAsync();
