@@ -10,7 +10,12 @@ public class TopicClientService(HttpClient _httpClient) : ITopicClientService
     public async Task<IEnumerable<TopicDTO>> GetUserTopicsAsync(string userEmail)
     {
         var response = await _httpClient.GetAsync($"{Constants.ApiEndpointPrefix}/topics?userEmail={userEmail}");
-        var json = await response.Content.ReadAsStringAsync();
+        var stream = response.Content.ReadAsStream();
+        string json;
+        using (StreamReader reader = new(stream))
+        {
+            json = reader.ReadToEnd();
+        }
         var topicsDTO = JsonSerializer.Deserialize<List<TopicDTO>>(json);
         return topicsDTO;
     }

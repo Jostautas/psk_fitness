@@ -15,7 +15,6 @@
 <PageTitle>Topics</PageTitle>
 
 <h3>My Topics</h3>
-
 <div class="d-flex flex-column">
     <div class="d-flex align-items-center">
         <div class="dropdown me-2">
@@ -56,7 +55,6 @@
         </TopicModalForm>
     </div>
 </div>
-
 @if (_topicsToDisplay != null) {
 <div class="container mt-4 mx-0">
     <div class="row">
@@ -209,7 +207,7 @@ else
     public TopicDTO TopicModel {get; set;}
 
     private string _modalMode {get; set;} = "create";
-    private IEnumerable<TopicDTO> _topicsToDisplay;
+    private IEnumerable<TopicDTO> _topicsToDisplay = null;
 
     private ApplicationUser user;
 
@@ -220,14 +218,20 @@ else
     private List<int> accessableTopicIdsToDisplay;
 
     protected override async Task OnInitializedAsync() {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userClaimsPrincipal = authState.User;
+        @* Must check if user logs out while in this view *@
+        if (!userClaimsPrincipal.Identity.IsAuthenticated) {
+            Console.WriteLine("Non-authenticated for Topics access!");
+            return;
+        }
+
         InitializeTopicModel();
         Container.PutObject(TopicModel, TopicModel.GetHashCode());
         await FetchUserTopicsAsync();
 
         addFriendModel ??= new();
 
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var userClaimsPrincipal = authState.User;
 
         if (userClaimsPrincipal.Identity.IsAuthenticated)
         {
