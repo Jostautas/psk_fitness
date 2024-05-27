@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using psk_fitness.Components;
 using psk_fitness.Components.Exercises.Pages;
 using psk_fitness.Components.Topics;
 using psk_fitness.Data;
@@ -11,20 +12,18 @@ namespace psk_fitness.Repositories
     public class ExerciseRepository : IExerciseRepository
     {
         private readonly ApplicationDbContext context;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper mapper;
 
-        public ExerciseRepository(ApplicationDbContext context, IMapper mapper)
+
+        public ExerciseRepository(ApplicationDbContext context, IUserRepository userRepository, IMapper mapper)
         {
             this.context = context;
             this.mapper = mapper;
+            _userRepository = userRepository;
         }
 
-        public async Task<List<ExerciseDisplayDTO>> GetExercisesByWorkoutId(int id)
-        {
-            var exercises = await context.Exercise.Where(e => e.WorkoutId == id).ToListAsync();
-            var exercisesDTO = mapper.Map<List<ExerciseDisplayDTO>>(exercises);
-            return exercisesDTO;
-        }
+
 
         public async Task<List<ExerciseDisplayDTO>> GetAllExercisesAsync()
         {
@@ -68,6 +67,31 @@ namespace psk_fitness.Repositories
                 await context.SaveChangesAsync();
             }
             return mapper.Map<ExerciseDisplayDTO>(exercise);
+        }
+
+        public async Task<List<ExerciseDisplayDTO>> GetExercisesForUser(string userId)
+        {
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            var exercises = await context.Exercise.Where(t => t.ApplicationUserId.Equals(user.Id)).ToListAsync();
+            return mapper.Map<List<ExerciseDisplayDTO>>(exercises);
+        }
+
+        public async Task<List<ExerciseForWorkoutDTO>> GetExercisesForCreatingWorkout(string userEmail)
+        {
+            var user = await _userRepository.GetUserByIdAsync(userEmail);
+            var exercises = await context.Exercise.Where(t => t.ApplicationUserId.Equals(user.Id)).ToListAsync();
+            return mapper.Map<List<ExerciseForWorkoutDTO>>(exercises);
+        }
+
+        public async Task<List<ExerciseForWorkoutDTO>> GetExercisesByWorkoutId(int workoutId)
+        {
+            
+            var exercises = await context.Workouts
+                .Where(w => w.Id == workoutId)
+                .SelectMany(w => w.Exercises)
+            .ToListAsync();
+
+            return mapper.Map<List<ExerciseForWorkoutDTO>>(exercises);   
         }
     }
 }

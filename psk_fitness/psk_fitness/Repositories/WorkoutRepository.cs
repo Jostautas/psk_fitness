@@ -51,14 +51,15 @@ namespace psk_fitness.Repositories
             return workout;
         }
 
-        public async Task<List<Workout>> GetWorkoutForCurrentMonth(int year, int month)
+        public async Task<List<Workout>> GetWorkoutForCurrentMonth(int year, int month, string userId)
         {
             var startDate = new DateOnly(year, month, 1);
             var endDate = startDate.AddMonths(1).AddDays(-1);
 
             var workouts = await _applicationDbContext.Workouts
-                            .Where(w => w.Date >= startDate && w.Date <= endDate)
-                            .ToListAsync();
+                                       .Where(w => w.Date >= startDate && w.Date <= endDate && w.Topic.ApplicationUserId == userId)
+                                       .Include(w => w.Exercises)
+                                       .ToListAsync();
 
             return workouts;
         }

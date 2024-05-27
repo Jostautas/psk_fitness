@@ -18,6 +18,13 @@ namespace psk_fitness.Data
                 .HasKey(tf => new { tf.TopicId, tf.ApplicationUserId });
 
             // Configuring the one-to-many relationship between ApplicationUsers and Topics
+
+            modelBuilder.Entity<Exercise>()
+                .HasOne(t => t.ApplicationUser)
+                .WithMany(au => au.Exercise) 
+                .HasForeignKey(t => t.ApplicationUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             modelBuilder.Entity<Topic>()
                 .HasOne(t => t.ApplicationUser)
                 .WithMany(au => au.Topics) // Assuming ApplicationUser has a Topics collection
@@ -37,10 +44,20 @@ namespace psk_fitness.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Workout>()
-                .HasMany(w => w.Exercises)
-                .WithOne(e => e.Workout)
-                .HasForeignKey(e => e.WorkoutId)
-                .OnDelete(DeleteBehavior.Cascade);
+            .HasMany(w => w.Exercises)
+            .WithMany()  // Leave blank as Exercises do not reference back to Workouts
+            .UsingEntity<Dictionary<string, object>>(
+                "WorkoutExercise",  // Name of the join table
+                j => j.HasOne<Exercise>()
+                      .WithMany()
+                      .HasForeignKey("ExerciseId"),
+                j => j.HasOne<Workout>()
+                      .WithMany()
+                      .HasForeignKey("WorkoutId"),
+                j =>
+                {
+                    j.ToTable("WorkoutExercises");  // Naming the join table
+                });
 
             modelBuilder.Entity<ApplicationUser>(entity =>
             {

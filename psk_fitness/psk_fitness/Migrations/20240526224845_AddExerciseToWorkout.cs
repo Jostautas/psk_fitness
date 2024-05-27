@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace psk_fitness.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreateSqlite : Migration
+    public partial class AddExerciseToWorkout : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -160,6 +160,32 @@ namespace psk_fitness.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Exercise",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ApplicationUserId = table.Column<string>(type: "TEXT", nullable: false),
+                    Title = table.Column<string>(type: "TEXT", nullable: false),
+                    Duration = table.Column<TimeSpan>(type: "TEXT", nullable: true),
+                    Sets = table.Column<int>(type: "INTEGER", nullable: true),
+                    Reps = table.Column<int>(type: "INTEGER", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: false),
+                    Notes = table.Column<string>(type: "TEXT", nullable: false),
+                    FriendsNotes = table.Column<string>(type: "TEXT", nullable: false),
+                    Steps = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Exercise", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Exercise_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Topics",
                 columns: table => new
                 {
@@ -233,26 +259,23 @@ namespace psk_fitness.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Exercise",
+                name: "WorkoutExercises",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    WorkoutId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Title = table.Column<string>(type: "TEXT", nullable: false),
-                    Duration = table.Column<TimeSpan>(type: "TEXT", nullable: true),
-                    Sets = table.Column<int>(type: "INTEGER", nullable: true),
-                    Reps = table.Column<int>(type: "INTEGER", nullable: true),
-                    Description = table.Column<string>(type: "TEXT", nullable: false),
-                    Notes = table.Column<string>(type: "TEXT", nullable: false),
-                    FriendsNotes = table.Column<string>(type: "TEXT", nullable: false),
-                    Steps = table.Column<string>(type: "TEXT", nullable: false)
+                    ExerciseId = table.Column<int>(type: "INTEGER", nullable: false),
+                    WorkoutId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Exercise", x => x.Id);
+                    table.PrimaryKey("PK_WorkoutExercises", x => new { x.ExerciseId, x.WorkoutId });
                     table.ForeignKey(
-                        name: "FK_Exercise_Workouts_WorkoutId",
+                        name: "FK_WorkoutExercises_Exercise_ExerciseId",
+                        column: x => x.ExerciseId,
+                        principalTable: "Exercise",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WorkoutExercises_Workouts_WorkoutId",
                         column: x => x.WorkoutId,
                         principalTable: "Workouts",
                         principalColumn: "Id",
@@ -297,9 +320,9 @@ namespace psk_fitness.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Exercise_WorkoutId",
+                name: "IX_Exercise_ApplicationUserId",
                 table: "Exercise",
-                column: "WorkoutId");
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TopicFriends_ApplicationUserId",
@@ -310,6 +333,11 @@ namespace psk_fitness.Migrations
                 name: "IX_Topics_ApplicationUserId",
                 table: "Topics",
                 column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorkoutExercises_WorkoutId",
+                table: "WorkoutExercises",
+                column: "WorkoutId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Workouts_TopicId",
@@ -336,13 +364,16 @@ namespace psk_fitness.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Exercise");
-
-            migrationBuilder.DropTable(
                 name: "TopicFriends");
 
             migrationBuilder.DropTable(
+                name: "WorkoutExercises");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Exercise");
 
             migrationBuilder.DropTable(
                 name: "Workouts");

@@ -1,11 +1,15 @@
 ﻿@page "/edit-exercise"
 @page "/edit-exercise/{exerciseId:int}"
+@rendermode InteractiveServer
+
 @using System.Text.Json
 @using Microsoft.Extensions.Logging
 @using psk_fitness.Data
 @using psk_fitness.Interfaces
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IUserRepository userRepository
 
 @inject IExerciseRepository ExerciseRepository
 
@@ -113,7 +117,7 @@
                         Reps = exercise.Reps,
                         Notes = exercise.Notes,
                         Steps = exercise.Steps,
-                        WorkoutId = exercise.WorkoutId
+                        ApplicationUserId = exercise.ApplicationUserId
                     };
                 steps = exerciseDTO.Steps.Split('>').ToList();
             }
@@ -133,6 +137,11 @@
 
     private void OpenModal()
     {
+        Console.WriteLine("Br br");
+        Console.WriteLine("Br br");
+        Console.WriteLine("Br br");
+        Console.WriteLine("Br br");
+
         isModalOpen = true;
         StateHasChanged();
     }
@@ -165,6 +174,12 @@
 
     private async Task HandleSubmit()
     {
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userEmail = authState.User.Identity.Name;
+        ApplicationUser user = userRepository.GetUserByIdAsync(userEmail).Result;
+
+
         exerciseDTO.Steps = string.Join(">", steps); // Combine steps into a single string
 
         // Custom validation
@@ -182,7 +197,7 @@
         }
         else
         {
-            exerciseDTO.WorkoutId = 1;
+            exerciseDTO.ApplicationUserId = user.Id;
             await ExerciseRepository.AddExerciseAsync(exerciseDTO);
         }
         await OnExerciseCreated.InvokeAsync(null); // Notify parent component
@@ -199,3 +214,4 @@
         exerciseId = null;
     }
 }
+

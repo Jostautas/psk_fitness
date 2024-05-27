@@ -10,6 +10,11 @@
 
   <ItemGroup>
     <None Remove="Pages\Calendar.razor.css" />
+    <None Remove="Shared\Dropdown.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Shared\Dropdown.razor.css" />
   </ItemGroup>
 
   <ItemGroup>

@@ -17,15 +17,16 @@ namespace psk_fitness.Client.Services
 
         public async Task<WorkoutCreateDTO> CreateWorkoutAsync(WorkoutCreateDTO workout) 
         {
+            Console.WriteLine("UI service create");
             var response = await _httpClient.PostAsJsonAsync("api/Workout", workout);
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadFromJsonAsync<WorkoutCreateDTO>();
         }
 
-        public async Task<List<WorkoutForCalendarDTO>> GetByMonth(int year, int month)
+        public async Task<List<WorkoutForCalendarDTO>> GetByMonth(int year, int month, string userEmail)
         {
-            var response = await _httpClient.GetAsync($"api/Workout/by-month/{year}/{month}");
+            var response = await _httpClient.GetAsync($"api/Workout/by-month/{year}/{month}/{userEmail}");
             response.EnsureSuccessStatusCode();
             
             var jsonString = await response.Content.ReadAsStringAsync();
@@ -43,6 +44,14 @@ namespace psk_fitness.Client.Services
             var workout = JsonConvert.DeserializeObject<WorkoutCreateDTO>(jsonString);
 
             return workout;
+        }
+
+        public async Task<WorkoutUpdateDTO> UpdateById(int id, WorkoutUpdateDTO workout)
+        {
+            var response = await _httpClient.PutAsJsonAsync("api/Workout/update", workout);
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<WorkoutUpdateDTO>();
         }
 
     }

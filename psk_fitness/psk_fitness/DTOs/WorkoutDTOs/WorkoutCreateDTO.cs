@@ -12,5 +12,6 @@ namespace psk_fitness.DTOs.WorkoutDTOs
         public string FriendsNotes { get; set; } = "";
         public bool Finished { get; set; } = false;
         public int TopicId { get; set; }
+        public List<int> ExeeciseIds { get; set; } = new List<int>();
     }
 }

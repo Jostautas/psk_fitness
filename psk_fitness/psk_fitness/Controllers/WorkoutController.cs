@@ -22,6 +22,7 @@ namespace psk_fitness.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateWorkout([FromBody] WorkoutCreateDTO workout)
         {
+            Console.WriteLine("Server Controller create");
             try
             {
                 Workout createdWorkout = await _workoutService.CreateWorkoutAsync(workout);
@@ -34,11 +35,11 @@ namespace psk_fitness.Controllers
             }
         }
 
-        [HttpGet("by-month/{year:int}/{month:int}")]
-        public async Task<IActionResult> GetWorkoutForCurrentMonth(int year, int month)
+        [HttpGet("by-month/{year:int}/{month:int}/{userEmail}")]
+        public async Task<IActionResult> GetWorkoutForCurrentMonth(int year, int month, string userEmail)
         {
 
-            List<WorkoutForCalendarDTO> workouts = await _workoutService.GetWorkoutForCurrentMonth(year, month);
+            List<WorkoutForCalendarDTO> workouts = await _workoutService.GetWorkoutForCurrentMonth(year, month, userEmail);
 
             if (workouts == null || workouts.Count == 0)
             {
@@ -52,8 +53,6 @@ namespace psk_fitness.Controllers
         [HttpGet("by-id/{id}")]
         public async Task<IActionResult> GetWorkoutById(int id)
         {
-
-
             var workout = await _workoutService.GetByIdAsync(id);
             
             if (workout == null)
@@ -89,5 +88,33 @@ namespace psk_fitness.Controllers
             var workouts = await _workoutRepository.GetAllWourkoutsAsync();
             return Ok(workouts);
         }
+
+
+    //    [HttpPut("update")]
+    //    public async Task<IActionResult> UpdateWorkout([FromBody] WorkoutUpdateDTO workoutUpdateDto)
+    //    {
+    //        if (!ModelState.IsValid)
+    //        {
+    //            return BadRequest(ModelState);
+    //        }
+
+    //        try
+    //        {
+    //            var updateResult = await _workoutService.UpdateWorkoutAsync(workoutUpdateDto);
+    //            if (updateResult)
+    //            {
+    //                return Ok(new { success = true, message = "Workout updated successfully." });
+    //            }
+    //            else
+    //            {
+    //                return NotFound(new { success = false, message = "Workout not found." });
+    //           }
+    //        }
+    //        catch (Exception ex)
+    //        {
+                // Log the exception details here for debugging and error tracing
+    //            return StatusCode(500, new { success = false, message = $"An error occurred while updating the workout. {ex.Message}" });
+    //        }
+    //    }
     }
 }
