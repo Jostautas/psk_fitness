@@ -3,6 +3,7 @@ using psk_fitness.Data;
 using psk_fitness.DTOs;
 using psk_fitness.Utilities;
 using psk_fitness.DTOs.WorkoutDTOs;
+using psk_fitness.Client.DTOs.TopicDTOs;
 
 namespace psk_fitness;
 
@@ -17,6 +18,7 @@ public class MappingProfile : Profile
                 src.DurationMinutes ?? 0,
                 src.DurationSeconds ?? 0
             )));
+        CreateMap<Exercise, ExerciseForWorkoutDTO>().ReverseMap();
 
         CreateMap<Exercise, ExerciseDisplayDTO>()
             .ForMember(dest => dest.DurationSeconds, opt => opt.MapFrom(src => src.Duration.HasValue ? (int?)src.Duration.Value.Hours : null))
@@ -32,7 +34,8 @@ public class MappingProfile : Profile
             .ForMember(
                 dest => dest.CssColor,
                 opt => opt.MapFrom(src => CssColor.FromString(src.Color)));
-
+        
+        CreateMap<Topic, TopicForWorkoutDTO>().ReverseMap();
         CreateMap<TopicFriend, TopicFriendCreateDTO>().ReverseMap();
        
         
@@ -42,6 +45,7 @@ public class MappingProfile : Profile
                    .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.Date.Day)) 
                    .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
                    .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Duration))
-                   .ForMember(dest => dest.Finished, opt => opt.MapFrom(src => src.Finished));
+                   .ForMember(dest => dest.Finished, opt => opt.MapFrom(src => src.Finished))
+                   .ForMember(dest => dest.ExerciseTitles, opt => opt.MapFrom(src => src.Exercises.Select(e => e.Title).ToList())); ;
     }
 }

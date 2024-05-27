@@ -5,7 +5,7 @@ namespace psk_fitness.Interfaces.Services
 {
     public interface IWorkoutService
     {
-        Task<List<WorkoutForCalendarDTO>> GetWorkoutForCurrentMonth(int year, int month);
+        Task<List<WorkoutForCalendarDTO>> GetWorkoutForCurrentMonth(int year, int month, string userEmail);
         Task<Workout> CreateWorkoutAsync(WorkoutCreateDTO workout);
         Task<WorkoutCreateDTO?> GetByIdAsync(int id);
 

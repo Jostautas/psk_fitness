@@ -2,6 +2,8 @@
 
 @using psk_fitness.Interfaces
 @inject IExerciseRepository ExerciseRepository
+@inject IUserRepository userRepository
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 @rendermode InteractiveServer
 
@@ -41,8 +43,18 @@ else
 
     async Task RefreshExercises()
     {
-        exercises = await ExerciseRepository.GetExercisesByWorkoutId(workoutId);
-        StateHasChanged(); // Ensure UI refresh
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userEmail = authState.User.Identity.Name;
+        ApplicationUser user = userRepository.GetUserByIdAsync(userEmail).Result;
+
+        exercises = await ExerciseRepository.GetExercisesForUser(user.Id);
+
+        foreach (ExerciseDisplayDTO ex in exercises)
+        {
+            Console.WriteLine(ex.Title);
+        }
+
+        StateHasChanged(); StateHasChanged(); // Ensure UI refresh
     }
 
     void EditExercise(int exerciseId)

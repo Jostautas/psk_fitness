@@ -7,7 +7,6 @@ using psk_fitness.Properties;
 using System.Text.Json;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.IdentityModel.Tokens;
 
 namespace psk_fitness.Controllers;
 
@@ -28,6 +27,17 @@ public class TopicController(ITopicService _topicService) : Controller
     public async Task<IActionResult> GetDisplayTopicsAsync([Required] string userEmail)
     {
         var topics = await _topicService.GetUserTopicsAsync(userEmail);
+        var json = JsonSerializer.Serialize(topics);
+        return Content(json, "application/json", Encoding.UTF8);
+    }
+
+    [HttpGet("for-workout/{userEmail}")]
+    public async Task<IActionResult> GetTopocsForWorkoutAsync([FromRoute] string userEmail)
+    {
+        Console.WriteLine("Reached the controller");
+        var topics = await _topicService.GetTopicsForWorkout(userEmail);
+        Console.WriteLine("Got the results in the controller");
+
         var json = JsonSerializer.Serialize(topics);
         return Content(json, "application/json", Encoding.UTF8);
     }

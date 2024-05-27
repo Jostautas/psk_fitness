@@ -3,7 +3,7 @@
     public class ExerciseDisplayDTO
     {
         public required int Id { get; set; }
-        public required int WorkoutId { get; set; }
+        public required string ApplicationUserId { get; set; }
         public required string Title { get; set; }
         public int? DurationSeconds { get; set; }
         public int? DurationMinutes { get; set; }

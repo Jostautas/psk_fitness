@@ -1,4 +1,5 @@
 using AutoMapper;
+using psk_fitness.Client.DTOs.TopicDTOs;
 using psk_fitness.Data;
 using psk_fitness.DTOs;
 using psk_fitness.Interfaces;
@@ -17,6 +18,15 @@ public class TopicService(
         topic.ApplicationUserId = user.Id;
         await _topicRepository.AddTopicAsync(topic);
         return topic;
+    }
+
+    public async Task<List<TopicForWorkoutDTO>> GetTopicsForWorkout(string userEmail)
+    {
+        var user = await _userRepository.GetUserByIdAsync(userEmail);
+        var userTopics = await _topicRepository.GetTopicsByUserIdAsync(user.Id);
+        
+        var topicsForWorkout = _mapper.Map<List<TopicForWorkoutDTO>>(userTopics);
+        return topicsForWorkout;
     }
 
     public async Task<List<TopicDTO>> GetUserTopicsAsync(string userEmail)

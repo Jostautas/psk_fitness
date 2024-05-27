@@ -11,8 +11,8 @@ using psk_fitness.Data;
 namespace psk_fitness.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240525141948_AddConcurrencyToken")]
-    partial class AddConcurrencyToken
+    [Migration("20240526224845_AddExerciseToWorkout")]
+    partial class AddExerciseToWorkout
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -148,6 +148,21 @@ namespace psk_fitness.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("WorkoutExercise", b =>
+                {
+                    b.Property<int>("ExerciseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("WorkoutId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ExerciseId", "WorkoutId");
+
+                    b.HasIndex("WorkoutId");
+
+                    b.ToTable("WorkoutExercises", (string)null);
+                });
+
             modelBuilder.Entity("psk_fitness.Data.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -227,6 +242,10 @@ namespace psk_fitness.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -256,12 +275,9 @@ namespace psk_fitness.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("WorkoutId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("WorkoutId");
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Exercise");
                 });
@@ -408,15 +424,30 @@ namespace psk_fitness.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("psk_fitness.Data.Exercise", b =>
+            modelBuilder.Entity("WorkoutExercise", b =>
                 {
-                    b.HasOne("psk_fitness.Data.Workout", "Workout")
-                        .WithMany("Exercises")
-                        .HasForeignKey("WorkoutId")
+                    b.HasOne("psk_fitness.Data.Exercise", null)
+                        .WithMany()
+                        .HasForeignKey("ExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Workout");
+                    b.HasOne("psk_fitness.Data.Workout", null)
+                        .WithMany()
+                        .HasForeignKey("WorkoutId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("psk_fitness.Data.Exercise", b =>
+                {
+                    b.HasOne("psk_fitness.Data.ApplicationUser", "ApplicationUser")
+                        .WithMany("Exercise")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("psk_fitness.Data.Topic", b =>
@@ -462,6 +493,8 @@ namespace psk_fitness.Migrations
 
             modelBuilder.Entity("psk_fitness.Data.ApplicationUser", b =>
                 {
+                    b.Navigation("Exercise");
+
                     b.Navigation("Topics");
                 });
 
@@ -470,11 +503,6 @@ namespace psk_fitness.Migrations
                     b.Navigation("TopicFriends");
 
                     b.Navigation("Workouts");
-                });
-
-            modelBuilder.Entity("psk_fitness.Data.Workout", b =>
-                {
-                    b.Navigation("Exercises");
                 });
 #pragma warning restore 612, 618
         }

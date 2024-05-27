@@ -18,7 +18,6 @@ namespace psk_fitness.Controllers
             this.exerciseService = exerciseService;
         }
 
-
         [HttpGet]
         public async Task<ActionResult<List<ExerciseDisplayDTO>>> GetAllExercisesAsync()
         {
@@ -35,6 +34,28 @@ namespace psk_fitness.Controllers
                 return NotFound("Exercise not found.");
 
             return Ok(exercise);
+        }
+
+        [HttpGet("for-workout/{userEmail}")]
+        public async Task<ActionResult<List<ExerciseForWorkoutDTO>>> GetExerciseForWorkout([FromRoute] string userEmail)
+        {
+            Console.WriteLine("Request is correct");
+            var exercises = await exerciseService.GetExercisesForCreatingWorkout(userEmail);
+            if (exercises is null)
+                return NotFound("Exercise not found.");
+
+            return Ok(exercises);
+        }
+
+        [HttpGet("for-calendar/{workoutId}")]
+        public async Task<ActionResult<List<ExerciseForWorkoutDTO>>> GetExerciseForCalendar([FromRoute] int workoutId)
+        {
+            Console.WriteLine("Request is correct");
+            var exercises = await exerciseService.GetExercisesByWorkoutId(workoutId);
+            if (exercises is null)
+                return NotFound("Exercise not found.");
+
+            return Ok(exercises);
         }
 
         [HttpPost]
@@ -63,12 +84,6 @@ namespace psk_fitness.Controllers
             return Ok("Exercise was removed.");
         }
 
-        [HttpGet("byWorkout/{workoutId}")]
-        public async Task<ActionResult<List<ExerciseDisplayDTO>>> GetExercisesByWorkoutIdAsync(int workoutId)
-        {
-            var exercises = await exerciseService.GetExercisesByWorkoutId(workoutId);
 
-            return Ok(exercises);
-        }
     }
 }

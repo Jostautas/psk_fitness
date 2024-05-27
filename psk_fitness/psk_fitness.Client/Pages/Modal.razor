@@ -77,17 +77,41 @@
                         }
                     </div>
                     <label for="workoutTypeDropdown" class="form-label">Workout type:</label>
-                    <Dropdown id="workoutTypeDropdown" TItem="string" OnSelected="@OnSelected">
-                        <InitialTip>This is a dropdown list</InitialTip>
+                    <Dropdown id="workoutTypeDropdown" TItem="TopicForWorkoutDTO" OnSelected="@OnSelected">
+                        <InitialTip>Select a topic</InitialTip>
                         <ChildContent>
-                            <DropdownListItem Item="list[0]">Chest</DropdownListItem>
-                            <DropdownListItem Item="list[1]">Back</DropdownListItem>
-                            <div class="dropdown-divider"></div>
-                            <DropdownListItem Item="list[2]">Calves</DropdownListItem>
+                            @foreach (TopicForWorkoutDTO topic in Topics)
+                            {
+                                <DropdownListItem Item="@topic">@topic.Title</DropdownListItem>
+                                <div class="dropdown-divider"></div>
+                            }
                         </ChildContent>
                     </Dropdown>
+
+
+
+                    <label for="exerciseButton" class="form-label">Exercises:</label>
+
+                    @foreach (var exercise in selectedExercises)
+                    {
+                        <div style="margin-bottom: 5px;">
+                            <Dropdown id="exerciseDropdown" TItem="ExerciseForWorkoutDTO" OnSelected="OnExerciseSelected">
+                                <InitialTip>Select an exercise</InitialTip>
+                                <ChildContent>
+                                    @foreach (var availableExercise in AvailableExercises)
+                                    {
+                                        <DropdownListItem Item="@availableExercise">@availableExercise.Title</DropdownListItem>
+                                        <div class="dropdown-divider"></div>
+                                    }
+                                </ChildContent>
+                            </Dropdown>
+                        </div>
+                    }
+                    <button id="exerciseButton" type="button" class="btn btn-primary" @onclick="AddExerciseDropdown" style="background-color: red;">Add exercise</button>
+
                 </form>
             </div>
+
             <div class="modal-footer">
                 <button type="button" @onclick="() => CreateWorkout()" class="btn btn-primary">Save changes</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => Close()">Close</button>
@@ -106,6 +130,25 @@
 
 @code {
 
+    List<ExerciseForWorkoutDTO> selectedExercises = new List<ExerciseForWorkoutDTO>();
+
+
+    void AddExerciseDropdown()
+    {
+        if (AvailableExercises.Any())
+            selectedExercises.Add(AvailableExercises.First()); // Default to the first exercise
+    }
+
+    void OnExerciseSelected(ExerciseForWorkoutDTO exercise)
+    {
+        newWorkout.ExerciseIds.Add(exercise.Id);
+    }
+
+    [Parameter]
+    public IEnumerable<TopicForWorkoutDTO> Topics { get; set; }
+    [Parameter]
+    public List<ExerciseForWorkoutDTO> AvailableExercises { get; set; }
+
     private bool _doNotShowInputBoxes = false;
     private WorkoutDisplayDTO selectedWorkout = new WorkoutDisplayDTO();
     private WorkoutCreateDTO newWorkout = new WorkoutCreateDTO();
@@ -114,11 +157,14 @@
     public string ModalClass = "";
     public bool ShowBackdrop = false;
 
+    private int _selectedDayOnCalendar;
+
     private async Task CreateWorkout()
     {
+        Console.WriteLine("Starting to create a workout");
         try
         {
-            newWorkout.TopicId = 1;
+            newWorkout.Date = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, _selectedDayOnCalendar);     
             WorkoutCreateDTO result = await WorkoutService.CreateWorkoutAsync(newWorkout);
             Console.WriteLine("Workout created successfully!");
         }
@@ -129,9 +175,9 @@
         }
     }
 
-    private void OnSelected(string selection)
+    private void OnSelected(TopicForWorkoutDTO topic)
     {
-        Console.WriteLine(selection);
+        newWorkout.TopicId = topic.Id;
     }
 
     public void OnDeleteWorkout()
@@ -152,8 +198,18 @@
         StateHasChanged();
     }
 
-    public async Task Open(int id)
+    public void Open(int day)
     {
+        _selectedDayOnCalendar = day;
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    public async Task Open(int id, int day)
+    {
+
         newWorkout = await WorkoutService.GetByIdAsync(id);
 
         Console.WriteLine(newWorkout.Title);
