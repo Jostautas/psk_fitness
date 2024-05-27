@@ -53,7 +53,6 @@ namespace psk_fitness.Controllers
         [HttpGet("for-calendar/{workoutId}")]
         public async Task<ActionResult<List<ExerciseForWorkoutDTO>>> GetExerciseForCalendar([FromRoute] int workoutId)
         {
-            Console.WriteLine("Request is correct");
             var exercises = await exerciseService.GetExercisesByWorkoutId(workoutId);
             if (exercises is null)
                 return NotFound("Exercise not found.");

@@ -34,7 +34,6 @@ namespace psk_fitness.ClientServices
                 .Where(exercise => workout.ExerciseIds.Contains(exercise.Id))
                 .ToListAsync();
 
-            System.Console.WriteLine("Here are the exercises");
 
             foreach (var item in selectedExercises)
             {
