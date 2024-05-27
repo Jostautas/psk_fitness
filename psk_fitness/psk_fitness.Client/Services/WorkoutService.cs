@@ -18,6 +18,12 @@ namespace psk_fitness.Client.Services
         public async Task<WorkoutCreateDTO> CreateWorkoutAsync(WorkoutCreateDTO workout) 
         {
             Console.WriteLine("UI service create");
+            Console.WriteLine("UI service ids");
+            foreach (var w in workout.ExerciseIds)
+            {
+                Console.WriteLine(w);
+            }
+
             var response = await _httpClient.PostAsJsonAsync("api/Workout", workout);
             response.EnsureSuccessStatusCode();
 

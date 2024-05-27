@@ -23,6 +23,13 @@ namespace psk_fitness.Controllers
         public async Task<IActionResult> CreateWorkout([FromBody] WorkoutCreateDTO workout)
         {
             Console.WriteLine("Server Controller create");
+
+            Console.WriteLine("Controller Ids");
+            foreach(var w in workout.ExerciseIds)
+            {
+                Console.WriteLine(w);
+            }
+
             try
             {
                 Workout createdWorkout = await _workoutService.CreateWorkoutAsync(workout);
