@@ -11,13 +11,6 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
 
 
-var services = new Dictionary<Type, Type>
-{
-    { typeof(IWorkoutService), typeof(WorkoutService) },
-    { typeof(ITopicService), typeof(TopicService) },
-    { typeof(IExerciseService), typeof(ExerciseService) }
-};
-
 builder.Services.AddHttpClient<IWorkoutService, WorkoutService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7032");
