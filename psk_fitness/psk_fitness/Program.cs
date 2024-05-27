@@ -11,17 +11,18 @@ using psk_fitness.ClientServices;
 using psk_fitness.Properties;
 using psk_fitness.Interfaces.Services;
 using psk_fitness.Services;
-using psk_fitness.Middleware;
+using psk_fitness.Interceptors;
 using psk_fitness.ClientServices.Decorators;
 
 var builder = WebApplication.CreateBuilder(args);
 var useDecoratedService = bool.Parse(Environment.GetEnvironmentVariable("UseDecoratedTopicClientService") ?? "false");
 
-
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddSingleton<LoggingInterceptor>();
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
@@ -48,6 +49,8 @@ else
 }
 
 builder.Services.AddTransient<ITopicService, TopicService>();
+// Proxy HAS to be declared AFTER the service
+builder.Services.AddProxiedScoped<ITopicService, TopicService>();
 
 builder.Services.AddScoped<StateContainer>();
 builder.Services.AddTransient<ITopicFriendRepository, TopicFriendRepository>();
@@ -116,8 +119,6 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
-
-app.UseMiddleware<LoggingMiddleware>();
 
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
