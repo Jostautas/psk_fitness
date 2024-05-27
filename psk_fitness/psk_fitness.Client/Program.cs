@@ -9,6 +9,15 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.Services.AddAuthorizationCore();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
+
+
+var services = new Dictionary<Type, Type>
+{
+    { typeof(IWorkoutService), typeof(WorkoutService) },
+    { typeof(ITopicService), typeof(TopicService) },
+    { typeof(IExerciseService), typeof(ExerciseService) }
+};
+
 builder.Services.AddHttpClient<IWorkoutService, WorkoutService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7032");
@@ -21,19 +30,5 @@ builder.Services.AddHttpClient<IExerciseService, ExerciseService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7032");
 });
-builder.Services.AddScoped(sp => {
-    var clientFactory = sp.GetRequiredService<IHttpClientFactory>();
-    var client = clientFactory.CreateClient("WorkoutServiceClient");
-    return new WorkoutService(client);
-});
-builder.Services.AddScoped(sp => {
-    var clientFactory = sp.GetRequiredService<IHttpClientFactory>();
-    var client = clientFactory.CreateClient("TopicServiceClient");
-    return new TopicService(client);
-});
-builder.Services.AddScoped(sp => {
-    var clientFactory = sp.GetRequiredService<IHttpClientFactory>();
-    var client = clientFactory.CreateClient("ExerciseServiceClient");
-    return new ExerciseService(client);
-});
+
 await builder.Build().RunAsync();
