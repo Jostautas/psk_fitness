@@ -5,6 +5,9 @@
 @using psk_fitness.Data
 @using Microsoft.AspNetCore.Components.Authorization
 @using psk_fitness.ClientServices
+@using System.Net;
+@using System.Net.Http;
+@inject IJSRuntime JSRuntime
 @inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager
 @inject ITopicFriendService TopicFriendService
@@ -262,10 +265,30 @@ else
         _topicsToDisplay = await TopicClientService.GetUserTopicsAsync(userEmail);
     }
 
-    private async void DeleteTopicAsync() {
-        await TopicClientService.DeleteTopicAsync(TopicModel.Id);
-        await FetchUserTopicsAsync();
-        await InvokeAsync(StateHasChanged);
+    private async Task DeleteTopicAsync()
+    {
+        try
+        {
+            var response = await TopicClientService.DeleteTopicAsync(TopicModel.Id);
+            if (response.IsSuccessStatusCode)
+            {
+                await FetchUserTopicsAsync();
+                await InvokeAsync(StateHasChanged);
+            }
+            else if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "Topic does not exist. Please reload the website.");
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "An unexpected error occurred.");
+            }
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "An unexpected error occurred.");
+            Console.WriteLine($"An unexpected error occurred: {ex.Message}");
+        }
     }
 
     private void InitializeTopicModel() {
@@ -306,8 +329,29 @@ else
         TopicModel.CssColor = new CssColor(CssColorMode.RGBA, (255, 150, 150).ToTuple());
     }
 
-    private async void DeleteTopicAsync(int topicId) {
-        await TopicClientService.DeleteTopicAsync(topicId);
-        await FetchUserTopicsAsync();
+    private async void DeleteTopicAsync(int topicId)
+{
+try
+    {
+        var response = await TopicClientService.DeleteTopicAsync(topicId);
+        if (response.IsSuccessStatusCode)
+        {
+            await FetchUserTopicsAsync();
+        }
+        else if (response.StatusCode == HttpStatusCode.InternalServerError)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Topic does not exist. Please reload the website.");
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "An unexpected error occurred.");
+        }
     }
+    catch (Exception ex)
+    {
+        displayText = "An unexpected error occurred.";
+        textClass = "text-dark bg-danger border border-dark p-3";
+        Console.WriteLine($"An unexpected error occurred: {ex.Message}");
+    }
+}
 }

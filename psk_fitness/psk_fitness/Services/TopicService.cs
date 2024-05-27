@@ -29,8 +29,17 @@ public class TopicService(
 
     public async Task DeleteTopicAsync(int topicId)
     {
-        var topic = await _topicRepository.GetTopicById(topicId);
-        await _topicRepository.DeleteTopicAsync(topic);
+        try
+        {
+            var topic = await _topicRepository.GetTopicById(topicId);
+            await _topicRepository.DeleteTopicAsync(topic);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+
+            throw;
+        }
     }
 
     public async Task UpdateTopicAsync(TopicDTO topicUpdateDTO)
