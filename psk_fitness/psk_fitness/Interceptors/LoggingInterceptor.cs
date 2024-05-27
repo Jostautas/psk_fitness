@@ -9,7 +9,7 @@ public class LoggingInterceptor(IOptionsMonitor<CustomLoggingOptions> _options) 
 {
     public void Intercept(IInvocation invocation)
     {
-        if (_options.CurrentValue.LoggingEnabled) {
+        if (_options.CurrentValue.LoggingEnabled == true) {
             var invokedClassName = invocation.MethodInvocationTarget?.DeclaringType?.Name;
             var invokedMethodName = invocation.Method.Name;
             // parameters contain user id
@@ -28,9 +28,8 @@ public class LoggingInterceptor(IOptionsMonitor<CustomLoggingOptions> _options) 
             Console.WriteLine("Intercepted!");
             Console.WriteLine(logEntry);
             LogToFileAsync(logEntry).Wait();
-
-            invocation.Proceed();
         }
+        invocation.Proceed();
     }
 
     private Task LogToFileAsync(string logEntry)
