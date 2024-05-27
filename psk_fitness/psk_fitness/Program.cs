@@ -28,29 +28,29 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
 
-builder.Services.AddScoped<ITopicRepository, TopicRepository>();
-builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
-builder.Services.AddScoped<IWorkoutRepository, WorkoutRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddTransient<ITopicRepository, TopicRepository>();
+builder.Services.AddTransient<IExerciseRepository, ExerciseRepository>();
+builder.Services.AddTransient<IWorkoutRepository, WorkoutRepository>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(Constants.BaseHttpUri) });
 
 if (useDecoratedService)
 {
-    builder.Services.AddScoped<TopicClientService>();
+    builder.Services.AddTransient<TopicClientService>();
 
-    builder.Services.AddScoped<ITopicClientService, SortingTopicClientServiceDecorator>(provider =>
+    builder.Services.AddTransient<ITopicClientService, SortingTopicClientServiceDecorator>(provider =>
         new SortingTopicClientServiceDecorator(provider.GetRequiredService<TopicClientService>()));
 }
 else
 {
-    builder.Services.AddScoped<ITopicClientService, TopicClientService>();
+    builder.Services.AddTransient<ITopicClientService, TopicClientService>();
 }
 
-builder.Services.AddScoped<ITopicService, TopicService>();
+builder.Services.AddTransient<ITopicService, TopicService>();
 
 builder.Services.AddScoped<StateContainer>();
-builder.Services.AddScoped<ITopicFriendRepository, TopicFriendRepository>();
+builder.Services.AddTransient<ITopicFriendRepository, TopicFriendRepository>();
 
 builder.Services.Configure<CustomLoggingOptions>(
     builder.Configuration.GetSection(CustomLoggingOptions.SectionName));
@@ -65,7 +65,7 @@ builder.Services.AddHttpClient<ITopicFriendService, TopicFriendService>(client =
 });
 
 
-builder.Services.AddScoped<IWorkoutService, WorkoutService>();
+builder.Services.AddTransient<IWorkoutService, WorkoutService>();
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>
