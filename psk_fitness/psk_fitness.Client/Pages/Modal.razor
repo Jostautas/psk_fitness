@@ -80,10 +80,16 @@
                     <Dropdown id="workoutTypeDropdown" TItem="TopicForWorkoutDTO" OnSelected="@OnSelected">
                         <InitialTip>Select a topic</InitialTip>
                         <ChildContent>
-                            @foreach (TopicForWorkoutDTO topic in Topics)
+                            if (Topics != null)
                             {
-                                <DropdownListItem Item="@topic">@topic.Title</DropdownListItem>
-                                <div class="dropdown-divider"></div>
+                                @foreach (TopicForWorkoutDTO topic in Topics)
+                                {
+                                    if (topic.Title != null)
+                                    {
+                                        <DropdownListItem Item="@topic">@topic.Title</DropdownListItem>
+                                        <div class="dropdown-divider"></div>
+                                    }
+                                }
                             }
                         </ChildContent>
                     </Dropdown>
@@ -91,21 +97,23 @@
 
 
                     <label for="exerciseButton" class="form-label">Exercises:</label>
-
-                    @foreach (var exercise in selectedExercises)
+                    @if (selectedExercises != null)
                     {
-                        <div style="margin-bottom: 5px;">
-                            <Dropdown id="exerciseDropdown" TItem="ExerciseForWorkoutDTO" OnSelected="OnExerciseSelected">
-                                <InitialTip>Select an exercise</InitialTip>
-                                <ChildContent>
-                                    @foreach (var availableExercise in AvailableExercises)
-                                    {
-                                        <DropdownListItem Item="@availableExercise">@availableExercise.Title</DropdownListItem>
-                                        <div class="dropdown-divider"></div>
-                                    }
-                                </ChildContent>
-                            </Dropdown>
-                        </div>
+                        @foreach (var exercise in selectedExercises)
+                        {
+                            <div style="margin-bottom: 5px;">
+                                <Dropdown id="exerciseDropdown" TItem="ExerciseForWorkoutDTO" OnSelected="OnExerciseSelected">
+                                    <InitialTip>Select an exercise</InitialTip>
+                                    <ChildContent>
+                                        @foreach (var availableExercise in AvailableExercises)
+                                        {
+                                            <DropdownListItem Item="@availableExercise">@availableExercise.Title</DropdownListItem>
+                                            <div class="dropdown-divider"></div>
+                                        }
+                                    </ChildContent>
+                                </Dropdown>
+                            </div>
+                        }
                     }
                     <button id="exerciseButton" type="button" class="btn btn-primary" @onclick="AddExerciseDropdown" style="background-color: red;">Add exercise</button>
 
