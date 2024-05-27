@@ -4,5 +4,5 @@ public class CustomLoggingOptions
 {
     public const string SectionName = "LoggingSettings";
     public bool LoggingEnabled { get; set; } = true;
-    public string LogPath { get; set; } = "logs/log.log";
+    public string LogPath { get; set; } = "Logs/log.log";
 }
